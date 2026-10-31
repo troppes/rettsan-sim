@@ -30,6 +30,9 @@ export function answerPrompts(g: Game, limit = 30) {
         for (const t of ctl.targets!) g.placeSet(t.id, t.x, t.y);
         g.placeCheck();
         break;
+      case 'gauge':
+        g.gaugeDone({ sys: p.sys, dia: p.dia, maxP: p.sys + 40, rate: 3 });
+        break;
       case 'rhythm':
         if (!p.pulseKnown) g.rhythmPulse();
         g.choose(ctl.keys.indexOf(p.rhythm));

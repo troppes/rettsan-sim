@@ -195,3 +195,49 @@ describe('EKG am Extremitätenansatz', () => {
     expect(p.result!.every((r) => r.ok)).toBe(true);
   });
 });
+
+describe('Maßnahmen-Gedächtnis über Einsätze', () => {
+  it('gleiche Maßnahme bekommt im nächsten Einsatz einen anderen Modus, richtige Fragen kommen nicht wieder', async () => {
+    const { procMemory } = await import('../src/lib/engine/memory');
+    procMemory.data = {};
+    const kinds: string[] = [];
+    for (let i = 0; i < 6; i++) {
+      const g = new Game(caseById('acs')!, { worsen: false, detail: true });
+      g.act('c_rr');
+      const p = g.prompt;
+      kinds.push(p ? (p.kind === 'mc' ? 'question' : p.kind) : 'quick');
+      answerPrompts(g);
+    }
+    for (let i = 1; i < kinds.length; i++) expect(kinds[i]).not.toBe(kinds[i - 1]);
+    expect(procMemory.get('c_rr').lastMode).toBeDefined();
+    procMemory.data = { c_rr: { right: [0, 1, 2] } };
+    for (let i = 0; i < 10; i++) {
+      const g = new Game(caseById('acs')!, { worsen: false, detail: true });
+      g.act('c_rr');
+      expect(g.prompt?.kind).not.toBe('mc');
+      answerPrompts(g);
+    }
+    procMemory.data = {};
+  });
+});
+
+describe('Blutdruck von Hand', () => {
+  it('genaue Werte mit guter Technik geben volle Punkte, zu schnell ablassen kostet', () => {
+    const run = (read: { sys: number; dia: number; maxP: number; rate: number }) => {
+      const g = new Game(caseById('acs')!, { worsen: false, detail: true });
+      g.forceProcMode = 'gauge';
+      g.act('c_rr');
+      const p = g.prompt!;
+      if (p.kind !== 'gauge') throw new Error('kein Minispiel');
+      g.gaugeDone({ ...read, sys: p.sys + read.sys, dia: p.dia + read.dia, maxP: p.sys + read.maxP });
+      const ev = g.s.events.find((e) => e.text.startsWith('Blutdruck manuell'))!;
+      g.next(); answerPrompts(g);
+      expect(g.s.nibp).not.toBeNull();
+      return ev;
+    };
+    const good = run({ sys: 2, dia: -4, maxP: 30, rate: 2.5 });
+    expect(good.pts).toBe(good.max);
+    const bad = run({ sys: -15, dia: 2, maxP: 10, rate: 9 });
+    expect(bad.pts).toBe(2);
+  });
+});

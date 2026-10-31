@@ -125,7 +125,26 @@
           "answer": 0,
           "explain": "Nicht am Shunt-Arm, nicht nach Lymphknotenentfernung und nicht am Arm mit laufender Infusion."
         }
-      ]
+      ],
+      "modes": {"gauge":4,"steps":2,"question":2,"quick":1},
+      "gauge": {
+        "task": "Manuell messen, Stethoskop in der Ellenbeuge. Pumpe deutlich über den systolischen Wert und lass langsam ab (2–3 mmHg/s). Beim ersten Ton „Systole“ tippen, beim letzten Ton „Diastole“.",
+        "max": 300,
+        "pumpStep": 20,
+        "rates": {"slow":3,"fast":7,"open":40},
+        "tolerance": 8,
+        "pumpAbove": 20,
+        "maxRate": 5,
+        "pts": {"value":2,"technique":1},
+        "texts": {
+          "low": "Zu wenig aufgepumpt: Du warst schon unter dem systolischen Wert, als du angefangen hast. Erst etwa 30 mmHg über das Verschwinden des Radialispulses pumpen.",
+          "fast": "Zu schnell abgelassen ({rate} mmHg/s): Zwischen zwei Herzschlägen fällt der Druck zu weit, die Werte werden ungenau. Ziel sind 2–3 mmHg pro Sekunde.",
+          "good": "Saubere Technik: hoch genug gepumpt und langsam abgelassen.",
+          "sys": "Systolisch: du {read}, tatsächlich {true} mmHg.",
+          "dia": "Diastolisch: du {read}, tatsächlich {true} mmHg.",
+          "score": "Blutdruck manuell: {right} von 2 Werten genau"
+        }
+      }
     },
     "b_spo2": {
       "title": "Pulsoxymeter anlegen",

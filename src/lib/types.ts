@@ -181,7 +181,7 @@ export interface ProcStep {
   wrong?: string;
 }
 /** Wie eine Maßnahme abgefragt wird: Schritte, klappt einfach, eine Frage, Elektroden selbst kleben */
-export type ProcMode = 'steps' | 'quick' | 'question' | 'place';
+export type ProcMode = 'steps' | 'quick' | 'question' | 'place' | 'gauge';
 
 export interface ProcQuestion { q: string; options: string[]; answer: number; explain?: string }
 
@@ -206,6 +206,22 @@ export interface Procedure {
   quick?: string;
   questions?: ProcQuestion[];
   place?: Placement;
+  gauge?: GaugeConfig;
+}
+
+/** Blutdruck von Hand messen: Manschette aufpumpen, ablassen, Korotkow-Töne hören */
+export interface GaugeConfig {
+  task: string;
+  max: number;
+  pumpStep: number;
+  /** Ablassgeschwindigkeit in mmHg/s */
+  rates: { slow: number; fast: number; open: number };
+  tolerance: number;
+  /** So weit über systolisch muss mindestens gepumpt werden */
+  pumpAbove: number;
+  maxRate: number;
+  pts: { value: number; technique: number };
+  texts: Record<'low' | 'fast' | 'good' | 'sys' | 'dia' | 'score', string>;
 }
 
 /* ------------------------------------------------------------ EKG */

@@ -5,6 +5,7 @@ import { clamp, fill, pick, shuffle } from '../util';
 import { mutate, test, variant, type Ctx } from './conditions';
 import type { Choice, FaceState, GameState, LogEntry, LogType, Prompt, PromptCtl, ScoreEvent, Settings } from './state';
 import { ProcSession } from './procedure';
+import { procMemory } from './memory';
 import { Rea } from './rea';
 import { debrief, type Debrief } from './scoring';
 
@@ -426,7 +427,7 @@ export class Game {
   }
 
   /* Quiz */
-  runQuiz(q: Quiz, next: () => void, opt: { kicker?: string; label?: string; pts?: number } = {}) {
+  runQuiz(q: Quiz, next: () => void, opt: { kicker?: string; label?: string; pts?: number; onRight?: () => void } = {}) {
     if (q.type === 'order') {
       this.open({ kind: 'order', title: q.q, items: shuffle(q.items), picked: [] }, { keys: [], next, quiz: q });
       return;
@@ -441,6 +442,7 @@ export class Game {
         const label = opt.label ?? `Quiz: ${q.q}`;
         markChoices(p.choices, order, k, q.answer);
         this.reward(ok ? pts : 0, pts, label);
+        if (ok) opt.onRight?.();
         if (!ok) this.addEvent(0, 0, `Falsch beantwortet: ${q.q}`, q.options[q.answer], 'miss');
         p.explain = q.explain;
       },
@@ -517,19 +519,28 @@ export class Game {
   private procMode(id: string): ProcMode {
     if (this.forceProcMode) return this.forceProcMode;
     const P = PROCEDURES[id];
+    const mem = procMemory.get(id);
     const w = { ...RULES.procedure.modes, ...(P.modes ?? {}) } as Record<ProcMode, number>;
     const usable: Record<ProcMode, boolean> = {
       steps: P.steps.length > 0,
       quick: true,
-      question: (P.questions?.length ?? 0) > (this.askedProcQ[id]?.length ?? 0),
+      question: this.openQuestions(id).length > 0,
       place: !!P.place,
+      gauge: !!P.gauge,
     };
     let modes = (Object.keys(w) as ProcMode[]).filter((m) => w[m] > 0 && usable[m]);
-    if (modes.length > 1 && this.lastProcMode) modes = modes.filter((m) => m !== this.lastProcMode);
+    // Nicht zweimal hintereinander gleich: weder im Einsatz noch bei dieser Maßnahme seit dem letzten Mal
+    for (const avoid of [this.lastProcMode, mem.lastMode]) if (modes.length > 1 && avoid) modes = modes.filter((m) => m !== avoid);
     if (!modes.length) return 'quick';
     let r = Math.random() * modes.reduce((t, m) => t + w[m], 0);
     for (const m of modes) { r -= w[m]; if (r < 0) return m; }
     return modes[modes.length - 1];
+  }
+  /** Kurzfragen, die weder in diesem Einsatz kamen noch schon einmal richtig beantwortet wurden */
+  private openQuestions(id: string) {
+    const asked = this.askedProcQ[id] ?? [];
+    const right = procMemory.get(id).right;
+    return (PROCEDURES[id].questions ?? []).map((_, k) => k).filter((k) => !asked.includes(k) && !right.includes(k));
   }
 
   private runProc(a: Action, next: () => void) {
@@ -537,21 +548,27 @@ export class Game {
     const PT = RULES.procedure;
     const mode = this.procMode(a.id);
     this.lastProcMode = mode;
+    procMemory.get(a.id).lastMode = mode;
+    procMemory.save();
     if (mode === 'quick') {
       this.addLog('info', fill(P.quick ?? PT.quickDefault, { title: P.title }));
       next();
     } else if (mode === 'question') {
       const asked = (this.askedProcQ[a.id] ??= []);
-      const i = pick(P.questions!.map((_, k) => k).filter((k) => !asked.includes(k)));
+      const i = pick(this.openQuestions(a.id));
       asked.push(i);
       const q = P.questions![i];
-      this.runQuiz({ on: a.id, type: 'mc', ...q }, next, { kicker: fill(PT.questionKicker, { title: P.title }), label: fill(PT.questionRight, { title: P.title }), pts: PT.questionPts });
+      this.runQuiz({ on: a.id, type: 'mc', ...q }, next, {
+        onRight: () => { procMemory.get(a.id).right.push(i); procMemory.save(); }, kicker: fill(PT.questionKicker, { title: P.title }), label: fill(PT.questionRight, { title: P.title }), pts: PT.questionPts });
     } else if (mode === 'place') {
       const v = pick(P.place!.variants);
       this.open(
         { kind: 'place', title: P.title, task: P.place!.task, view: (P.place!.view ?? [0, 0, 200, 260]).join(' '), variant: v.name, electrodes: v.electrodes.map(({ id, label, color }) => ({ id, label, color })), pos: {} },
         { keys: [], next, targets: v.electrodes },
       );
+    } else if (mode === 'gauge') {
+      const v = this.s.v;
+      this.open({ kind: 'gauge', title: P.title, cfg: P.gauge!, hr: Math.round(v.hr), sys: Math.round(v.sys), dia: Math.round(v.dia) }, { keys: [], next });
     } else {
       this.proc = new ProcSession(this, a);
       this.open(this.proc.prompt, { keys: [], next });
@@ -567,6 +584,30 @@ export class Game {
     const p = this.prompt;
     if (p?.kind !== 'place' || p.result || !p.electrodes.some((e) => e.id === id)) return;
     p.pos[id] = { x, y };
+    this.changed();
+  }
+  /** Ergebnis des Blutdruck-Minispiels: abgelesene Werte, höchster Druck, mittlere Ablassgeschwindigkeit */
+  gaugeDone(read: { sys: number; dia: number; maxP: number; rate: number }) {
+    const p = this.prompt;
+    if (p?.kind !== 'gauge' || p.result) return;
+    const g = p.cfg;
+    const sysOk = Math.abs(read.sys - p.sys) <= g.tolerance;
+    const diaOk = Math.abs(read.dia - p.dia) <= g.tolerance;
+    const low = read.maxP < p.sys + g.pumpAbove;
+    const fast = read.rate > g.maxRate;
+    const lines = [
+      { ok: sysOk, text: fill(g.texts.sys, { read: Math.round(read.sys), true: p.sys }) },
+      { ok: diaOk, text: fill(g.texts.dia, { read: Math.round(read.dia), true: p.dia }) },
+    ];
+    if (low) lines.push({ ok: false, text: g.texts.low });
+    if (fast) lines.push({ ok: false, text: fill(g.texts.fast, { rate: read.rate.toFixed(1).replace('.', ',') }) });
+    if (!low && !fast) lines.push({ ok: true, text: g.texts.good });
+    p.result = { lines };
+    const right = +sysOk + +diaOk;
+    const max = 2 * g.pts.value + g.pts.technique;
+    this.reward(right * g.pts.value + (!low && !fast ? g.pts.technique : 0), max, fill(g.texts.score, { right }));
+    const wrong = lines.filter((l) => !l.ok);
+    if (wrong.length) this.addEvent(0, 0, p.title + ': manuell ungenau', wrong.map((l) => l.text).join(' '), 'miss');
     this.changed();
   }
   placeCheck() {

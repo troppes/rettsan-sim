@@ -4,6 +4,7 @@
   import MonitorView from './MonitorView.svelte';
   import Options from './Options.svelte';
   import PlaceBoard from './PlaceBoard.svelte';
+  import GaugeGame from './GaugeGame.svelte';
 
   let { game, prompt }: { game: Game; prompt: Prompt } = $props();
 </script>
@@ -78,6 +79,11 @@
       <div class="kicker">Selbst kleben · {prompt.variant}</div>
       <h3>{prompt.title}</h3>
       <PlaceBoard {game} {prompt} />
+
+    {:else if prompt.kind === 'gauge'}
+      <div class="kicker">Von Hand messen</div>
+      <h3>{prompt.title}</h3>
+      <GaugeGame {game} {prompt} />
 
     {:else if prompt.kind === 'rhythm'}
       <div class="kicker">{prompt.kicker}</div>
