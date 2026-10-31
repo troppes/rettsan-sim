@@ -10,9 +10,8 @@
   const cfg = $derived(prompt.cfg);
 
   let p = $state(0);
-  let speed = $state(0); // geglättete Ablassgeschwindigkeit für die Anzeige
-  let valve = $state(0); // Ventilstellung 0–10
-  let dump = $state(false); // ganz auf
+  type Valve = 'zu' | 'slow' | 'fast' | 'open';
+  let valve = $state<Valve>('zu');
   let jitter = $state(0);
   let sound = $state(true);
   let say = $state(''); // Sprechblase des Patienten / der Umgebung
@@ -20,9 +19,7 @@
   let maxP = 0;
   let maskUntil = 0; // solange jemand spricht, sind die Töne leiser
   // Ventil ist bei jeder Manschette etwas anders, manchmal leckt sie leicht
-  const sens = 0.75 + Math.random() * 0.3;
-  const leak = Math.random() < 0.3 ? 0.1 + Math.random() * 0.2 : 0;
-  const rate = () => (dump ? cfg.rates.open : sens * valve * 0.4 + leak);
+  const rate = () => (valve === 'zu' ? 0 : cfg.rates[valve]);
 
   /* ---------- Anzeige „Was höre ich?“: Ausschläge der letzten Sekunden */
   type Blip = { t: number; a: number; w: number };
@@ -159,8 +156,7 @@
       const dt = (t - last) / 1000;
       last = t;
       now = t;
-      if (p > 0) { const r = rate(); p = Math.max(0, p - r * dt); speed += (r - speed) * Math.min(1, dt * 2); }
-      if (p === 0) dump = false;
+      p = Math.max(0, p - rate() * dt);
       jitter *= Math.exp(-dt * 8);
       if (t >= nextBeat) {
         const base = 60000 / prompt.hr;
@@ -181,7 +177,7 @@
 
   function pump() {
     ctx();
-    dump = false;
+    valve = 'zu';
     p = Math.min(cfg.max, p + cfg.pumpStep);
     maxP = Math.max(maxP, p);
     noise(0.15, 0.15, 400, 1200);
@@ -245,18 +241,14 @@
     <button class="btn small {read.dia ? 'set' : ''}" disabled={!read.sys} onclick={() => mark('dia')}>Diastole{#if read.dia}: {Math.round(read.dia.p)}{/if}</button>
     <button class="btn small ghost" onclick={() => { sound = !sound; if (sound && ctx()) tock(0.6); }} aria-label="Ton an/aus">{sound ? '🔊' : '🔇'}</button>
   </div>
-  <label class="valve">
-    <span class="muted">Ventil</span>
-    <input type="range" min="0" max="10" step="0.1" bind:value={valve} oninput={() => (dump = false)} aria-label="Ventil aufdrehen" />
-    <span class="muted rate" class:ok={p > 0 && speed >= 2 && speed <= 3.5} class:bad={p > 0 && speed > cfg.maxRate}>{p > 0 && speed > 0.05 ? `≈ ${speed.toFixed(1).replace('.', ',')} mmHg/s` : valve < 0.2 ? 'zu' : 'offen'}</span>
-  </label>
   <div class="valve">
-    <button class="btn small ghost" onclick={() => { dump = false; valve = Math.max(0, +(valve - 0.5).toFixed(1)); }} aria-label="Ventil etwas zu">− zu</button>
-    <button class="btn small ghost" onclick={() => { dump = false; valve = Math.min(10, +(valve + 0.5).toFixed(1)); }} aria-label="Ventil etwas auf">auf +</button>
+    <span class="muted">Ventil</span>
+    {#each [['zu', 'zu'], ['slow', 'langsam'], ['fast', 'schneller'], ['open', 'ganz auf']] as [k, l] (k)}
+      <button class="chip {valve === k ? 'active' : ''}" onclick={() => (valve = k as Valve)}>{l}</button>
+    {/each}
   </div>
   <div class="row">
     <button class="btn accent pump" onclick={pump}>Pumpen</button>
-    <button class="btn ghost" onclick={() => (dump = true)}>Ablassen</button>
     <button class="btn" disabled={!read.sys || !read.dia} onclick={done}>Fertig</button>
   </div>
 {/if}
@@ -277,10 +269,8 @@
   .ear-blip { fill: #6fd3a0; }
   .gauge-read { display: flex; gap: 6px; justify-content: center; margin: 6px 0; }
   .gauge-read :global(.btn.set) { background: #173426; color: var(--good); }
-  .valve { display: flex; gap: 10px; align-items: center; justify-content: center; margin: 6px 0; font-size: 14px; }
-  .valve input { flex: 1; max-width: 220px; }
+  .valve { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; justify-content: center; margin: 6px 0; font-size: 14px; }
+  .valve .chip { padding: 6px 12px; border-radius: 999px; border: 1px solid var(--line); background: var(--bg2); }
+  .valve .chip.active { border-color: var(--accent2); box-shadow: 0 0 0 2px var(--accent2) inset; }
   .pump { flex: 1; }
-  .rate { min-width: 92px; text-align: right; font-variant-numeric: tabular-nums; }
-  .rate.ok { color: var(--good); }
-  .rate.bad { color: var(--bad); }
 </style>
