@@ -21,12 +21,13 @@ Die Inhalte folgen der NAW-Schulmeinung, gespielt wird in der Rolle als RettSan.
 - **Wechselnde Einsatzmeldungen**, auch irreführende (nicht jeder Bauchschmerz ist der Bauch)
 - **Auswertung** mit Punkten, vergessenen Maßnahmen, Fehlern und Merksätzen
 
-Kein Login, nichts wird gespeichert.
+**Konto (freiwillig):** Wer sich anmeldet, speichert Einsätze und EKG-Ergebnisse und sieht unter „Mein Fortschritt“ Schnitt pro Fall, häufige Fehler und schwache Rhythmen, mit Knöpfen zum gezielten Üben. Ohne Anmeldung bleibt alles spielbar.
 
 ## Technik
 
 Reines HTML, CSS und JavaScript ohne Build-Schritt. `index.html` direkt im Browser öffnen funktioniert auch lokal.
 
+- `js/account.js`: Login und Fortschritt über Supabase (Auth und REST ohne SDK). Im Code stehen nur die öffentliche Projekt-URL und der publishable key; jeder Nutzer sieht per Row Level Security nur seine eigenen Daten. Schema in `supabase.sql`.
 - `js/cases.js`: die Fälle (Vitalwerte, Befunde, Antworten, Wirkungen, Pflichtmaßnahmen, Quizfragen)
 - `js/cases_extra.js`: Einsatzmeldungen, Namen, Stimmung, Gesprächsmomente, Nachfragen
 - `js/procedures.js`: Maßnahmen als Schritte

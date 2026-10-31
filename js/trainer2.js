@@ -35,7 +35,9 @@
     return s.hr < 60 ? 'brady' : s.hr > 100 ? 'tachy' : 'normal';
   }
 
-  function start() {
+  function start(customKeys) {
+    if (Array.isArray(customKeys) && customKeys.length) { SETS.custom = customKeys; T.set = 'custom'; } else if (T.set === 'custom') T.set = 'alle';
+    $('t2Set').value = T.set === 'custom' ? 'alle' : T.set;
     document.querySelectorAll('.screen').forEach((el) => el.classList.toggle('active', el.id === 'trainer2'));
     window.scrollTo(0, 0);
     next();
@@ -46,7 +48,7 @@
     let k; do { k = pool[Math.floor(Math.random() * pool.length)]; } while (k === T.last && pool.length > 1);
     T.last = k;
     T.strip = build(k, 6);
-    T.pulseChecked = false;
+    T.pulseChecked = false; T.stepOk = {};
     $('t2Vig').textContent = T.strip.vignette;
     $('t2Pulse').textContent = '';
     $('t2Steps').innerHTML = '';
@@ -83,7 +85,9 @@
 
   function showStep(i) {
     const st = T.steps[i];
-    if (!st) { T.n++; if (T.cur === T.curMax) { T.streak++; T.best = Math.max(T.best, T.streak); } else T.streak = 0; stats(); $('t2Next').hidden = false; return; }
+    if (!st) {
+      window.dispatchEvent(new CustomEvent('rettsan:ekg', { detail: { rhythmus: T.strip.key, modus: 'profi', richtig: T.stepOk && T.stepOk.diag === true, punkte: T.cur, max_punkte: T.curMax } }));
+      T.n++; if (T.cur === T.curMax) { T.streak++; T.best = Math.max(T.best, T.streak); } else T.streak = 0; stats(); $('t2Next').hidden = false; return; }
     if (i === 0) { T.cur = 0; T.curMax = 0; }
     const card = document.createElement('div');
     card.className = 'card t2step';
@@ -107,6 +111,7 @@
         b.classList.add(ok ? 'right' : 'wrong');
         if (!ok) [...box.children][Object.keys(st.opts).indexOf(st.ans)].classList.add('right');
         const got = ok ? (help ? Math.floor(st.pts / 2) : st.pts) : 0;
+        T.stepOk = T.stepOk || {}; T.stepOk[st.id] = ok;
         T.pts += got; T.max += st.pts; T.cur += got; T.curMax += st.pts;
         let ex = st.explain || '';
         if (st.needPulse) {
@@ -128,7 +133,7 @@
   }
 
   function init() {
-    $('btnTrainer2').onclick = start;
+    $('btnTrainer2').onclick = () => start();
     $('t2Back').onclick = () => { document.querySelector('#home').classList.add('active'); document.querySelector('#trainer2').classList.remove('active'); window.scrollTo(0, 0); };
     $('t2Next').onclick = () => { next(); window.scrollTo({ top: 0, behavior: 'smooth' }); };
     $('t2Set').onchange = (e) => { T.set = e.target.value; next(); };
@@ -142,4 +147,5 @@
 
   init();
   window.__t2 = T;
+  window.Trainer2 = { start };
 })();

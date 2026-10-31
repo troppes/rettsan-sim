@@ -224,3 +224,15 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .t2q { font-weight: 700; }
 .t2step .options { margin: 8px 0 6px; }
 .t2step .opt { padding: 9px 11px; font-size: 15px; }
+
+/* Konto und Fortschritt */
+.account { margin-top: 10px; }
+.acc-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.muted { color: var(--muted); }
+.acc-form { display: grid; gap: 12px; margin: 12px 16px; }
+.acc-form label { display: grid; gap: 4px; font-weight: 600; font-size: 14px; }
+.acc-form input { font: inherit; font-size: 16px; padding: 11px 12px; border-radius: 10px; border: 1px solid var(--line); background: var(--bg); color: var(--text); }
+.acc-msg { color: var(--warn); min-height: 1.2em; font-size: 14px; }
+.save-status { margin-top: 12px; text-align: center; color: var(--muted); font-size: 14px; }
+.pbar { display: block; height: 6px; border-radius: 3px; background: var(--line); margin: 6px 0 2px; overflow: hidden; }
+.pbar > span { display: block; height: 100%; border-radius: 3px; }

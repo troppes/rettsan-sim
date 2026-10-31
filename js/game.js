@@ -1104,8 +1104,14 @@
     if (good.length || miss.length) h += '<h4>Quiz und Erkennen</h4>' + good.map((e) => `<div class="ditem good"><span class="p">+${e.pts}</span>${esc(e.text)}</div>`).join('') + miss.map((e) => `<div class="ditem miss">${esc(e.text)}${e.why ? `<small>${esc(e.why)}</small>` : ''}</div>`).join('');
     h += '<h4>Merke</h4><div class="ditem"><ul class="teach">' + C.teach.map((t) => `<li>${esc(t)}</li>`).join('') + '</ul></div>';
     h += '<div class="row" style="margin-top:14px"><button class="btn accent" id="dAgain">Nochmal</button><button class="btn ghost" id="dHome">Andere Einsätze</button></div><p class="foot">Inhalte nach NAW-Schulmeinung. Im Zweifel gilt dein Unterricht.</p>';
+    h += '<div id="saveStatus" class="save-status"></div>';
     $('debriefBody').innerHTML = h;
     show('debrief');
+    window.dispatchEvent(new CustomEvent('rettsan:case', { detail: {
+      fall: C.id, meldung: s.dispatch.short, prozent: pct, punkte: score, max_punkte: max, dauer_s: Math.round(s.time),
+      diagnose_richtig: s.events.some((e) => e.text && e.text.startsWith('Diagnose richtig')), detail: settings.detail,
+      fehler: bad.map((e) => e.text), vergessen: missed.map((r) => r.label),
+    } }));
     $('dAgain').onclick = () => startCase(C);
     $('dHome').onclick = () => show('home');
   }
@@ -1140,6 +1146,7 @@
         box.querySelectorAll('button').forEach((x) => { x.disabled = true; });
         const ok = o === k;
         TR.total++; if (ok) TR.right++;
+        window.dispatchEvent(new CustomEvent('rettsan:ekg', { detail: { rhythmus: k, modus: 'basis', richtig: ok, punkte: ok ? 1 : 0, max_punkte: 1 } }));
         b.classList.add(ok ? 'right' : 'wrong');
         if (!ok) [...box.children][opts.indexOf(k)].classList.add('right');
         const shock = (k === 'vf' || k === 'pvt') ? 'Schockbar.' : (k === 'asystolie' || k === 'pea') ? 'Nicht schockbar.' : '';
@@ -1188,5 +1195,5 @@
   initHome();
   initGameUi();
   initTrainer();
-  window.__game = { get state() { return s; }, get caseData() { return C; }, act, finish };
+  window.__game = { get state() { return s; }, get caseData() { return C; }, act, finish, startCase: (id) => startCase(CASES.find((c) => c.id === id)), show };
 })();
