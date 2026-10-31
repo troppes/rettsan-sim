@@ -1,0 +1,94 @@
+{
+  "id": "rea",
+  "level": 3,
+  "rea": true,
+  "person": "👨",
+  "icon": "🛒",
+  "name": "unbekannt",
+  "mood": 5,
+  "dispatches": [
+    {
+      "short": "Hilflose Person im Supermarkt",
+      "text": "RTW, hilflose Person. Männlich, ca. 58 Jahre, Supermarkt. Die Kassiererin: „Er liegt hier und sagt nichts.“"
+    },
+    {
+      "short": "Person zusammengebrochen, 58 J.",
+      "text": "RTW, Person zusammengebrochen. Männlich, ca. 58 Jahre, Supermarkt."
+    },
+    {
+      "short": "Bewusstlose Person im Supermarkt",
+      "text": "RTW, Person bewusstlos. Männlich, 58 Jahre, Supermarkt. Die Kassiererin: „Er ist einfach umgekippt!“"
+    }
+  ],
+  "start": {
+    "hr": 0,
+    "rhythm": "vf",
+    "spo2": 0,
+    "sys": 0,
+    "dia": 0,
+    "af": 0,
+    "bz": 105,
+    "temp": 36.5,
+    "gcs": 3,
+    "status": "Liegt zwischen den Regalen auf dem Rücken, das Gesicht grau-bläulich. Er reagiert nicht. Ab und zu ein schnappender Atemzug."
+  },
+  "answerer": [{"who":"Kassiererin"}],
+  "problems": [],
+  "findings": {
+    "sss": "Supermarkt, keine Gefahr. Schaulustige zurückschicken, eine Person soll den AED vom Eingang holen.",
+    "ansprechen": "Keine Reaktion auf laute Ansprache."
+  },
+  "answers": {
+    "q_e": "„Er hat sich an die Brust gefasst und ist umgekippt. Vor vielleicht 4 Minuten.“",
+    "q_s": "„Er hat vorher gesagt, ihm ist nicht gut.“",
+    "q_m": "„Weiß ich nicht.“",
+    "q_p": "„Keine Ahnung, er ist Stammkunde.“"
+  },
+  "moments": [
+    {
+      "id": "helfen",
+      "at": 150,
+      "who": "Kassiererin",
+      "say": "„Kann ich irgendwie helfen?“",
+      "options": [
+        {
+          "t": "„Ja, bitte: Gehen Sie zum Eingang, halten Sie ihn frei und weisen Sie den Notarzt ein.“",
+          "pts": 3,
+          "reply": "Sie läuft los."
+        },
+        {
+          "t": "„Nein, gehen Sie bitte weg.“",
+          "pts": -1,
+          "why": "Ersthelfer sinnvoll einbinden: Einweisen, Platz schaffen, Angehörige suchen."
+        }
+      ]
+    }
+  ],
+  "effects": {},
+  "required": [],
+  "quizzes": [
+    {
+      "on": "r_hdm",
+      "type": "order",
+      "q": "Kreislaufstillstand. Bring die ersten Schritte in die richtige Reihenfolge.",
+      "items": [
+        "SSS, Bewusstsein prüfen",
+        "Atmung (10 s) und Puls (5 s) prüfen",
+        "Druckmassage starten: 100–120/min, 5–6 cm",
+        "Defi-Elektroden kleben",
+        "Frühanalyse und ggf. Schock"
+      ]
+    }
+  ],
+  "diagnosis": {
+    "options": ["Kreislaufstillstand, vermutlich kardial (Herzinfarkt)","Synkope","Hypoglykämie","Krampfanfall"],
+    "answer": 0
+  },
+  "teach": [
+    "Keine Reaktion + keine normale Atmung = Reanimation. Schnappatmung ist keine normale Atmung!",
+    "Schockbar: VF und pVT. Nicht schockbar: Asystolie und PEA.",
+    "Adrenalin 1 mg: nicht schockbar sofort, wenn der Zugang liegt; schockbar nach dem 3. Schock; dann alle 4 Minuten (Schulmeinung).",
+    "NEF spätestens bis Ende des 2. Blocks nachalarmieren. Hands-off unter 5 s (Beatmung) bzw. 10 s (Analyse).",
+    "Nach ROSC: Rückenlage, Absaugbereitschaft, ABCDE, 12-Kanal-EKG, SpO₂ 94–98 %."
+  ]
+}

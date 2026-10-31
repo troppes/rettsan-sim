@@ -1,0 +1,202 @@
+{
+  "id": "anaphylaxie",
+  "level": 2,
+  "person": "👩",
+  "icon": "🐝",
+  "name": "Frau Krüger",
+  "mood": 3,
+  "dispatches": [
+    {
+      "short": "Kreislaufprobleme im Biergarten, 45 J.",
+      "text": "RTW, Kreislaufprobleme. Weiblich, 45 Jahre, Biergarten. Der Kellner: „Der Frau geht es plötzlich ganz schlecht.“"
+    },
+    {
+      "short": "Nach Wespenstich, 45 J.",
+      "text": "RTW, allergische Reaktion. Weiblich, 45 Jahre, Biergarten, nach einem Wespenstich."
+    },
+    {"short":"Atemnot im Biergarten, 45 J.","text":"RTW, Atemnot. Weiblich, 45 Jahre, Biergarten."}
+  ],
+  "start": {
+    "hr": 132,
+    "rhythm": "sinustachy",
+    "spo2": 91,
+    "sys": 78,
+    "dia": 45,
+    "af": 26,
+    "bz": 120,
+    "temp": 37,
+    "gcs": 14,
+    "status": "Liegt auf einer Bank, Gesicht und Hals sind rot und geschwollen, überall Quaddeln. Sie ist unruhig: „Ich krieg so schlecht Luft.“"
+  },
+  "problems": [
+    {
+      "id": "hypox",
+      "letter": "B",
+      "blocking": true,
+      "label": "Atemnot mit SpO₂ 91 %",
+      "fixedBy": ["m_o2_mask"],
+      "worsen": {"spo2":-0.8}
+    },
+    {
+      "id": "schock",
+      "letter": "C",
+      "blocking": true,
+      "label": "Anaphylaktischer Schock (RR 78/45)",
+      "fixedBy": ["m_epipen"],
+      "worsen": {"sys":-2.5,"dia":-1.5,"hr":2}
+    }
+  ],
+  "findings": {
+    "sss": "Es fliegen noch Wespen um den Tisch. Patientin vom Tisch wegbringen, Getränke abdecken.",
+    "a_check": "Atemweg frei, Stimme leicht heiser, Zunge nicht geschwollen.",
+    "b_af": "Atemhilfsmuskulatur arbeitet.",
+    "b_ausk": "Leises Giemen über beiden Lungen.",
+    "c_puls": "Schnell, flach, schwer tastbar.",
+    "c_rekap": "Rekap 3 s. Haut gerötet, warm, Quaddeln.",
+    "e_body": "Einstichstelle am rechten Unterarm, der Stachel steckt noch! Quaddeln am ganzen Körper."
+  },
+  "answers": {
+    "q_s": "„Alles juckt, mir ist schwindelig und die Luft wird knapp.“",
+    "q_a": "„Ich weiß, dass ich auf Wespen allergisch bin. Ich hab so einen Pen, aber der liegt zu Hause.“",
+    "q_m": "„Nur die Pille.“",
+    "q_p": "„Wespengiftallergie, sonst nichts.“",
+    "q_e": "„Die Wespe saß am Glas, hat mich am Arm gestochen, und nach fünf Minuten fing das an.“",
+    "q_o": "„Vor zehn Minuten.“"
+  },
+  "followups": {
+    "f_set": {"after":"q_a","label":"Wo ist Ihr Notfallset?","ans":"„Zu Hause im Bad… ich hab’s heute vergessen.“"},
+    "f_frueher": {
+      "after": "q_a",
+      "label": "Wie schlimm war es beim letzten Stich?",
+      "ans": "„Da hatte ich nur Quaddeln. So wie heute war es noch nie.“"
+    }
+  },
+  "moments": [
+    {
+      "id": "spritze",
+      "before": "m_epipen",
+      "who": "Frau Krüger",
+      "say": "„Was ist das? Eine Spritze? Ich hab total Angst vor Spritzen!“",
+      "options": [
+        {
+          "t": "„Das ist Adrenalin, das wirkt gegen die Allergie. Es piekst kurz in den Oberschenkel, durch die Hose. Danach wird es Ihnen schnell besser gehen. Einverstanden?“",
+          "mood": 2,
+          "pts": 3,
+          "reply": "Sie nickt mit Tränen in den Augen: „Okay. Machen Sie.“"
+        },
+        {
+          "t": "Ohne Erklärung: „Keine Zeit, Augen zu!“",
+          "mood": -2,
+          "pts": -3,
+          "why": "Auch im Notfall kurz aufklären. Der § 34 setzt eine (zumindest mutmaßliche) Einwilligung voraus, und die Patientin ist wach."
+        }
+      ]
+    }
+  ],
+  "effects": {
+    "m_allergen": {
+      "needs": ["e_body","q_e"],
+      "needText": "Du weißt noch nicht, wo oder was das Allergen ist. Erst untersuchen (Bodycheck) oder fragen, was passiert ist.",
+      "text": "Stachel mit dem Fingernagel weggewischt (nicht drücken), Stichstelle gekühlt."
+    },
+    "m_o2_mask": {"text":"O₂ 15 l/min über Reservoirmaske.","delta":{"spo2":5}},
+    "m_o2_nb": {
+      "pts": -2,
+      "why": "Bei Anaphylaxie hochdosiert: 15 l/min über Reservoirmaske (Schulmeinung).",
+      "delta": {"spo2":2}
+    },
+    "m_schock": {"text":"Beine hoch. Sie wird etwas klarer, die Atemnot bleibt aber.","delta":{"sys":8,"dia":4,"hr":-4}},
+    "m_ok_hoch": {
+      "pts": -5,
+      "why": "Schulmeinung: Bei instabilem Kreislauf hat der Schock Vorrang vor der Atemnot → Schocklage, wenn sie toleriert wird.",
+      "delta": {"sys":-8,"hr":6}
+    },
+    "m_epipen": [
+      {
+        "text": "Autoinjektor in den seitlichen Oberschenkel, 10 Sekunden halten. Nach 2 Minuten: Puls sinkt, Blutdruck steigt, die Atmung wird freier.",
+        "delta": {"sys":28,"dia":16,"hr":-18,"spo2":3},
+        "set": {"gcs":15},
+        "status": "Liegt mit erhöhten Beinen, wirkt wacher. Die Quaddeln sind noch da, sie atmet freier.",
+        "penalties": [
+          {
+            "if": {"not":{"done":"m_nef"}},
+            "pts": -5,
+            "why": "§ 34 StGB: Voraussetzung ist, dass das NEF nachalarmiert ist. Erst NEF, dann Adrenalin."
+          }
+        ]
+      }
+    ],
+    "m_ivz": {"text":"PVK liegt (§ 34: Stadium III, NEF ist alarmiert)."},
+    "m_vel": [
+      {"if":{"done":"m_ivz"},"text":"VEL läuft im Schuss (500–1000 ml).","delta":{"sys":6,"hr":-3}},
+      {"text":"Ohne Zugang keine Infusion.","nopts":true}
+    ],
+    "m_laufen": {
+      "pts": -10,
+      "why": "Schockpatienten nie aufstehen lassen: Gefahr des plötzlichen Kreislaufstillstands („empty heart“).",
+      "delta": {"sys":-15}
+    },
+    "m_trinken": {"pts":-3,"why":"Bei drohender Schwellung im Hals nichts zu trinken geben."}
+  },
+  "required": [
+    {
+      "any": ["m_allergen"],
+      "pts": 5,
+      "label": "Allergenzufuhr gestoppt",
+      "why": "Stachel weg, sonst wird weiter Gift abgegeben."
+    },
+    {
+      "any": ["m_nef"],
+      "pts": 10,
+      "label": "NEF nachalarmiert",
+      "why": "Anaphylaktischer Schock: lebensbedrohlich, NA nötig."
+    },
+    {"any":["m_o2_mask"],"pts":5,"label":"O₂ 15 l/min","why":"Schulmeinung: hochdosiert über Reservoirmaske."},
+    {
+      "any": ["m_schock"],
+      "pts": 5,
+      "label": "Schocklage",
+      "why": "Instabiler Kreislauf: Schock hat Vorrang vor Atemnot."
+    },
+    {
+      "any": ["m_epipen"],
+      "pts": 10,
+      "label": "Adrenalin 0,3 mg i.m. (Autoinjektor)",
+      "why": "Stadium III: Adrenalin i.m. ist das wichtigste Medikament, RettSan im Rahmen § 34."
+    },
+    {
+      "all": ["m_ivz","m_vel"],
+      "pts": 5,
+      "label": "Zugang und VEL-Infusion",
+      "why": "Schulmeinung Stadium III: PVK + VEL 500–1000 ml."
+    }
+  ],
+  "quizzes": [
+    {
+      "on": "treat",
+      "type": "order",
+      "q": "Anaphylaktischer Schock nach Wespenstich. Bring die Maßnahmen in die Reihenfolge der Schulmeinung.",
+      "items": [
+        "Allergenzufuhr stoppen (Stachel wegwischen)",
+        "NEF nachalarmieren",
+        "Sauerstoff 15 l/min",
+        "Schocklage",
+        "Adrenalin 0,3 mg i.m. per Autoinjektor (§ 34)"
+      ]
+    }
+  ],
+  "diagnosis": {
+    "options": [
+      "Anaphylaxie Stadium III (anaphylaktischer Schock)",
+      "Asthmaanfall",
+      "Lokale Stichreaktion",
+      "Septischer Schock"
+    ],
+    "answer": 0
+  },
+  "teach": [
+    "Anaphylaxie Stadium III: Allergen stoppen, NEF, O₂ 15 l, Schocklage (Schock vor Atemnot), Adrenalin 0,3 mg i.m. (§ 34), PVK + VEL.",
+    "Adrenalin i.m. ist sicher. Zögern tötet, Antihistaminika ersetzen kein Adrenalin.",
+    "Patienten im Schock nie aufstehen lassen („empty heart“)."
+  ]
+}

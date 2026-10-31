@@ -1,0 +1,230 @@
+{
+  "id": "poly",
+  "level": 3,
+  "person": "🏍️",
+  "icon": "🏍️",
+  "name": "Marco",
+  "mood": 4,
+  "dispatches": [
+    {
+      "short": "Verkehrsunfall Landstraße",
+      "text": "RTW, VU. Landstraße, Pkw gegen Motorrad. Die Polizei ist noch nicht vor Ort."
+    },
+    {
+      "short": "Motorradunfall, ca. 30 J.",
+      "text": "RTW, VU Motorrad gegen Pkw. Männlich, ca. 30 Jahre, Landstraße. Die Polizei ist noch nicht vor Ort."
+    }
+  ],
+  "sssPts": 5,
+  "start": {
+    "hr": 128,
+    "rhythm": "sinustachy",
+    "spo2": 91,
+    "sys": 88,
+    "dia": 55,
+    "af": 26,
+    "bz": 118,
+    "temp": 35.9,
+    "gcs": 14,
+    "status": "Liegt neben dem Motorrad auf der Fahrbahn, Helm noch auf. Er stöhnt, aus dem rechten Oberschenkel spritzt hellrotes Blut. Autos fahren langsam vorbei."
+  },
+  "problems": [
+    {
+      "id": "blutung",
+      "letter": "x",
+      "blocking": true,
+      "label": "Spritzende Blutung am Oberschenkel",
+      "fixedBy": ["m_tq"],
+      "worsen": {"hr":4,"sys":-6,"dia":-4}
+    },
+    {
+      "id": "hws",
+      "letter": "A",
+      "blocking": true,
+      "label": "HWS nicht fixiert (Hochrasanztrauma)",
+      "fixedBy": ["m_hws"]
+    },
+    {
+      "id": "hypox",
+      "letter": "B",
+      "blocking": true,
+      "label": "SpO₂ 91 % beim Polytrauma",
+      "fixedBy": ["m_o2_mask"],
+      "worsen": {"spo2":-0.5}
+    },
+    {
+      "id": "becken",
+      "letter": "C",
+      "blocking": true,
+      "label": "Instabiles Becken",
+      "fixedBy": ["m_becken"],
+      "worsen": {"sys":-1.5,"hr":1}
+    },
+    {"id":"kaelte","letter":"E","label":"Auskühlung","fixedBy":["m_waerme"],"worsen":{"temp":-0.08}}
+  ],
+  "rules": [
+    {
+      "id": "eintruebung",
+      "if": {"all":[{"setting":"worsen"},{"vital":"sys","op":"<","value":70}]},
+      "set": {"gcs":10},
+      "flags": {"eingetruebt":true},
+      "status": "Er wird ruhiger und blasser, die Augen fallen zu. Er reagiert nur noch auf laute Ansprache.",
+      "alert": "Der Patient trübt ein: Der Blutverlust ist zu groß!"
+    }
+  ],
+  "findings": {
+    "sss": "Fließender Verkehr! RTW schräg als Schutz stellen, Warnweste, Warnblinker. Polizei über die Leitstelle nachfordern. Jetzt ist es sicher.",
+    "ansprechen": "Er stöhnt: „Mein Bein… mein Bein!“",
+    "x_check": [
+      {"if":{"fixed":"blutung"},"text":"Blutung steht (Tourniquet)."},
+      {"text":"Spritzende, pulsierende Blutung am rechten Oberschenkel. Lebensbedrohlich!"}
+    ],
+    "a_check": "Atemweg frei, er spricht. Der Helm muss zu zweit abgenommen werden, dabei HWS fixieren.",
+    "b_af": "Atmung flach, rechts Schonatmung.",
+    "b_ausk": "Atemgeräusch beidseits vorhanden, rechts etwas leiser.",
+    "c_puls": "Schnell, flach, an der Speichenarterie kaum tastbar.",
+    "c_rekap": "Rekap 4 s. Blass, kaltschweißig.",
+    "c_5b": "Brustkorb: Prellmarke rechts. Bauch: weich. Becken: starke Schmerzen, nach KISS instabil (nicht durchdrücken!). Beine: rechter Oberschenkel fehlgestellt. Boden: große Blutlache.",
+    "d_gcs": "GCS {gcs}.",
+    "e_body": "Schürfwunden, Fehlstellung rechter Oberschenkel, Prellmarke rechter Thorax. Er zittert."
+  },
+  "answers": {
+    "q_s": "„Das Bein! Und das Becken tut so weh.“",
+    "q_a": "„Nein.“",
+    "q_m": "„Nein.“",
+    "q_p": "„Nein, gesund.“",
+    "q_e": "„Der ist einfach rausgezogen… ich bin voll drauf.“",
+    "q_l": "„Mittag.“"
+  },
+  "moments": [
+    {
+      "id": "fahrer",
+      "after": ["sss"],
+      "who": "Pkw-Fahrer",
+      "say": "Der Pkw-Fahrer läuft zitternd auf dich zu: „Ich hab ihn nicht gesehen! Ist er tot?!“",
+      "options": [
+        {
+          "t": "Kurz und klar: „Wir kümmern uns. Bitte setzen Sie sich dort an die Leitplanke, wir schauen gleich auch nach Ihnen.“ Leitstelle: weiteres Rettungsmittel.",
+          "pts": 3,
+          "reply": "Er setzt sich hin. Ein zweiter RTW ist unterwegs."
+        },
+        {
+          "t": "Ignorieren und zum Patienten.",
+          "pts": -2,
+          "why": "Der Unfallgegner ist auch ein möglicher Patient (Schock, Verletzungen). Kurz ansprechen, Platz zuweisen, Nachforderung."
+        },
+        {
+          "t": "Ihn erst mal ausführlich beruhigen.",
+          "pts": -3,
+          "delta": {"sys":-6,"hr":4},
+          "why": "Dein Patient verblutet gerade: x zuerst. Kurze Ansage reicht."
+        }
+      ]
+    }
+  ],
+  "react": {
+    "m_tq.zudrehen": "„AAAH! Hören Sie auf, das tut so weh!“",
+    "m_tq.zudrehen.explained": "„AAAH!“ Er schreit, aber er hält still. Die Blutung steht."
+  },
+  "effects": {
+    "m_abdr": {
+      "text": "Abdrücken in der Leiste: Die Blutung wird schwächer, aber du kannst nicht dauerhaft drücken.",
+      "delta": {"hr":-2}
+    },
+    "m_druckv": {"text":"Der Druckverband ist sofort durchgeblutet. Das reicht hier nicht!"},
+    "m_tq": {
+      "text": "Tourniquet oberhalb der Wunde, festgezogen bis die Blutung steht. Uhrzeit notiert.",
+      "delta": {"hr":-4},
+      "status": "Die Blutung steht. Er ist blass und zittert, stöhnt vor Schmerzen im Becken."
+    },
+    "m_hws": {"text":"Kollege fixiert die HWS manuell, Helm zu zweit abgenommen, Stifneck angelegt."},
+    "m_o2_mask": {"text":"O₂ 15 l/min über Reservoirmaske.","delta":{"spo2":6}},
+    "m_o2_nb": {
+      "pts": -2,
+      "why": "Polytrauma: hochdosiert O₂, 15 l/min über Reservoirmaske (Schulmeinung).",
+      "delta": {"spo2":2}
+    },
+    "m_becken": {
+      "needs": ["c_5b","e_body","q_s"],
+      "needText": "Woher weißt du, dass das Becken verletzt ist? Erst die Blutungsräume (5 B) prüfen oder fragen, wo es wehtut.",
+      "text": "Beckenschlinge in Höhe der Trochanter angelegt. Der Schmerz lässt etwas nach.",
+      "delta": {"sys":6,"hr":-3}
+    },
+    "m_schock": {"pts":-5,"why":"Bei Verdacht auf Becken- oder Wirbelsäulenverletzung keine Schocklage (Schulmeinung)."},
+    "m_waerme": {"text":"Rettungsdecke und Wolldecke, RTW-Heizung hoch."},
+    "m_voranm": {"text":"Überregionales Traumazentrum (Schockraum) ist vorangemeldet."},
+    "m_ivz": {"text":"Zugang liegt."},
+    "m_vel": [
+      {"if":{"done":"m_ivz"},"text":"VEL läuft.","delta":{"sys":5}},
+      {"text":"Ohne Zugang keine Infusion.","nopts":true}
+    ],
+    "m_laufen": {"pts":-10,"why":"Polytrauma: Nichts aktiv bewegen, Vakuummatratze."},
+    "m_trinken": {"pts":-3,"why":"Traumapatienten nüchtern lassen (OP)."},
+    "m_ssl": {"pts":-5,"why":"Wach, Wirbelsäule nicht abgeklärt: keine Seitenlage."}
+  },
+  "required": [
+    {
+      "any": ["sss"],
+      "pts": 5,
+      "label": "Einsatzstelle abgesichert",
+      "why": "Fließender Verkehr: Eigenschutz geht vor."
+    },
+    {
+      "any": ["m_tq"],
+      "pts": 10,
+      "label": "Kritische Blutung mit Tourniquet gestoppt",
+      "why": "x vor A: Ein Druckverband reicht bei spritzender Oberschenkelblutung oft nicht."
+    },
+    {"any":["m_hws"],"pts":5,"label":"HWS fixiert","why":"Hochrasanztrauma: HWS bis zum Ausschluss fixieren."},
+    {
+      "any": ["m_o2_mask"],
+      "pts": 5,
+      "label": "O₂ 15 l/min",
+      "why": "Schulmeinung: Polytrauma ist eine O₂-Indikation (hochdosiert)."
+    },
+    {
+      "any": ["m_becken"],
+      "pts": 10,
+      "label": "Beckenschlinge",
+      "why": "Instabiles Becken: Hier kann man innerlich verbluten."
+    },
+    {"any":["m_nef"],"pts":10,"label":"NEF nachalarmiert","why":"Polytrauma im Schock."},
+    {
+      "any": ["m_waerme"],
+      "pts": 5,
+      "label": "Wärmeerhalt",
+      "why": "Kälte verschlechtert die Blutgerinnung (letale Trias)."
+    },
+    {"any":["m_voranm"],"pts":5,"label":"Traumazentrum vorangemeldet","why":"Schockraum vorbereiten."}
+  ],
+  "quizzes": [
+    {
+      "on": "treat",
+      "type": "order",
+      "q": "Polytrauma auf der Landstraße. Bring die Maßnahmen in die xABCDE-Reihenfolge.",
+      "items": [
+        "Einsatzstelle absichern (Verkehr!)",
+        "Kritische Blutung stoppen (Tourniquet)",
+        "HWS manuell fixieren",
+        "O₂ 15 l/min über Reservoirmaske",
+        "Beckenschlinge anlegen",
+        "Wärmeerhalt"
+      ]
+    }
+  ],
+  "diagnosis": {
+    "options": [
+      "Polytrauma mit arterieller Blutung und Beckenverletzung (hämorrhagischer Schock)",
+      "Isolierte Oberschenkelfraktur",
+      "Spannungspneumothorax",
+      "Schweres Schädel-Hirn-Trauma"
+    ],
+    "answer": 0
+  },
+  "teach": [
+    "Erst Eigenschutz (SSS), dann x: spritzende Blutung sofort stoppen. Reicht Abdrücken/Druckverband nicht → Tourniquet.",
+    "Dann A (HWS), B (O₂ 15 l), C (5 B prüfen, Beckenschlinge), D, E (Wärmeerhalt).",
+    "Keine Schocklage bei Verdacht auf Becken- oder Wirbelsäulenverletzung.",
+    "BZ messen, während er verblutet, ist ein typischer Reihenfolge-Fehler."
+  ]
+}

@@ -1,0 +1,229 @@
+{
+  "id": "acs",
+  "level": 1,
+  "person": "👨",
+  "icon": "🏠",
+  "name": "Herr Becker",
+  "mood": 4,
+  "dispatches": [
+    {
+      "short": "Oberbauchschmerzen, 62 J.",
+      "text": "RTW, Bauchschmerzen. Männlich, 62 Jahre, Wohnung im 3. OG. Die Ehefrau am Telefon: „Er hat seit dem Rasenmähen Bauchweh und ihm ist schlecht.“"
+    },
+    {
+      "short": "Übelkeit und Schwäche, 62 J.",
+      "text": "RTW, Übelkeit, Schwäche. Männlich, 62 Jahre, Wohnung im 3. OG. Die Ehefrau hat angerufen."
+    },
+    {
+      "short": "Brustschmerz, 62 J.",
+      "text": "RTW, Brustschmerz. Männlich, 62 Jahre, Wohnung im 3. OG. Die Ehefrau hat angerufen."
+    }
+  ],
+  "start": {
+    "hr": 92,
+    "rhythm": "stemi",
+    "spo2": 95,
+    "sys": 145,
+    "dia": 90,
+    "af": 20,
+    "bz": 132,
+    "temp": 36.7,
+    "gcs": 15,
+    "status": "Sitzt blass und kaltschweißig auf dem Sofa, hält eine Hand auf den Oberbauch und wirkt sehr ängstlich."
+  },
+  "problems": [
+    {
+      "id": "acs",
+      "letter": "C",
+      "label": "Verdacht auf akutes Koronarsyndrom",
+      "fixedBy": [],
+      "worsen": {"hr":0.6,"sys":-1}
+    }
+  ],
+  "moodDrop": {"delta":{"hr":2}},
+  "findings": {
+    "ansprechen": "Er antwortet klar, aber kurzatmig: „Es drückt so furchtbar.“",
+    "c_puls": "Regelmäßig, kräftig.",
+    "c_rekap": "Rekap 2 s. Haut blass, kalt und schweißig.",
+    "c_rr": "Rechts und links gleich.",
+    "c_12": "12-Kanal-EKG: ST-Hebungen in II, III und aVF, spiegelbildliche Senkungen in I und aVL. → Hinterwand-STEMI!",
+    "e_body": "Keine Ödeme, keine Verletzungen."
+  },
+  "answers": {
+    "q_s": "„Es drückt hier oben im Bauch und in der Brust. Und mir ist so übel.“",
+    "q_a": "„Nicht dass ich wüsste.“",
+    "q_m": "„Ramipril für den Blutdruck und Simvastatin. Ach ja, und manchmal Viagra, aber nicht heute.“",
+    "q_p": "„Bluthochdruck und zu hohes Cholesterin.“",
+    "q_l": "„Frühstück vor drei Stunden.“",
+    "q_e": "„Ich hab Rasen gemäht, dann fing das an. Hingesetzt, aber es geht nicht weg.“",
+    "q_r": "„Ich rauche seit 40 Jahren. Mein Vater hatte mit 60 einen Herzinfarkt.“",
+    "q_o": "„Vor etwa 40 Minuten, ganz plötzlich bei der Gartenarbeit.“",
+    "q_pr": "„Ausruhen hilft nicht. Beim Atmen ändert es sich nicht.“",
+    "q_q": "„Drückend, eng. Wie ein Ring.“",
+    "q_rad": "„In den Rücken, und der linke Arm fühlt sich komisch an.“",
+    "q_sev": "„8 von 10.“",
+    "q_t": "„So schlimm noch nie. Beim Treppensteigen zieht es manchmal ein bisschen.“"
+  },
+  "followups": {
+    "f_atemnot": {"after":"q_s","label":"Haben Sie auch Atemnot?","ans":"„Ein bisschen, wenn es so drückt.“"},
+    "f_viagra": {
+      "after": "q_m",
+      "label": "Wann haben Sie zuletzt Viagra genommen?",
+      "ans": "„Vorgestern. Ist das wichtig?“ (Ja: Nitrate sind dann für den NA tabu.)"
+    },
+    "f_magen": {
+      "after": "q_p",
+      "label": "Hatten Sie schon mal Magenprobleme?",
+      "ans": "„Sodbrennen manchmal. Aber so war das noch nie.“"
+    }
+  },
+  "moments": [
+    {
+      "id": "angst",
+      "after": ["c_12","c_ekg"],
+      "who": "Herr Becker",
+      "say": "„Ist das… ist das ein Herzinfarkt? Sterbe ich jetzt?“",
+      "options": [
+        {
+          "t": "„Wir vermuten, dass es vom Herzen kommt. Deshalb kommt gleich ein Notarzt dazu, und wir fahren in eine Klinik, die genau das behandelt. Wir bleiben die ganze Zeit bei Ihnen.“",
+          "mood": 3,
+          "delta": {"hr":-5},
+          "pts": 3,
+          "reply": "Er atmet tief durch und nickt: „Okay. Danke.“"
+        },
+        {
+          "t": "„Ach was, das ist bestimmt nur der Magen.“",
+          "mood": -1,
+          "pts": -3,
+          "why": "Keine falschen Versprechen. Bestätigt sich der Infarkt, ist das Vertrauen weg, und du hast dich selbst auf eine Diagnose festgelegt."
+        },
+        {
+          "t": "„Dazu kann ich nichts sagen, das macht der Arzt.“",
+          "mood": -2,
+          "delta": {"hr":6},
+          "pts": -2,
+          "why": "Abwimmeln steigert die Angst. Stress erhöht den Sauerstoffbedarf des Herzens."
+        }
+      ]
+    }
+  ],
+  "effects": {
+    "m_ok_hoch": {"text":"Er sitzt bequem mit erhöhtem Oberkörper und atmet etwas ruhiger.","delta":{"hr":-3}},
+    "m_ok30": {"text":"Oberkörper 30° hoch. Er liegt ruhiger.","delta":{"hr":-2}},
+    "m_betreuung": {"text":"Du erklärst, was ihr tut. Er wird etwas ruhiger.","delta":{"hr":-4}},
+    "m_defi_kleben": {"text":"Defi-Elektroden kleben. Reanimationsbereitschaft hergestellt."},
+    "m_voranm": {"text":"Herzkatheterlabor ist informiert, das EKG wird vom NEF per Telemetrie geschickt."},
+    "m_o2_mask": [
+      {
+        "if": {"vital":"spo2","op":">","value":90},
+        "pts": -5,
+        "why": "Schulmeinung: Sauerstoff ist beim STEMI mit SpO₂ über 90 % kontraindiziert. Zu viel O₂ verengt die Herzkranzgefäße. O₂ nur bei Atemnot oder SpO₂ unter 90 %."
+      },
+      {"text":"O₂ läuft, die Sättigung steigt.","delta":{"spo2":4}}
+    ],
+    "m_o2_nb": [
+      {
+        "if": {"vital":"spo2","op":">","value":90},
+        "pts": -5,
+        "why": "Schulmeinung: Sauerstoff ist beim STEMI mit SpO₂ über 90 % kontraindiziert, auch über die Nasenbrille."
+      },
+      {"text":"O₂ über Nasenbrille.","delta":{"spo2":2}}
+    ],
+    "m_laufen": {
+      "pts": -10,
+      "why": "Patienten mit ACS nie laufen lassen: Jede Anstrengung erhöht den O₂-Bedarf des Herzens. Tragestuhl!",
+      "delta": {"hr":12}
+    },
+    "m_schock": {
+      "pts": -5,
+      "why": "Keine Schocklage beim ACS: Das zusätzliche Blut belastet das kranke Herz.",
+      "delta": {"hr":4}
+    },
+    "m_ivz": {
+      "pts": -5,
+      "why": "Beim stabilen ACS legt der RettSan keinen Zugang: Das NEF kommt, § 34 greift nicht. Zugang nur vorbereiten."
+    },
+    "m_trinken": {"pts":-2,"why":"Nüchtern lassen: Mögliche Herzkatheter-Untersuchung, außerdem ist ihm übel."},
+    "m_flach": {"pts":-3,"why":"Flach liegen belastet das Herz und erschwert die Atmung. Oberkörper hoch."}
+  },
+  "required": [
+    {
+      "any": ["m_ok_hoch","m_ok30"],
+      "pts": 5,
+      "label": "Oberkörperhochlagerung",
+      "why": "Entlastet das Herz und erleichtert die Atmung."
+    },
+    {
+      "any": ["c_12"],
+      "pts": 10,
+      "label": "12-Kanal-EKG geschrieben",
+      "why": "Nur das 12-Kanal-EKG zeigt den STEMI sicher."
+    },
+    {
+      "any": ["m_nef"],
+      "pts": 10,
+      "label": "NEF nachalarmiert",
+      "why": "ACS/STEMI: NA für Medikamente (ASS, Heparin, Schmerzmittel) und Transport mit Rea-Risiko."
+    },
+    {
+      "any": ["m_defi_kleben","c_ekg"],
+      "pts": 5,
+      "label": "Monitoring und Reanimationsbereitschaft",
+      "why": "Beim STEMI drohen Kammerflimmern und Stillstand: Patches früh kleben."
+    },
+    {
+      "any": ["c_rr"],
+      "pts": 5,
+      "label": "Blutdruck gemessen (beidseits)",
+      "why": "RR beidseits gehört zum ACS-Monitoring (Seitendifferenz → Aortendissektion?)."
+    },
+    {
+      "any": ["m_betreuung"],
+      "pts": 5,
+      "label": "Patient beruhigt",
+      "why": "Stress erhöht den O₂-Bedarf des Herzens."
+    },
+    {
+      "any": ["m_voranm"],
+      "pts": 5,
+      "label": "Klinik mit Herzkatheter vorangemeldet",
+      "why": "Time is muscle: STEMI → direkt ins Herzkatheterlabor."
+    }
+  ],
+  "quizzes": [
+    {
+      "on": "treat",
+      "type": "order",
+      "q": "Verdacht auf ACS. Bring die ersten Maßnahmen in eine sinnvolle Reihenfolge.",
+      "items": [
+        "Oberkörper hoch lagern, nicht laufen lassen",
+        "Monitoring und 12-Kanal-EKG",
+        "Bei STEMI: NEF nachalarmieren",
+        "Defi-Elektroden kleben (Rea-Bereitschaft)",
+        "Klinik mit Herzkatheter voranmelden"
+      ]
+    },
+    {
+      "on": "c_12",
+      "type": "mc",
+      "q": "Das EKG zeigt einen STEMI, die SpO₂ liegt bei 95 %, keine Atemnot. Gibst du Sauerstoff?",
+      "options": [
+        "Ja, 15 l/min über Reservoirmaske, ein Herzinfarkt braucht immer O₂",
+        "Nein, bei STEMI mit SpO₂ über 90 % ist O₂ laut Schulmeinung kontraindiziert",
+        "Ja, 2 l über Nasenbrille, das schadet nie",
+        "Nur wenn der Patient es möchte"
+      ],
+      "answer": 1,
+      "explain": "Schulmeinung: KI für O₂ beim STEMI mit SpO₂ über 90 %. Zu viel O₂ verengt die Herzkranzgefäße und bildet Sauerstoffradikale."
+    }
+  ],
+  "diagnosis": {
+    "options": ["Akutes Koronarsyndrom: Hinterwand-STEMI","Lungenarterienembolie","Hypertensive Krise","Panikattacke"],
+    "answer": 0
+  },
+  "teach": [
+    "Beim ACS: Oberkörper hoch, nicht laufen lassen, beruhigen, Monitoring, 12-Kanal-EKG, NEF, Defi-Patches.",
+    "Sauerstoff nur bei Atemnot oder SpO₂ unter 90 % (Schulmeinung: KI bei STEMI mit SpO₂ über 90 %).",
+    "Medikamente (ASS, Heparin, Opioide) gibt NotSan/NA, der RettSan bereitet den Zugang vor."
+  ]
+}

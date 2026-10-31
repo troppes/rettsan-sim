@@ -1,0 +1,168 @@
+{
+  "id": "fieberkrampf",
+  "level": 2,
+  "person": "👶",
+  "icon": "🧸",
+  "name": "Mia",
+  "mood": 5,
+  "child": true,
+  "dispatches": [
+    {
+      "short": "Kind schlapp, 18 Monate",
+      "text": "RTW, Kindernotfall. Kleinkind, 18 Monate, Wohnung. Die Mutter: „Meine Tochter ist ganz schlapp und reagiert kaum!“"
+    },
+    {
+      "short": "Kind hat gekrampft, 18 Monate",
+      "text": "RTW, Kind krampft. Kleinkind, 18 Monate, Wohnung. Die Mutter ruft an."
+    }
+  ],
+  "start": {
+    "hr": 150,
+    "rhythm": "sinustachy",
+    "spo2": 95,
+    "sys": 90,
+    "dia": 55,
+    "af": 32,
+    "bz": 92,
+    "temp": 39.6,
+    "gcs": 11,
+    "status": "Das Kind liegt schlaff und schläfrig im Arm der Mutter, ist heiß und gerötet. Der Krampf hat laut Mutter vor 3 Minuten aufgehört. Die Mutter weint."
+  },
+  "answerer": [{"who":"Mutter"}],
+  "problems": [],
+  "rules": [
+    {
+      "id": "aufwachen",
+      "if": {"all":[{"done":"m_ssl"},{"time":421}]},
+      "set": {"gcs":14,"hr":138},
+      "flags": {"wach":true},
+      "status": "Das Kind wird wacher, weint und klammert sich an die Mutter.",
+      "info": "Das Kind wird wacher und weint. Gutes Zeichen!"
+    }
+  ],
+  "findings": {
+    "ansprechen": "Das Kind öffnet kurz die Augen, schläft dann wieder ein.",
+    "a_check": "Atemweg frei.",
+    "b_af": "AF 32/min: für ein Kleinkind normal bis leicht erhöht (Fieber).",
+    "b_ausk": "Beidseits frei.",
+    "c_rekap": "Rekap unter 2 s, Haut heiß und gerötet.",
+    "d_gcs": "Schläfrig, öffnet die Augen auf Ansprache, weint dann kurz (postiktal).",
+    "d_pup": "Isokor, prompt.",
+    "e_body": "Keine Verletzungen. Kein Ausschlag, keine Petechien (Glastest). Nacken weich, Fontanelle nicht vorgewölbt."
+  },
+  "answers": {
+    "q_s": "„Sie hatte seit gestern Fieber. Und dann hat sie so gezuckt!“",
+    "q_a": "„Keine.“",
+    "q_m": "„Gestern Abend ein Fieberzäpfchen.“",
+    "q_p": "„Nein, sie ist sonst gesund, alle Impfungen. Das war das erste Mal!“",
+    "q_l": "„Heute Morgen etwas Brei, getrunken hat sie wenig.“",
+    "q_e": "„Sie hat plötzlich die Augen verdreht und am ganzen Körper gezuckt, vielleicht 2 Minuten. Dann war sie ganz schlapp.“",
+    "q_o": "„Vor 5 Minuten fing es an, 2 Minuten lang.“"
+  },
+  "followups": {
+    "f_krank": {
+      "after": "q_s",
+      "label": "Ist sonst jemand in der Familie krank?",
+      "ans": "„Ihr Bruder hatte letzte Woche einen Infekt mit Fieber.“"
+    },
+    "f_familie": {
+      "after": "q_p",
+      "label": "Gab es Fieberkrämpfe in der Familie?",
+      "ans": "„Mein Mann hatte als Kind auch welche, glaube ich.“"
+    }
+  },
+  "moments": [
+    {
+      "id": "tot",
+      "at": 15,
+      "who": "Mutter",
+      "say": "„Ist sie tot?! Sie bewegt sich ja kaum! Bitte tun Sie doch was!“",
+      "options": [
+        {
+          "t": "„Ihre Tochter atmet und hat einen Puls. Nach so einem Krampf sind Kinder ganz müde. Wir schauen sie uns jetzt genau an, Sie bleiben bei ihr.“",
+          "pts": 3,
+          "reply": "Die Mutter atmet durch und streichelt ihre Tochter."
+        },
+        {
+          "t": "„Bitte gehen Sie raus, Sie stören.“",
+          "pts": -3,
+          "why": "Eltern gehören zum Kind: Das Kind beruhigt sich bei den Eltern, und sie kennen die Vorgeschichte."
+        },
+        {"t":"„Keine Ahnung, mal sehen.“","pts":-5,"why":"Panische Eltern brauchen klare, ruhige Infos."}
+      ]
+    }
+  ],
+  "effects": {
+    "m_betreuung": {
+      "text": "Du erklärst der Mutter ruhig, dass Fieberkrämpfe meist harmlos sind und ihr jetzt gut aufpasst. Sie beruhigt sich etwas."
+    },
+    "m_ssl": {"text":"Kind in Seitenlage auf dem Schoß der Mutter. Atemweg frei."},
+    "m_kalt_wasch": {"pts":-5,"why":"Nicht aktiv kalt abwaschen (Lehrbuch), aber auch nicht zu warm einpacken."},
+    "m_kuehl": {"pts":-3,"why":"Beim Fieberkrampf nicht aktiv kühlen: Leicht bekleiden, nicht warm einpacken reicht."},
+    "m_rektiole": {
+      "pts": -10,
+      "why": "Diazepam ist nicht in der RettSan-Freigabe der Schulmeinung, und der Krampf ist vorbei. Krampfdurchbrechung erst ab 5 Minuten, durch Eltern (eigene Rektiole) oder NA/NotSan."
+    },
+    "m_eltern_rekt": {"pts":-5,"why":"Der Krampf ist vorbei: Keine Rektiole nötig."},
+    "m_o2_mask": {"pts":-2,"why":"SpO₂ 95 %: kein Sauerstoff nötig. O₂ nur bei fortbestehender Hypoxie."},
+    "m_trinken": {"pts":-5,"why":"Schläfriges Kind: Aspirationsgefahr."},
+    "m_waerme": {"pts":-3,"why":"Nicht zu warm einpacken: Das Fieber steigt weiter."}
+  },
+  "required": [
+    {"any":["m_betreuung"],"pts":5,"label":"Mutter beruhigt","why":"Folie Tag 14: Eltern beruhigen."},
+    {
+      "any": ["b_af","c_puls","b_spo2"],
+      "pts": 5,
+      "label": "Vitalfunktionen geprüft",
+      "why": "Nach dem Anfall: Vitalfunktionen."
+    },
+    {"any":["m_ssl"],"pts":5,"label":"Seitenlage","why":"Postiktal schläfrig: Seitenlage."},
+    {
+      "any": ["d_bz"],
+      "pts": 10,
+      "label": "BZ gemessen (erster Krampf)",
+      "why": "Beim ersten Krampfanfall BZ bestimmen."
+    },
+    {"any":["e_temp"],"pts":5,"label":"Temperatur gemessen","why":"Fieber bestätigt die Verdachtsdiagnose."},
+    {
+      "any": ["e_body"],
+      "pts": 5,
+      "label": "Bodycheck (Verletzungen, Meningitis-Zeichen)",
+      "why": "Petechien oder steifer Nacken → Meningitis!"
+    }
+  ],
+  "quizzes": [
+    {
+      "on": "treat",
+      "type": "mc",
+      "q": "Ab wann wird ein Fieberkrampf medikamentös durchbrochen (Folie Tag 14)?",
+      "options": [
+        "Sofort, sobald er beginnt",
+        "Wenn er länger als 5 Minuten dauert: Diazepam-Rektiole durch Eltern oder NA/NotSan",
+        "Nie, Fieberkrämpfe hören immer von selbst auf",
+        "Erst ab 30 Minuten"
+      ],
+      "answer": 1,
+      "explain": "Über 5 Minuten → Diazepam rektal (unter 15 kg: 5 mg, über 15 kg: 10 mg). RettSan leitet höchstens die Eltern bei der eigenen Rektiole an."
+    },
+    {
+      "on": "finish",
+      "type": "mc",
+      "q": "Die Mutter fragt, ob sie zu Hause bleiben können. Was sagst du?",
+      "options": [
+        "Ja, Fieberkrämpfe sind harmlos",
+        "Transport in die Kinderklinik: Beim ersten Fieberkrampf immer",
+        "Nur wenn das Fieber über 40 °C steigt",
+        "Sie soll morgen zum Kinderarzt"
+      ],
+      "answer": 1,
+      "explain": "Folie Tag 14: Kliniktransport immer beim ersten oder sehr langen Anfall."
+    }
+  ],
+  "diagnosis": {"options":["Fieberkrampf (einfach)","Meningitis","Epilepsie","Hypoglykämie"],"answer":0},
+  "teach": [
+    "Nach dem Fieberkrampf: Eltern beruhigen, Vitalfunktionen, Seitenlage, beim ersten Krampf BZ, Temperatur, nach Verletzungen und Meningitis-Zeichen suchen.",
+    "Beim ersten Fieberkrampf immer in die Klinik.",
+    "Kind nicht zu warm einpacken, aber auch nicht aktiv kalt abwaschen."
+  ]
+}

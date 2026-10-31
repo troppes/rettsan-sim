@@ -238,3 +238,8 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .pbar > span { display: block; height: 100%; border-radius: 3px; }
 .case-btn.played { border-color: #2c5a43; }
 .case-btn .t small.played-info { display: block; color: var(--good); font-size: 13px; margin-top: 2px; }
+.hint { color: var(--muted); font-size: 14px; }
+.modal h3.say { font-weight: 600; }
+.quiz-monitor canvas { width: 100%; height: 150px; display: block; background: var(--mon); border-radius: 10px; }
+.pre { white-space: pre-line; }
+.nowrap { white-space: nowrap; }
