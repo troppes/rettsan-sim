@@ -19,9 +19,9 @@
   let maxP = 0;
   let maskUntil = 0; // solange jemand spricht, sind die Töne leiser
   // Ventil ist bei jeder Manschette etwas anders, manchmal leckt sie leicht
-  const sens = 0.55 + Math.random() * 0.4;
+  const sens = 0.75 + Math.random() * 0.3;
   const leak = Math.random() < 0.4 ? 0.3 + Math.random() * 0.5 : 0;
-  const rate = () => (dump ? cfg.rates.open : sens * (valve / 10) ** 2 * 40 + leak);
+  const rate = () => (dump ? cfg.rates.open : sens * valve * 0.6 + leak);
 
   /* ---------- Anzeige „Was höre ich?“: Ausschläge der letzten Sekunden */
   type Blip = { t: number; a: number; w: number };
@@ -74,6 +74,15 @@
     src.start(t, Math.random() * 0.5);
     src.stop(t + len + 0.02);
   }
+  /** Ein „Tock“: echte Korotkow-Töne sind sehr tief, Laptop- und Handylautsprecher geben unter ~150 Hz
+      kaum etwas wieder. Deshalb Grundton + Obertöne + kurzer Klick, dumpf = tiefer und weicher. */
+  function tock(a: number, dull = false) {
+    const f = dull ? 95 : 120;
+    tone(f, a, 0.12);
+    tone(f * 2, a * 0.8, 0.09);
+    tone(f * 3, a * (dull ? 0.2 : 0.45), 0.06);
+    noise(a * (dull ? 0.4 : 0.8), 0.04, dull ? 150 : 200, dull ? 450 : 800);
+  }
   /** Korotkow-Ton je nach Phase: I leise klopfend, II mit Rauschen, III kräftig, IV dumpf */
   function korotkow(pr: number) {
     const { sys, dia } = prompt;
@@ -86,10 +95,8 @@
     else if (x < 0.8) a = 0.75; // Phase III
     else a = 0.35; // Phase IV: dumpf, leiser
     a *= masked;
-    const f = x >= 0.8 ? 48 : 65;
-    tone(f, a, 0.12);
-    tone(f * 2, a * 0.3, 0.08);
-    if (x >= 0.15 && x < 0.4) noise(a * 0.5, 0.14, 200, 600);
+    tock(a, x >= 0.8);
+    if (x >= 0.15 && x < 0.4) noise(a * 0.5, 0.14, 250, 700);
     blip(a);
   }
 
@@ -112,8 +119,8 @@
   };
   const DISTRACT: Distraction[] = [
     // Schlauch reibt am Stethoskop: klingt fast wie ein Ton
-    () => { noise(0.5, 0.09, 60, 220); tone(70, 0.25, 0.08); blip(0.55); },
-    () => { noise(0.4, 0.09, 60, 220); setTimeout(() => { noise(0.35, 0.09, 60, 220); blip(0.4); }, 260); blip(0.45); },
+    () => { noise(0.7, 0.1, 180, 700); tone(140, 0.3, 0.08); blip(0.55); },
+    () => { noise(0.6, 0.1, 180, 700); setTimeout(() => { noise(0.5, 0.1, 180, 700); blip(0.4); }, 260); blip(0.45); },
     // Monitor piept
     () => { tone(960, 0.12, 0.12, 'square'); tone(960, 0.12, 0.12, 'square', 0.25); blip(0.2, 2); },
     // Sirene in der Ferne
@@ -196,6 +203,7 @@
 </script>
 
 <p class="hint">{cfg.task}</p>
+<p class="hint small">🎧 Mit Kopfhörern hört man die Töne am besten. Tippe auf 🔊 für einen Testton.</p>
 
 <div class="gauge-wrap">
   <svg class="gauge" viewBox="0 0 200 200" role="img" aria-label="Manometer {Math.round(p)} mmHg">
@@ -234,13 +242,17 @@
   <div class="gauge-read">
     <button class="btn small {read.sys ? 'set' : ''}" onclick={() => mark('sys')}>Systole{#if read.sys}: {Math.round(read.sys.p)}{/if}</button>
     <button class="btn small {read.dia ? 'set' : ''}" disabled={!read.sys} onclick={() => mark('dia')}>Diastole{#if read.dia}: {Math.round(read.dia.p)}{/if}</button>
-    <button class="btn small ghost" onclick={() => (sound = !sound)} aria-label="Ton an/aus">{sound ? '🔊' : '🔇'}</button>
+    <button class="btn small ghost" onclick={() => { sound = !sound; if (sound && ctx()) tock(0.6); }} aria-label="Ton an/aus">{sound ? '🔊' : '🔇'}</button>
   </div>
   <label class="valve">
     <span class="muted">Ventil</span>
     <input type="range" min="0" max="10" step="0.1" bind:value={valve} oninput={() => (dump = false)} aria-label="Ventil aufdrehen" />
     <span class="muted">{valve < 0.2 ? 'zu' : 'offen'}</span>
   </label>
+  <div class="valve">
+    <button class="btn small ghost" onclick={() => (valve = Math.max(0, +(valve - 0.5).toFixed(1)))} aria-label="Ventil etwas zu">− zu</button>
+    <button class="btn small ghost" onclick={() => (valve = Math.min(10, +(valve + 0.5).toFixed(1)))} aria-label="Ventil etwas auf">auf +</button>
+  </div>
   <div class="row">
     <button class="btn accent pump" onclick={pump}>Pumpen</button>
     <button class="btn ghost" onclick={() => (dump = true)}>Ablassen</button>
