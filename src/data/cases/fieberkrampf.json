@@ -210,5 +210,6 @@
     "Nach dem Fieberkrampf: Eltern beruhigen, Vitalfunktionen, Seitenlage, beim ersten Krampf BZ, Temperatur, nach Verletzungen und Meningitis-Zeichen suchen.",
     "Beim ersten Fieberkrampf immer in die Klinik.",
     "Kind nicht zu warm einpacken, aber auch nicht aktiv kalt abwaschen."
-  ]
+  ],
+  "scene": {"place":"wohnung"}
 }

@@ -8,6 +8,7 @@ import { ProcSession } from './procedure';
 import { procMemory } from './memory';
 import { Rea } from './rea';
 import { debrief, type Debrief } from './scoring';
+import { isAt, moveTo, placeOf, RTW_ACTION, SCENE_EVENTS, sceneLabel, weatherTrend, startScene } from './scene';
 
 const T = RULES.texts;
 const li = (l: Letter) => LETTERS.indexOf(l);
@@ -38,6 +39,7 @@ export class Game {
       count: {}, lastAt: {}, fixed: {}, flags: {}, warned: {}, quizDone: {}, momentDone: {}, rulesDone: {},
       letters: {}, unlocked: [], events: [], attached: { ekg: false, spo2: false }, nibp: null, afShown: null,
       measured: {}, quickAsk: 0, over: false, rea: null,
+      ...startScene(c.scene),
     };
     for (const p of c.problems ?? []) this.s.fixed[p.id] = false;
     this.rea = c.rea ? new Rea(this) : null;
@@ -49,13 +51,21 @@ export class Game {
   /** Zufällige Störungen (Funk, Telefon, Gaffer …), mehr bei schwereren Fällen */
   private pickStress(): Moment[] {
     if (this.c.noStress) return [];
+    if (this.c.rea) return [];
     const st = RULES.stress as unknown as StressConfig;
     const n = st.interruptions[String(this.c.level)] ?? 0;
-    const pool = shuffle(st.pool.filter((m) => !(m.except ?? []).includes(this.c.id) && (!m.only || m.only.includes(this.c.id))));
+    // Möglich ist, was am Startort passt; Ereignisse im RTW kommen erst, wenn ihr dort seid
+    const inRtw = (m: Moment) => !!m.if && 'at' in m.if && m.if.at === 'rtw';
+    const possible = (m: Moment) => !m.if || test(m.if, this.ctx) || inRtw(m);
+    const pool = shuffle(st.pool.filter((m) => !(m.except ?? []).includes(this.c.id) && (!m.only || m.only.includes(this.c.id)) && possible(m)));
+    // Dazu ein Ereignis, das zum Ort passt (Wetter, Hund, U-Bahn …)
+    const here = SCENE_EVENTS.filter((m) => test(m.if, this.ctx));
+    const local = shuffle(here.length && Math.random() < 0.75 ? here : SCENE_EVENTS.filter(possible)).slice(0, 1);
+    const picked = [...local, ...pool.slice(0, n)];
     const [from, to] = st.window;
-    return pool.slice(0, n).map((m, i) => {
-      const at = Math.round(from + ((to - from) * (i + 0.2 + Math.random() * 0.6)) / n);
-      const { except: _e, only: _o, ...rest } = m;
+    return picked.map((m, i) => {
+      const at = Math.round(from + ((to - from) * (i + 0.2 + Math.random() * 0.6)) / picked.length);
+      const { except: _e, only: _o, ...rest } = m as typeof m & { except?: string[]; only?: string[] };
       return { ...rest, id: 'stress_' + m.id, at };
     });
   }
@@ -68,6 +78,12 @@ export class Game {
   /* ------------------------------------------------------------ Log & Punkte */
   addLog(type: LogType, text: string, who?: string, pts?: number) { this.log.push({ type, text, who, pts }); }
   toast(text: string, tone: Toast['tone'] = '') { this.onToast({ text, tone }); }
+  /** Ortswechsel ins Protokoll schreiben */
+  private logMove(before: string) {
+    if (this.s.place !== before) this.addLog('info', `${placeOf(this.s).icon} ${placeOf(this.s).enter ?? placeOf(this.s).label}`);
+  }
+  /** Ort und Wetter für die Anzeige */
+  scene() { return sceneLabel(this.s); }
   addEvent(pts: number, max: number, text: string, why?: string, type?: ScoreEvent['type']) {
     this.s.events.push({ pts, max, text, why, type: type ?? (pts < 0 ? 'bad' : 'good'), at: this.s.time });
   }
@@ -106,6 +122,8 @@ export class Game {
         for (const [k, d] of Object.entries(p.worsen)) s.v[k as VitalKey] += d! * dtMin * this.worsenFactor;
       }
     }
+    const wt = this.settings.worsen ? weatherTrend(s) : null;
+    for (const [k, d] of Object.entries(wt ?? {})) s.v[k as VitalKey] += d! * dtMin;
     for (const tr of c.trends ?? []) {
       if (!test(tr.if, this.ctx)) continue;
       for (const [k, d] of Object.entries(tr.perMin)) {
@@ -118,7 +136,9 @@ export class Game {
     for (const r of c.rules ?? []) {
       if (s.rulesDone[r.id] || !test(r.if, this.ctx)) continue;
       s.rulesDone[r.id] = true;
+      const before = s.place;
       mutate(s, r);
+      this.logMove(before);
       for (const id of r.fix ?? []) s.fixed[id] = true;
       if (r.alert) { this.addLog('alert', '⚠️ ' + r.alert); this.toast('⚠️ Zustand verändert', 'bad'); }
       if (r.info) this.addLog('info', 'ℹ️ ' + r.info);
@@ -369,6 +389,7 @@ export class Game {
 
   private doTreat(a: Action) {
     const { s } = this;
+    if (a.id === RTW_ACTION && isAt(s, 'rtw')) { this.addLog('info', T.alreadyInRtw); return; }
     const e = this.effect(a.id);
     if (e.needs && !e.needs.some((id) => s.count[id])) {
       this.addLog('info', '🤔 ' + e.needText);
@@ -386,7 +407,10 @@ export class Game {
     if (!(bad && !e.text)) this.addLog('find', text, 'Ergebnis');
     if (bad && first) this.penalty(-e.pts!, e.why ?? T.wrongDefault);
     else if (bad) this.addLog('info', e.why ?? '');
+    const before = s.place;
     mutate(s, e);
+    if (a.id === RTW_ACTION && !bad) moveTo(s, 'rtw');
+    this.logMove(before);
     const fixes = new Set(e.fix ?? []);
     if (!bad && !e.noCount) for (const p of this.c.problems ?? []) if ((p.fixedBy ?? []).includes(a.id) && this.active(p.activeIf)) fixes.add(p.id);
     for (const pid of fixes) s.fixed[pid] = true;
@@ -506,8 +530,8 @@ export class Game {
       if (trig.before && m.before === trig.before) return m;
       if (trig.after && m.after?.includes(trig.after)) return m;
       if (trig.tick) {
-        if (m.at != null && this.s.time >= m.at && !m.after && !m.before) return m;
-        if (m.if && test(m.if, this.ctx)) return m;
+        if (m.at != null && this.s.time >= m.at && !m.after && !m.before && (!m.if || test(m.if, this.ctx))) return m;
+        if (m.at == null && m.if && test(m.if, this.ctx)) return m;
       }
     }
     return null;
@@ -539,6 +563,7 @@ export class Game {
         }
         this.moodChange(o.mood ?? 0);
         if (o.delta) { mutate(this.s, { delta: o.delta }); this.clampVitals(); }
+        if (o.move) { const before = this.s.place; moveTo(this.s, o.move); this.logMove(before); }
         if (o.reply) this.addLog('pt', o.reply, m.who);
         p.reply = o.reply;
         p.why = pts >= best ? undefined : o.why;
@@ -663,16 +688,18 @@ export class Game {
     if (p?.kind !== 'iv' || p.result) return;
     const { pts: P, texts: T2, angle: [lo, hi], order } = p.cfg;
     const vein = p.cfg.veins.find((v) => v.id === r.vein);
-    const hygiene = !r.early && !r.retouched;
+    const hygiene = !r.early && !r.retouched && !r.offSite;
     const angleOk = r.angle >= lo && r.angle <= hi;
     const orderOk = r.order.length === order.length && r.order.every((x, i) => x === order[i]);
     const inVein = r.hit === 'in';
     const hitText = { in: T2.hitIn, through: T2.hitThrough, short: T2.hitShort, beside: T2.hitBeside }[r.hit];
     const lines: { ok: boolean; text: string; pts: number }[] = [
-      { ok: r.stauOk, text: r.stauOk ? T2.stauOk : T2.stauBad, pts: r.stauOk ? P.stau : 0 },
+      { ok: r.stauOk, text: r.stauOk ? T2.stauOk : r.noStau ? T2.stauNone : T2.stauBad, pts: r.stauOk ? P.stau : 0 },
       { ok: vein?.quality === 'good', text: `${vein?.label ?? '?'}: ${vein?.why ?? ''}`, pts: vein?.quality === 'good' ? P.vein : vein?.quality === 'ok' ? Math.ceil(P.vein / 2) : 0 },
       ...(r.early ? [{ ok: false, text: T2.early, pts: 0 }] : []),
       ...(r.retouched ? [{ ok: false, text: T2.retouched, pts: 0 }] : []),
+      ...(r.offSite ? [{ ok: false, text: T2.offSite, pts: 0 }] : []),
+      ...(r.wrongDir ? [{ ok: false, text: T2.wrongDir, pts: 0 }] : []),
       ...(hygiene ? [{ ok: true, text: T2.hygieneOk, pts: P.hygiene }] : []),
       { ok: r.tensioned, text: r.tensioned ? T2.tensionOk : T2.tensionBad, pts: 0 },
       {

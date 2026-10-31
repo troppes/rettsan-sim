@@ -280,5 +280,6 @@
       ]
     }
   ],
-  "oddEcg": true
+  "oddEcg": true,
+  "scene": {"place":"wohnheim"}
 }

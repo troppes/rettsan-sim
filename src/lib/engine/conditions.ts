@@ -1,6 +1,7 @@
 /* Bedingungen und Zustandsänderungen aus den Falldaten auswerten. */
 import type { Condition, Mutation, VitalKey } from '../types';
 import type { GameState, Settings } from './state';
+import { hasWeather, isAt, moveTo } from './scene';
 
 export interface Ctx { s: GameState; settings: Settings }
 
@@ -34,6 +35,8 @@ export function test(c: Condition | undefined, ctx: Ctx): boolean {
     return typeof f === 'number' && at != null && at > f;
   }
   if ('setting' in c) return !!ctx.settings[c.setting];
+  if ('at' in c) return isAt(s, c.at);
+  if ('weather' in c) return hasWeather(s, c.weather);
   throw new Error('Unbekannte Bedingung: ' + JSON.stringify(c));
 }
 
@@ -50,4 +53,5 @@ export function mutate(s: GameState, m: Mutation) {
   if (m.cap) for (const [k, d] of Object.entries(m.cap)) s.v[k as VitalKey] = Math.min(s.v[k as VitalKey], d!);
   if (m.flags) for (const [k, f] of Object.entries(m.flags)) s.flags[k] = typeof f === 'object' ? s.time + f.now : f;
   if (m.status) s.status = m.status;
+  if (m.move) moveTo(s, m.move);
 }

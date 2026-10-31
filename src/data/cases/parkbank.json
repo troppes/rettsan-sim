@@ -1,0 +1,330 @@
+{
+  "id": "parkbank",
+  "level": 3,
+  "person": "🧓",
+  "icon": "🌳",
+  "look": {
+    "sex": "m",
+    "age": "old",
+    "skin": "#f3d2bb",
+    "hair": "#bdbdbd",
+    "hairStyle": "short",
+    "beard": "stubble",
+    "signs": {"pale":{"vital":"temp","op":"<","value":35.5}}
+  },
+  "name": "Herr Krüger",
+  "mood": 2,
+  "scene": {"place":"park","weather":["cold","snow","rain"]},
+  "dispatches": [
+    {
+      "short": "Betrunkener? ca. 70 J.",
+      "text": "RTW, hilflose Person. Männlich, ca. 70 Jahre, Parkbank im Volkspark. Ein Hundebesitzer: „Der sitzt hier seit einer Stunde und lallt nur, der ist wohl besoffen.“"
+    },
+    {
+      "short": "Hilflose Person, Park",
+      "text": "RTW, hilflose Person. Männlich, älter, Volkspark, Parkbank am Teich. Anrufer: Spaziergänger mit Hund."
+    }
+  ],
+  "start": {
+    "hr": 56,
+    "rhythm": "sinusbrady",
+    "spo2": 92,
+    "sys": 108,
+    "dia": 66,
+    "af": 12,
+    "bz": 42,
+    "temp": 34.6,
+    "gcs": 12,
+    "status": "Sitzt zusammengesunken auf einer nassen Parkbank, die Jacke ist durchweicht. Er zittert, murmelt undeutlich und schaut an euch vorbei."
+  },
+  "answerer": [{"if":{"vital":"gcs","op":"<","value":14},"who":"Hundebesitzer"}],
+  "problems": [
+    {
+      "id": "kaelte",
+      "letter": "E",
+      "label": "Unterkühlung (draußen, nasse Kleidung)",
+      "fixedBy": ["m_rtw"],
+      "worsen": {"temp":-0.04},
+      "activeIf": {"not":{"at":"rtw"}}
+    },
+    {"id":"hypo","letter":"D","label":"Unterzuckerung","fixedBy":["m_gluc_oral"],"worsen":{"bz":-0.6}}
+  ],
+  "findings": {
+    "sss": "Rutschiger Weg, Dämmerung, kalter Wind. Keine Gefahr durch Dritte. Der Hund ist angeleint.",
+    "ansprechen": [
+      {
+        "if": {"vital":"gcs","op":">=","value":14},
+        "text": "„Wo… bin ich? Mir ist so kalt.“ Er schaut dich jetzt an."
+      },
+      {"text":"Er murmelt etwas Unverständliches, öffnet die Augen auf Ansprache."}
+    ],
+    "a_check": "Atemweg frei, er schluckt, aber langsam.",
+    "b_af": "Ruhige, eher flache Atmung, 12/min.",
+    "b_ausk": "Beidseits frei.",
+    "b_spo2": "Der Clip findet an den eiskalten Fingern kaum ein Signal. Am Ohrläppchen klappt es besser.",
+    "c_puls": "Langsam, regelmäßig, kräftig genug.",
+    "c_rekap": "Rekap verlängert, Haut kalt, blass, feucht. Er zittert stark.",
+    "d_gcs": [
+      {
+        "if": {"vital":"gcs","op":">=","value":14},
+        "text": "GCS 14: öffnet spontan die Augen, noch leicht verwirrt, befolgt Aufforderungen. Er schluckt sicher."
+      },
+      {"text":"GCS 12 (Augen auf Ansprache, verwirrt, lokalisiert Schmerz)."}
+    ],
+    "d_pup": "Isokor, etwas träge.",
+    "d_befast": "Keine Seitenzeichen: Arme halten gleich, Gesicht symmetrisch. Sprache verwaschen, aber eher müde als aphasisch.",
+    "e_body": "Kleidung völlig durchnässt. Kein Alkoholgeruch! Am Handgelenk ein Notfallarmband: „Diabetiker – Insulin“. Keine Verletzungen.",
+    "e_temp": "Gemessen im Ohr. Unter 35 °C spricht man von Unterkühlung."
+  },
+  "answers": {
+    "q_s": {"pt":"„Mir ist so kalt… und so komisch… zittrig.“","by":"„Keine Ahnung, der hat nur gelallt.“"},
+    "q_a": {"pt":"„Nein.“","by":"„Weiß ich nicht.“"},
+    "q_m": {
+      "pt": "„Insulin… heute früh gespritzt wie immer. Und Ramipril.“",
+      "by": "„Keine Ahnung. Aber der hat so ein Armband um.“"
+    },
+    "q_p": {"pt":"„Zucker. Seit zwanzig Jahren. Und Blutdruck.“","by":"„Weiß ich nicht, ich kenne ihn nicht.“"},
+    "q_l": {"pt":"„Frühstück… nur einen Kaffee. Wollte nach dem Spaziergang essen.“","by":"„Keine Ahnung.“"},
+    "q_e": {
+      "pt": "„Ich bin spazieren gegangen… dann wurde mir schwummrig… hab mich hingesetzt.“",
+      "by": "„Vor einer Stunde hat er mich nach der Uhrzeit gefragt, da war er noch ganz normal. Jetzt lallt er nur noch.“"
+    },
+    "q_r": {"pt":"„Ich lebe allein seit meine Frau tot ist.“","by":"„Keine Ahnung.“"},
+    "q_o": {"pt":"„Wann… weiß nicht. Mittag?“","by":"„So vor einer Stunde fing das an, glaub ich.“"},
+    "q_t": {"pt":"„Unterzucker hatte ich schon mal. Aber nie so.“","by":"„Weiß ich nicht.“"}
+  },
+  "moments": [
+    {
+      "id": "betrunken",
+      "at": 40,
+      "who": "Hundebesitzer",
+      "say": "„Der ist doch nur besoffen, oder? Ich muss jetzt echt weiter, mein Hund friert.“",
+      "options": [
+        {
+          "t": "„Das wissen wir noch nicht, Lallen hat viele Ursachen. Können Sie kurz erzählen, was Sie gesehen haben?“",
+          "pts": 3,
+          "reply": "„Na gut. Vor einer Stunde hat er mich nach der Uhrzeit gefragt, ganz normal. Jetzt lallt er nur noch.“"
+        },
+        {
+          "t": "„Ja, sieht so aus. Danke, Sie können gehen.“",
+          "pts": -3,
+          "why": "Nie vorschnell „betrunken“ annehmen: Hypoglykämie, Schlaganfall, Unterkühlung und Kopfverletzung sehen genauso aus. Und der Zeuge hatte wichtige Infos."
+        },
+        {
+          "t": "„Sie bleiben hier, bis die Polizei kommt.“",
+          "pts": -1,
+          "why": "Kein Grund, ihn festzuhalten. Freundlich nach Beobachtungen fragen reicht."
+        }
+      ]
+    },
+    {
+      "id": "sturm",
+      "at": 150,
+      "if": {"at":"outdoor"},
+      "who": "Wetter",
+      "say": "Der Wind frischt auf, es wird schnell dunkel. Der Patient zittert immer heftiger. Der Hundebesitzer: „Wollt ihr den nicht mal ins Warme bringen?“",
+      "options": [
+        {
+          "t": "Tragestuhl holen und ihn behutsam in den warmen RTW bringen, dort weiter versorgen.",
+          "pts": 4,
+          "move": "rtw",
+          "reply": "Im RTW läuft die Heizung. Licht an, Tür zu."
+        },
+        {
+          "t": "Rettungsdecke drüber und draußen weiter untersuchen.",
+          "pts": 0,
+          "why": "Nasse Kleidung plus Wind kühlen weiter aus. Bei Unterkühlung schnell ins Warme, Untersuchung im RTW."
+        },
+        {
+          "t": "Ihn stützen und zum RTW laufen lassen, das bringt den Kreislauf in Schwung.",
+          "pts": -4,
+          "why": "Bei Unterkühlung keine aktive Bewegung: Kaltes Blut aus Armen und Beinen kann den Kern weiter abkühlen (Afterdrop) und Rhythmusstörungen auslösen."
+        }
+      ]
+    },
+    {
+      "id": "heim",
+      "if": {"flag":"klar"},
+      "who": "Herr Krüger",
+      "say": "„Jetzt geht’s schon wieder. Lassen Sie mich nach Hause, ich hab doch nur nicht gegessen.“",
+      "options": [
+        {
+          "t": "„Sie waren stark unterzuckert und unterkühlt. Das kann wiederkommen, gerade nachts allein. Wir möchten Sie in der Klinik durchchecken lassen.“",
+          "pts": 3,
+          "reply": "Er seufzt. „Na gut. Aber nur kurz.“"
+        },
+        {
+          "t": "„Okay, wenn Sie meinen. Unterschreiben Sie hier.“",
+          "pts": -4,
+          "why": "Er war vor Minuten noch verwirrt: Einwilligungsfähigkeit fraglich, Rückfallgefahr bei Insulin. Erst gründlich aufklären, NA einbeziehen."
+        },
+        {
+          "t": "„Sie haben keine Wahl, Sie kommen mit.“",
+          "pts": -2,
+          "why": "Zwang ist der falsche Ton. Aufklären und überzeugen; bei echter Einwilligungsunfähigkeit entscheidet der NA."
+        }
+      ]
+    }
+  ],
+  "rules": [
+    {"id":"imRtw","if":{"at":"rtw"},"flags":{"rtwAt":{"now":0}}},
+    {
+      "id": "klarer",
+      "if": {"all":[{"sinceFlag":"rtwAt","over":150},{"done":"m_waerme"}]},
+      "set": {"gcs":14},
+      "delta": {"temp":0.5,"hr":6},
+      "flags": {"klar":true},
+      "status": "Liegt im warmen RTW in Decken gewickelt, die nasse Kleidung ist aus. Er zittert noch, wird aber klarer und schaut dich an.",
+      "info": "Im Warmen wird er klarer (GCS 14). Jetzt schluckt er sicher."
+    },
+    {
+      "id": "eintruebung",
+      "if": {"all":[{"setting":"worsen"},{"not":{"fixed":"hypo"}},{"time":720},{"not":{"flag":"naGluc"}}]},
+      "set": {"gcs":9},
+      "cap": {"bz":30},
+      "status": "Er reagiert kaum noch, nur noch auf Schmerzreiz.",
+      "alert": "Er trübt weiter ein (GCS 9): Der Zucker sinkt weiter!"
+    },
+    {
+      "id": "na_glucose",
+      "if": {"all":[{"not":{"fixed":"hypo"}},{"sinceFlag":"nefAt","over":420}]},
+      "fix": ["hypo"],
+      "set": {"bz":90,"gcs":14},
+      "flags": {"glucAt":{"now":0},"naGluc":true},
+      "status": "Der Notarzt hat Glucose i.v. gegeben. Er wird wacher.",
+      "alert": "Der Notarzt ist da und gibt Glucose 20 % i.v."
+    }
+  ],
+  "effects": {
+    "m_rtw": {"text":"Mit dem Tragestuhl, ohne dass er selbst läuft, behutsam in den RTW. Heizung an, Tür zu."},
+    "m_waerme": [
+      {
+        "if": {"at":"rtw"},
+        "text": "Im RTW: nasse Kleidung vorsichtig raus, abtrocknen, in warme Decken und Rettungsdecke wickeln, Kopf bedecken. Heizung hoch.",
+        "delta": {"temp":0.2}
+      },
+      {
+        "text": "Rettungsdecke über die nasse Kleidung. Draußen im Wind hilft das kaum: Er muss ins Warme.",
+        "delta": {"temp":0.05},
+        "noCount": true
+      }
+    ],
+    "m_gluc_oral": [
+      {
+        "if": {"vital":"gcs","op":">=","value":14},
+        "text": "Er trinkt langsam einen warmen, gezuckerten Tee bzw. Glucose-Gel (ca. 20 g). Er schluckt sicher.",
+        "fix": ["hypo"],
+        "set": {"bz":72},
+        "flags": {"glucAt":{"now":0}},
+        "penalties": [{"if":{"not":{"done":"d_bz"}},"pts":-3,"why":"Erst BZ messen, dann Glucose."}]
+      },
+      {
+        "pts": -10,
+        "why": "Bei GCS unter 14 nichts oral: Aspirationsgefahr. Erst aufwärmen bzw. NEF für Glucose i.v.",
+        "delta": {"spo2":-3}
+      }
+    ],
+    "m_trinken": [
+      {
+        "if": {"vital":"gcs","op":">=","value":14},
+        "text": "Ein paar Schluck warmer Tee. Ohne Zucker hilft das gegen die Hypo nicht."
+      },
+      {"pts":-10,"why":"Bewusstseinsgetrübt: nichts zu trinken, Aspirationsgefahr."}
+    ],
+    "m_gluc_iv": {
+      "pts": -3,
+      "why": "Glucose i.v. durch RettSan nur bei GCS 3 mit gefährdetem Atemweg (§ 34). Hier: aufwärmen, NEF, ggf. oral, sobald er wach genug ist.",
+      "fix": ["hypo"],
+      "set": {"bz":85},
+      "flags": {"glucAt":{"now":0}}
+    },
+    "m_laufen": {
+      "pts": -10,
+      "why": "Unterkühlte nicht laufen lassen: Afterdrop und Rhythmusstörungen. Tragestuhl/Trage.",
+      "delta": {"temp":-0.3,"hr":-6}
+    },
+    "m_kuehl": {"pts":-10,"why":"Er ist unterkühlt!"},
+    "m_kalt_wasch": {"pts":-10,"why":"Er ist unterkühlt!"},
+    "m_raus": {"text":"Ihr bringt ihn behutsam mit dem Tragestuhl in den warmen RTW.","move":"rtw"},
+    "m_ssl": [
+      {"if":{"vital":"gcs","op":"<","value":13},"text":"Seitenlage, Atemweg geschützt."},
+      {"text":"Er ist wach genug und möchte lieber liegen bleiben, wie er ist."}
+    ],
+    "m_flach": {"text":"Er liegt flach, möglichst wenig Bewegung."}
+  },
+  "required": [
+    {
+      "any": ["d_bz"],
+      "pts": 10,
+      "label": "Blutzucker gemessen",
+      "why": "„Betrunken“ wirkende Patienten: immer BZ messen."
+    },
+    {
+      "any": ["e_temp"],
+      "pts": 5,
+      "label": "Körpertemperatur gemessen",
+      "why": "Kalte Umgebung, nasse Kleidung, verwirrt: Unterkühlung messen."
+    },
+    {
+      "any": ["e_body"],
+      "pts": 5,
+      "label": "Bodycheck: Notfallarmband gefunden",
+      "why": "Der Bodycheck findet Hinweise wie Notfallarmband, Insulinpumpe, Verletzungen."
+    },
+    {
+      "pts": 10,
+      "label": "Ins Warme gebracht (RTW)",
+      "why": "Unterkühlung: raus aus Wind und Nässe, behutsam tragen.",
+      "if": {"at":"rtw"}
+    },
+    {
+      "any": ["m_waerme"],
+      "pts": 10,
+      "label": "Nasse Kleidung raus, Wärmeerhalt im RTW",
+      "why": "Passives Wiedererwärmen: nasse Kleidung entfernen (im Warmen), Decken, Kopf bedecken."
+    },
+    {
+      "any": ["m_nef"],
+      "pts": 5,
+      "label": "NEF nachalarmiert",
+      "why": "Bewusstseinsstörung mit Hypoglykämie und Unterkühlung bei älterem Patienten."
+    },
+    {
+      "any": ["m_gluc_oral","m_nef"],
+      "pts": 10,
+      "label": "Glucose: oral erst bei sicherem Schlucken, sonst über den NA",
+      "why": "Schulmeinung: oral nur bei GCS 14–15 und sicherem Schlucken."
+    },
+    {
+      "pts": 5,
+      "label": "BZ nach der Gabe kontrolliert",
+      "why": "Nach 5–10 Minuten kontrollieren.",
+      "if": {"doneAfterFlag":{"action":"d_bz","flag":"glucAt"}}
+    }
+  ],
+  "quizzes": [
+    {
+      "on": "finish",
+      "type": "mc",
+      "q": "Rückblick: Warum soll ein unterkühlter Patient nicht selbst laufen?",
+      "options": [
+        "Kaltes Blut aus Armen und Beinen strömt zum Körperkern (Afterdrop), Gefahr von Rhythmusstörungen",
+        "Weil er sonst schneller schwitzt",
+        "Weil Laufen den Blutzucker erhöht",
+        "Das ist kein Problem, Bewegung wärmt"
+      ],
+      "answer": 0,
+      "explain": "Unterkühlte behutsam und liegend/sitzend transportieren, nicht laufen lassen, nicht reiben."
+    }
+  ],
+  "diagnosis": {
+    "options": ["Hypoglykämie mit Unterkühlung","Alkoholintoxikation","Schlaganfall","Unterkühlung ohne weitere Ursache"],
+    "answer": 0
+  },
+  "teach": [
+    "„Betrunken“ ist eine Ausschlussdiagnose: BZ, Temperatur, BE-FAST und Bodycheck immer.",
+    "Unterkühlung: ins Warme, nasse Kleidung erst im Warmen raus, passiv wärmen, nicht laufen lassen, nicht reiben.",
+    "Glucose oral nur bei GCS 14–15 und sicherem Schlucken. Erst aufwärmen: Im Warmen wurde er wach genug.",
+    "Kalte Finger: SpO₂ unzuverlässig, Ohrläppchen oder Stirnsensor versuchen."
+  ]
+}

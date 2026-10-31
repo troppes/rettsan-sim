@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { ACTIONS, CASES, ECG, PROCEDURES, REA, RULES } from '../src/lib/data';
 import radio from '../src/data/radio.json';
 import { applyVariant } from '../src/lib/engine/variants';
+import { PLACES, SCENE_EVENTS, WEATHER } from '../src/lib/engine/scene';
 
 /** Alle Fälle plus jede Variante als eigener Fall */
 const ALL = CASES.flatMap((c) => [c, ...(c.variants ?? []).map((v) => ({ ...applyVariant(c, v), id: `${c.id}+${v.id}` }))]);
@@ -20,9 +21,9 @@ function conditionRefs(c: Condition | undefined, out: { actions: string[]; probl
 }
 
 describe('Fälle', () => {
-  it('es gibt 12 Fälle mit eindeutigen IDs', () => {
-    expect(CASES).toHaveLength(12);
-    expect(new Set(CASES.map((c) => c.id)).size).toBe(12);
+  it('es gibt 13 Fälle mit eindeutigen IDs', () => {
+    expect(CASES).toHaveLength(13);
+    expect(new Set(CASES.map((c) => c.id)).size).toBe(13);
   });
 
   it('Varianten: eindeutige IDs, entfernte Pflichtpunkte existieren', () => {
@@ -165,5 +166,25 @@ describe('Störungen und Funk', () => {
       expect(new Set(all).size, c.task).toBe(all.length);
     }
     for (const q of radio.mc) expect(q.options[q.answer], q.q).toBeDefined();
+  });
+});
+
+describe('Orte', () => {
+  it('jeder Fall hat einen bekannten Ort und bekanntes Wetter', () => {
+    for (const c of CASES) {
+      expect(PLACES[c.scene?.place ?? ''], c.id).toBeDefined();
+      for (const w of c.scene?.weather ?? []) expect(WEATHER[w], `${c.id}: ${w}`).toBeDefined();
+    }
+  });
+  it('Ortsereignisse: mindestens 3 Antworten, genau eine beste, jede schwächere erklärt, Ziele bekannt', () => {
+    for (const m of SCENE_EVENTS) {
+      expect(m.options.length, m.id).toBeGreaterThanOrEqual(3);
+      const best = Math.max(...m.options.map((o) => o.pts ?? 0));
+      expect(m.options.filter((o) => (o.pts ?? 0) === best), m.id).toHaveLength(1);
+      for (const o of m.options) {
+        if ((o.pts ?? 0) < best) expect(o.why, o.t).toBeTruthy();
+        if (o.move) expect(PLACES[o.move], o.t).toBeDefined();
+      }
+    }
   });
 });

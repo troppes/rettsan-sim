@@ -30,9 +30,23 @@
   /* ---------- Töne */
   let audio: AudioContext | null = null;
   let noiseBuf: AudioBuffer | null = null;
+  let out: AudioNode | null = null;
+  let ttsReady = false;
   function ctx() {
-    if (!audio && typeof AudioContext !== 'undefined') {
-      audio = new AudioContext();
+    // iOS spricht nur, wenn die erste Sprachausgabe direkt aus einem Tippen kommt: einmal leise „freischalten“
+    if (!ttsReady) {
+      ttsReady = true;
+      try { const u = new SpeechSynthesisUtterance(' '); u.volume = 0; speechSynthesis.speak(u); } catch { /* ohne Sprache */ }
+    }
+    const AC = typeof AudioContext !== 'undefined' ? AudioContext : (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
+    if (!audio && AC) {
+      audio = new AC();
+      // Etwas lauter und gleichmäßiger: Verstärkung plus Kompressor vor dem Ausgang
+      const comp = audio.createDynamicsCompressor();
+      const gain = audio.createGain();
+      gain.gain.value = 1.6;
+      gain.connect(comp).connect(audio.destination);
+      out = gain;
       noiseBuf = audio.createBuffer(1, audio.sampleRate, audio.sampleRate);
       const d = noiseBuf.getChannelData(0);
       for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
@@ -50,7 +64,7 @@
     g.gain.setValueAtTime(0, t);
     g.gain.linearRampToValueAtTime(a, t + 0.01);
     g.gain.exponentialRampToValueAtTime(0.001, t + len);
-    o.connect(g).connect(audio.destination);
+    o.connect(g).connect(out ?? audio.destination);
     o.start(t);
     o.stop(t + len + 0.02);
     return o;
@@ -68,18 +82,28 @@
     g.gain.setValueAtTime(0, t);
     g.gain.linearRampToValueAtTime(a, t + 0.01);
     g.gain.exponentialRampToValueAtTime(0.001, t + len);
-    src.connect(bp).connect(g).connect(audio.destination);
+    src.connect(bp).connect(g).connect(out ?? audio.destination);
     src.start(t, Math.random() * 0.5);
     src.stop(t + len + 0.02);
   }
   /** Ein „Tock“: echte Korotkow-Töne sind sehr tief, Laptop- und Handylautsprecher geben unter ~150 Hz
       kaum etwas wieder. Deshalb Grundton + Obertöne + kurzer Klick, dumpf = tiefer und weicher. */
   function tock(a: number, dull = false) {
-    const f = dull ? 95 : 120;
-    tone(f, a, 0.12);
-    tone(f * 2, a * 0.8, 0.09);
-    tone(f * 3, a * (dull ? 0.2 : 0.45), 0.06);
-    noise(a * (dull ? 0.4 : 0.8), 0.04, dull ? 150 : 200, dull ? 450 : 800);
+    if (!sound || !audio) return;
+    // Dreieckswelle mit fallender Tonhöhe: klingt wie ein Klopfen, die Obertöne (x3, x5) hört man auch aus kleinen Lautsprechern
+    const t = audio.currentTime;
+    const o = audio.createOscillator();
+    const g = audio.createGain();
+    o.type = 'triangle';
+    o.frequency.setValueAtTime(dull ? 170 : 240, t);
+    o.frequency.exponentialRampToValueAtTime(dull ? 80 : 110, t + 0.1);
+    g.gain.setValueAtTime(0, t);
+    g.gain.linearRampToValueAtTime(a, t + 0.008);
+    g.gain.exponentialRampToValueAtTime(0.001, t + (dull ? 0.16 : 0.12));
+    o.connect(g).connect(out ?? audio.destination);
+    o.start(t);
+    o.stop(t + 0.2);
+    noise(a * (dull ? 0.3 : 0.6), 0.025, dull ? 300 : 500, dull ? 900 : 1600);
   }
   /** Korotkow-Ton je nach Phase: I leise klopfend, II mit Rauschen, III kräftig, IV dumpf */
   function korotkow(pr: number) {
@@ -132,7 +156,7 @@
       g.gain.setValueAtTime(0, t);
       g.gain.linearRampToValueAtTime(0.08, t + 1);
       g.gain.linearRampToValueAtTime(0, t + 3);
-      o.connect(g).connect(audio.destination);
+      o.connect(g).connect(out ?? audio.destination);
       o.start(t);
       o.stop(t + 3.1);
       say = '🚨 Sirene draußen';

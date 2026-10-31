@@ -18,7 +18,11 @@ export type Condition =
   | { time: number }
   | { sinceFlag: string; over: number }
   | { doneAfterFlag: { action: string; flag: string } }
-  | { setting: 'worsen' | 'detail' };
+  | { setting: 'worsen' | 'detail' }
+  /** Ort-ID oder Ortsmerkmal (outdoor, indoor, public, home, crowd, rtw …), siehe places.json */
+  | { at: string }
+  /** Wetter am Einsatzort (wirkt nur draußen) */
+  | { weather: string };
 
 /** Zeitstempel relativ zur aktuellen Einsatzzeit oder fester Wert */
 export type FlagValue = boolean | number | { now: number };
@@ -30,6 +34,8 @@ export interface Mutation {
   cap?: VitalNumbers;
   flags?: Record<string, FlagValue>;
   status?: string;
+  /** Ortswechsel, z. B. "rtw" */
+  move?: string;
 }
 
 /* ------------------------------------------------------------ Fall */
@@ -90,6 +96,8 @@ export interface MomentOption {
   delta?: VitalNumbers;
   reply?: string;
   why?: string;
+  /** Ortswechsel bei dieser Wahl, z. B. "rtw" */
+  move?: string;
 }
 export interface Moment {
   id: string;
@@ -166,6 +174,8 @@ export interface CaseDef {
     variants?: { if: Condition; options: string[]; answer: number }[];
   };
   teach: string[];
+  /** Einsatzort und mögliches Wetter (draußen) */
+  scene?: { place: string; weather?: string[] };
   /** Zufällige Abwandlungen beim Neuspielen (andere Werte, Vorerkrankungen, Kontraindikationen) */
   variants?: CaseVariant[];
   /** Gewicht der unveränderten Grundversion beim Auslosen (Standard 1) */
@@ -263,6 +273,12 @@ export interface IvConfig {
 }
 export interface IvRun {
   stauOk: boolean; vein: string; early: boolean; retouched: boolean;
+  /** Gar nicht gestaut */
+  noStau?: boolean;
+  /** Außerhalb der desinfizierten Stelle gestochen */
+  offSite?: boolean;
+  /** Gegen den Blutfluss (Richtung Hand) gestochen */
+  wrongDir?: boolean;
   /** Haut gestrafft (Vene rollt nicht weg) */
   tensioned: boolean;
   /** Wie oft zurückgezogen und neu gezielt */

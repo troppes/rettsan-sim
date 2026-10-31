@@ -125,7 +125,6 @@
       "group": "C – Kreislauf",
       "items": [
         {"id":"m_allergen","label":"Allergenzufuhr stoppen","time":10},
-        {"id":"m_schock","label":"Schocklage (Beine hoch)","letter":"C","time":15},
         {"id":"m_becken","label":"Beckenschlinge anlegen","letter":"C","time":60},
         {"id":"m_defi_kleben","label":"Defi-Elektroden kleben","letter":"C","time":20},
         {"id":"m_ivz","label":"i.v.-Zugang legen (§ 34)","letter":"C","time":60},
@@ -162,12 +161,19 @@
       "items": [
         {"id":"m_ok_hoch","label":"Oberkörper hoch / sitzend","time":15},
         {"id":"m_ok30","label":"Oberkörper 30° hoch","time":15},
-        {"id":"m_ssl","label":"Stabile Seitenlage","time":20},
         {"id":"m_flach","label":"Flache Rückenlage","time":15},
-        {"id":"m_laufen","label":"Zum RTW laufen lassen","time":30}
+        {"id":"m_schock","label":"Schocklage (Beine hoch)","letter":"C","time":15},
+        {"id":"m_ssl","label":"Stabile Seitenlage","time":20}
       ]
     },
-    {"group":"Transport","items":[{"id":"m_voranm","label":"Klinik voranmelden","time":30}]}
+    {
+      "group": "Transport",
+      "items": [
+        {"id":"m_rtw","label":"Mit Trage in den RTW bringen","time":90},
+        {"id":"m_laufen","label":"Zum RTW laufen lassen","time":30},
+        {"id":"m_voranm","label":"Klinik voranmelden","time":30}
+      ]
+    }
   ],
   "rea": [
     {

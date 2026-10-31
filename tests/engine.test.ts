@@ -346,4 +346,50 @@ describe('Opioid-Intoxikation', () => {
     expect(run({ catheter: false })).toContain('paravenös');
     expect(run({ corrections: 2 })).toContain('2×');
   });
+
 });
+
+describe('Einsatzort und Wetter', () => {
+  it('Startort aus dem Fall, RTW-Aktion wechselt den Ort, zweites Mal nur Hinweis', () => {
+    const g = new Game(caseById('poly')!, { worsen: false, detail: false });
+    expect(g.s.place).toBe('landstrasse');
+    expect(g.scene()).toContain('Landstraße');
+    g.act('m_rtw'); answerPrompts(g);
+    expect(g.s.place).toBe('rtw');
+    expect(g.log.some((l) => l.text.includes('Trage im RTW'))).toBe(true);
+    const n = g.log.length;
+    g.act('m_rtw'); answerPrompts(g);
+    expect(g.log.slice(n).some((l) => l.text.includes('schon im RTW'))).toBe(true);
+  });
+  it('Wetter kühlt nur draußen aus', () => {
+    const c = { ...caseById('poly')!, problems: [], scene: { place: 'landstrasse', weather: ['snow'] } };
+    const g = new Game(c, { worsen: true, detail: false });
+    const t0 = g.s.v.temp;
+    g.advance(600);
+    expect(g.s.v.temp).toBeLessThan(t0 - 0.3);
+    g.act('m_rtw'); answerPrompts(g);
+    const t1 = g.s.v.temp;
+    g.advance(600);
+    expect(g.s.v.temp).toBeCloseTo(t1, 5);
+  });
+  it('Gaffer und zweiter Patient nur an belebten Orten, Ortsereignisse passen zum Ort', () => {
+    for (let i = 0; i < 40; i++) {
+      const home = new Game(caseById('acs')!, { worsen: false, detail: false }).moments.map((m) => m.id);
+      expect(home.some((id) => /gaffer|zweiter|zug|regen|kollegen/.test(id))).toBe(false);
+      const ubahn = new Game(caseById('krampf')!, { worsen: false, detail: false }).moments.map((m) => m.id);
+      expect(ubahn.some((id) => /hund|regen|kollegen/.test(id))).toBe(false);
+    }
+  });
+  it('Story-Fall Parkbank: erst im Warmen wach genug für Glucose oral', () => {
+    const g = new Game(caseById('parkbank')!, { worsen: true, detail: false });
+    expect(isOutdoor(g)).toBe(true);
+    for (const id of ['sss', 'ansprechen', 'e_body', 'd_bz', 'm_rtw', 'm_waerme']) { g.act(id); answerPrompts(g); }
+    expect(g.s.place).toBe('rtw');
+    g.advance(200); g.act('d_gcs'); answerPrompts(g);
+    expect(g.s.flags.klar).toBe(true);
+    g.act('m_gluc_oral'); answerPrompts(g);
+    expect(g.s.fixed.hypo).toBe(true);
+    expect(g.s.events.filter((e) => e.pts < 0).every((e) => !e.text.includes('Aspiration'))).toBe(true);
+  });
+});
+const isOutdoor = (g: Game) => g.scene().includes('Park');

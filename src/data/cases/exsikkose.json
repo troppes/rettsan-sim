@@ -220,5 +220,6 @@
       ]
     }
   ],
-  "oddEcg": true
+  "oddEcg": true,
+  "scene": {"place":"wohnung"}
 }

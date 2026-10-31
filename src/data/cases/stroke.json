@@ -209,5 +209,6 @@
         "Diesmal: Wake-up-Stroke. Beginn = zuletzt gesund gesehen (gestern 22 Uhr), nicht der Fund. Trotzdem Stroke Unit: Bildgebung kann Therapie noch möglich machen."
       ]
     }
-  ]
+  ],
+  "scene": {"place":"wohnung"}
 }

@@ -530,7 +530,7 @@
           {
             "id": "unterarm",
             "x": 150,
-            "y": 62,
+            "y": 74,
             "r": 16,
             "quality": "good",
             "label": "Gerade Vene am Unterarm",
@@ -539,7 +539,7 @@
           {
             "id": "hand",
             "x": 262,
-            "y": 58,
+            "y": 70,
             "r": 12,
             "quality": "ok",
             "label": "Kleine Vene am Handrücken",
@@ -548,7 +548,7 @@
           {
             "id": "ellenbeuge",
             "x": 48,
-            "y": 60,
+            "y": 72,
             "r": 14,
             "quality": "ok",
             "label": "Ellenbeuge",
@@ -557,7 +557,7 @@
           {
             "id": "gabel",
             "x": 205,
-            "y": 70,
+            "y": 82,
             "r": 12,
             "quality": "bad",
             "label": "Venengabel",
@@ -566,11 +566,11 @@
           {
             "id": "arterie",
             "x": 238,
-            "y": 96,
+            "y": 108,
             "r": 10,
             "quality": "bad",
             "label": "Pulsierendes Gefäß am Handgelenk",
-            "why": "Das pulsiert: eine Arterie (A. radialis). Nie punktieren!"
+            "why": "Hellrotes, pulsierendes Blut: Arterie (A. radialis) getroffen. Sofort raus, mindestens 5 Minuten fest abdrücken, Arzt informieren."
           }
         ],
         "wait": 4,
@@ -586,7 +586,7 @@
         "texts": {
           "stauOk": "Venös gestaut, der Radialispuls bleibt tastbar.",
           "stauBad": "Zu fest gestaut: Ohne Radialispuls fließt kein Blut nach, die Venen füllen sich schlecht.",
-          "early": "Zu früh punktiert: Die Einwirkzeit des Desinfektionsmittels nicht abgewartet.",
+          "early": "Zu früh punktiert: Die Einwirkzeit des Desinfektionsmittels war nicht abgewartet (oder es wurde gar nicht desinfiziert).",
           "retouched": "Nach dem Desinfizieren nochmal getastet: Die Stelle ist wieder kontaminiert.",
           "hygieneOk": "Desinfiziert, Einwirkzeit abgewartet, nicht mehr getastet.",
           "angleOk": "Stichwinkel {angle}° (ideal 15–30°).",
@@ -594,7 +594,7 @@
           "angleSteep": "Stichwinkel {angle}°: zu steil, da sticht man leicht durch die Vene durch.",
           "hitIn": "Treffer: Blut in der Rückflusskammer.",
           "hitThrough": "Durchgestochen: Die Hinterwand der Vene ist verletzt, es bildet sich ein Hämatom (Vene „geplatzt“). Stau lösen, Kanüle raus, abdrücken, neue Stelle weiter proximal.",
-          "hitShort": "Zu früh gestoppt: noch nicht in der Vene, kein Rückfluss.",
+          "hitShort": "Nicht tief genug: noch nicht in der Vene, kein Rückfluss.",
           "orderOk": "Reihenfolge nach dem Treffer richtig.",
           "orderBad": "Reihenfolge: {right}.",
           "score": "i.v.-Zugang: {pts} von {max} Punkten",
@@ -604,10 +604,13 @@
           "aimCorrected": "Erst daneben, dann {n}× zurückgezogen und neu gezielt. Geht, tut aber weh und reizt die Vene.",
           "aimMiss": "Daneben gestochen: Die Kanüle lief seitlich an der Vene vorbei.",
           "hitBeside": "Kein Rückfluss, die Vene wurde nicht getroffen. Abbrechen, abdrücken, neu punktieren.",
-          "catheterOk": "Nach dem Rückfluss Winkel abgesenkt und noch ein Stück vorgeschoben: Die Kunststoffkanüle sitzt in der Vene.",
-          "catheterPara": "Kunststoffkanüle paravenös: Beim ersten Blut liegt nur die Stahlspitze in der Vene, die Kunststoffkanüle endet etwas dahinter. Erst Winkel absenken und 2–3 mm weiter vorschieben, dann die Kunststoffkanüle vorschieben."
+          "catheterOk": "Nach dem Rückfluss noch ein Stück nachgeschoben: Die Kunststoffkanüle sitzt in der Vene.",
+          "catheterPara": "Kunststoffkanüle paravenös: Beim ersten Blut liegt nur die Stahlspitze in der Vene, die Kunststoffkanüle endet ein Stück dahinter. Nach dem Rückfluss noch 2–3 mm flach nachschieben, dann erst die Kunststoffkanüle vorschieben.",
+          "stauNone": "Nicht gestaut: Die Venen sind kaum gefüllt und schwer zu treffen.",
+          "offSite": "Außerhalb der desinfizierten Stelle (oder ganz ohne Desinfektion) gestochen.",
+          "wrongDir": "Gegen den Blutfluss gestochen: Die Kanüle zeigt Richtung Hand. Immer in Richtung Herz punktieren."
         },
-        "catheter": 7
+        "catheter": 5
       }
     },
     "m_o2_mask": {

@@ -1,291 +1,290 @@
 <script lang="ts">
-  /* i.v.-Zugang als Minispiel: stauen → Vene wählen → desinfizieren → Winkel wählen und
-     vorschieben, bis Blut kommt → Reihenfolge nach dem Treffer. */
+  /* i.v.-Zugang wie am Tablett: Werkzeug wählen und direkt am Arm benutzen.
+     Stauband, Tasten, Desinfizieren, Haut straffen, dann mit der Kanüle auf den Arm drücken und
+     in Stichrichtung ziehen: Die Zugrichtung ist die Stichrichtung, die Zuglänge der Vorschub.
+     Die kleine Seitenansicht zeigt die Tiefe. Blut kommt leicht verzögert, zu weit = durchgestochen. */
   import type { Game } from '../lib/engine/game';
   import type { Prompt } from '../lib/engine/state';
   import { shuffle } from '../lib/util';
+  import { onMount } from 'svelte';
 
   let { game, prompt }: { game: Game; prompt: Extract<Prompt, { kind: 'iv' }> } = $props();
   const cfg = $derived(prompt.cfg);
 
-  type Phase = 'stau' | 'vene' | 'desinf' | 'ziel' | 'stich' | 'order' | 'done';
-  let phase = $state<Phase>('stau');
-  let stauOk = $state(false);
-  let vein = $state<string | null>(null);
-  let miss = $state('');
-  let early = $state(false);
-  let retouched = $state(false);
+  type Tool = 'stau' | 'tasten' | 'spray' | 'daumen' | 'nadel';
+  let tool = $state<Tool>('stau');
+  let stau = $state<'none' | 'ok' | 'tight'>('none');
+  let askStau = $state(false);
+  let spray = $state<{ x: number; y: number } | null>(null);
   let left = $state(0);
-  let sprayed = $state(false);
-  let angle = $state(40);
-  let pushing = $state(false);
-  let wasIn = $state(false);
-  let hit = $state<'in' | 'through' | 'short' | 'beside' | null>(null);
-  let picked = $state<string[]>([]);
-  let orderItems = $state<string[]>([]);
+  let retouched = $state(false);
+  let feel = $state<{ x: number; y: number; t: number } | null>(null);
+  let thumb = $state<{ x: number; y: number } | null>(null);
+  let angle = $state(20);
+  let msg = $state('');
 
-  /* ---------- Phase 1: stauen */
-  function stau(ok: boolean) { stauOk = ok; phase = 'vene'; }
+  /* ---------- Gefäße (Mittellinien), Roll-Versatz */
+  const VEINS = ['M12 72 Q100 69 150 74 Q185 78 205 82', 'M205 82 Q235 74 268 69', 'M205 82 Q232 92 252 98'];
+  const ARTERY = 'M196 118 Q222 115 252 113';
+  let pts: { x: number; y: number }[] = [];
+  let art: { x: number; y: number }[] = [];
+  let roll = $state(0);
+  let probe = $state<SVGPathElement[]>([]);
+  let probeA = $state<SVGPathElement>();
+  onMount(() => {
+    const sample = (p: SVGPathElement) => { const n = p.getTotalLength(); return Array.from({ length: Math.ceil(n / 2) + 1 }, (_, i) => p.getPointAtLength(Math.min(n, i * 2))).map((q) => ({ x: q.x, y: q.y })); };
+    pts = probe.flatMap(sample);
+    if (probeA) art = sample(probeA);
+  });
+  const dist = (list: { x: number; y: number }[], x: number, y: number, dy = 0) => list.reduce((m, q) => Math.min(m, Math.hypot(q.x - x, q.y + dy - y)), 1e9);
 
-  /* ---------- Phase 2: Vene antippen */
+  /* ---------- Tiefe und Treffer */
+  const VD = 4; // Tiefe der Venenmitte
+  const K = 0.35; // Vorschub → Tiefe
+  const R = $derived((stau === 'ok' ? 2 : stau === 'tight' ? 1.4 : 1.1));
+  const W = $derived(R * 2.4); // halbe Venenbreite von oben
+
+  let S = $state<{ x: number; y: number } | null>(null); // Einstichstelle
+  let dir = $state<{ x: number; y: number } | null>(null);
+  let s = $state(0); // Vorschub entlang der Stichrichtung
+  let base = 0;
+  let D0: { x: number; y: number } | null = null;
+  let dragging = $state(false);
+  let usedAngle = 0;
+  let early = false, offSite = false, wrongDir = false;
+  let tensioned = false;
+  let corrections = $state(0);
+  let flashAt: number | null = null; // Vorschub beim Eintritt in die Vene
+  let flash = $state(false);
+  let arterial = $state(false);
+  let hema = $state(0);
+  let done = $state<'through' | 'in' | null>(null);
+  let siteId = '';
+
+  const rad = $derived((angle * Math.PI) / 180);
+  const tip = $derived(S && dir ? { x: S.x + dir.x * s * Math.cos(rad), y: S.y + dir.y * s * Math.cos(rad) } : null);
+  const depth = $derived(s * Math.sin(rad) * K);
+  const lateral = $derived(tip ? dist(pts, tip.x, tip.y, roll) : 1e9);
+  const inVein = $derived(!!tip && lateral <= W && Math.abs(depth - VD) < R);
+  const inArtery = $derived(!!tip && dist(art, tip.x, tip.y) <= 3.5 && Math.abs(depth - VD) < 1.6);
+
+  /** Nadel von oben: Spitze, Ende (Kammer) und Ende der Kunststoffkanüle */
+  const ng = $derived.by(() => {
+    if (!S) return { tx: 0, ty: 0, bx: 0, by: 0, cx: 0, cy: 0 };
+    const tx = tip?.x ?? S.x, ty = tip?.y ?? S.y;
+    const bx = dir ? tx - dir.x * 80 : S.x + 50, by = dir ? ty - dir.y * 80 : S.y;
+    return { tx, ty, bx, by, cx: dir ? tx - dir.x * 6 : tx, cy: dir ? ty - dir.y * 6 : ty };
+  });
+  function svgPoint(ev: PointerEvent) {
+    const m = arm!.getScreenCTM()!;
+    const q = new DOMPoint(ev.clientX, ev.clientY).matrixTransform(m.inverse());
+    return { x: q.x, y: q.y };
+  }
   let arm = $state<SVGSVGElement>();
-  function tapArm(ev: PointerEvent) {
-    if (phase !== 'vene' || !arm) return;
-    const m = arm.getScreenCTM();
-    if (!m) return;
-    const pt = new DOMPoint(ev.clientX, ev.clientY).matrixTransform(m.inverse());
-    const v = cfg.veins.find((x) => Math.hypot(pt.x - x.x, pt.y - x.y) <= x.r);
-    if (!v) { miss = 'Da ist keine Vene zu tasten.'; return; }
-    miss = '';
-    vein = v.id;
-    phase = 'desinf';
-  }
-
-  /* ---------- Phase 3: desinfizieren und Einwirkzeit */
   let timer: ReturnType<typeof setInterval> | undefined;
-  function spray() {
-    sprayed = true;
-    left = cfg.wait;
-    clearInterval(timer);
-    timer = setInterval(() => { left = Math.max(0, left - 1); if (!left) clearInterval(timer); }, 1000);
-  }
-  function touch() { retouched = true; sprayed = false; left = 0; clearInterval(timer); }
-  function toStich() {
-    if (left > 0) early = true;
-    clearInterval(timer);
-    phase = 'ziel';
-  }
   $effect(() => () => clearInterval(timer));
 
-  /* ---------- Phase 4: Zielen (Draufsicht). Die Vene schlängelt sich, ohne gestraffte Haut rollt sie weg. */
-  const veinQ = $derived(cfg.veins.find((v) => v.id === vein)?.quality ?? 'ok');
-  const W = $derived(veinQ === 'good' ? 8 : veinQ === 'ok' ? 6 : 5); // halbe Venenbreite in der Draufsicht
-  const D = 34; // so weit vor der Einstichstelle erreicht die Spitze die Vene
-  const shape = { cy: 62 + Math.random() * 26, amp: 4 + Math.random() * 9, f: 0.018 + Math.random() * 0.02, ph: Math.random() * 6.28 };
-  let roll = $state(0);
-  const veinY = (x: number) => shape.cy + roll + shape.amp * Math.sin(x * shape.f + shape.ph);
-  const veinPath = $derived(Array.from({ length: 31 }, (_, i) => `${i ? 'L' : 'M'}${i * 10} ${veinY(i * 10).toFixed(1)}`).join(' '));
-  let aim = $state<{ x: number; y: number } | null>(null);
-  let tensioned = $state(false);
-  let corrections = $state(0);
-  let rolled = $state(false);
-  let beside = $state(false);
-  let top = $state<SVGSVGElement>();
-  function tapTop(ev: PointerEvent) {
-    if (phase !== 'ziel' || !top) return;
-    const m = top.getScreenCTM();
-    if (!m) return;
-    const q = new DOMPoint(ev.clientX, ev.clientY).matrixTransform(m.inverse());
-    aim = { x: Math.max(D + 20, Math.min(280, q.x)), y: Math.max(10, Math.min(140, q.y)) };
-  }
-  const nudge = (dy: number) => { if (aim) aim = { ...aim, y: aim.y + dy }; };
-  function einstechen() {
-    if (!aim) return;
-    let justRolled = false;
-    if (!tensioned && !rolled && Math.random() < 0.65) {
-      rolled = true; justRolled = true;
-      roll = (Math.random() < 0.5 ? -1 : 1) * (W + 3 + Math.random() * 6);
+  function down(ev: PointerEvent) {
+    if (!arm || done || flash && !dragging && tool !== 'nadel') return;
+    const q = svgPoint(ev);
+    msg = '';
+    if (tool === 'stau') { askStau = true; return; }
+    if (tool === 'tasten') {
+      if (spray) retouched = true;
+      feel = { x: q.x, y: q.y, t: Date.now() };
+      setTimeout(() => (feel = null), 1500);
+      const near = dist(pts, q.x, q.y, roll) <= 9 || dist(art, q.x, q.y) <= 6;
+      msg = dist(art, q.x, q.y) <= 6 ? 'Hier pulsiert es: eine Arterie!' : near ? (stau === 'ok' ? 'Prall gefüllte Vene, gut tastbar.' : 'Eine Vene, aber schlecht gefüllt.') : 'Hier tastest du keine Vene.';
+      return;
     }
-    beside = Math.abs(aim.y - veinY(aim.x - D)) > W;
-    // Seitenansicht neu aufbauen
-    tip = { x: EX - 8 * Math.cos(rad0()), y: SKIN - 8 * Math.sin(rad0()) };
-    a = angle; inDist = 0; wasIn = false; flash = false; hit = null; hematoma = 0;
-    setTimeout(() => (phase = 'stich'), justRolled ? 900 : 0);
+    if (tool === 'spray') {
+      spray = q; retouched = false; left = cfg.wait;
+      clearInterval(timer);
+      timer = setInterval(() => { left = Math.max(0, left - 1); if (!left) clearInterval(timer); }, 1000);
+      return;
+    }
+    if (tool === 'daumen') { thumb = q; return; }
+    // Kanüle
+    (ev.currentTarget as Element).setPointerCapture?.(ev.pointerId);
+    dragging = true;
+    if (!S) {
+      S = q; dir = null; s = 0; base = 0; D0 = q; usedAngle = angle;
+      early = !spray || left > 0;
+      offSite = !spray || Math.hypot(q.x - spray.x, q.y - spray.y) > 24;
+      tensioned = !!thumb && thumb.x > q.x + 10 && Math.hypot(thumb.x - q.x, thumb.y - q.y) < 80;
+    } else { base = s; D0 = q; }
   }
-
-  /* ---------- Phase 5: Seitenansicht, vorschieben bis Blut kommt, Winkel absenken, nachschieben */
-  const SKIN = 40, EX = 60;
-  const VY = 70 + Math.random() * 18;
-  const R = $derived(veinQ === 'good' ? 7 : veinQ === 'ok' ? 6 : 5);
-  let a = $state(25); // aktueller Winkel (sinkt beim Absenken)
-  const rad0 = () => (angle * Math.PI) / 180;
-  const rad = $derived((a * Math.PI) / 180);
-  let tip = $state({ x: EX, y: SKIN });
-  let inDist = $state(0);
-  let flash = $state(false);
-  let hematoma = $state(0);
-  const lumen = (y: number) => y > VY - R && y < VY + R;
-  const tipIn = $derived(!beside && lumen(tip.y));
-  const tail = $derived({ x: tip.x - 130 * Math.cos(rad), y: tip.y - 130 * Math.sin(rad) });
-  const under = $derived(tip.y > SKIN);
-
-  $effect(() => {
-    if (!pushing) return;
-    let last = performance.now();
-    let raf = 0;
-    const loop = (now: number) => {
-      const d = ((now - last) / 1000) * 22;
-      last = now;
-      tip = { x: tip.x + d * Math.cos(rad), y: tip.y + d * Math.sin(rad) };
-      if (!beside && lumen(tip.y)) {
-        inDist += d;
-        if (!wasIn) { wasIn = true; setTimeout(() => (flash = true), 350); }
-      } else if (!beside && wasIn && tip.y >= VY + R) {
-        pushing = false; hit = 'through'; flash = true;
-        const grow = setInterval(() => { hematoma = Math.min(26, hematoma + 2); if (hematoma >= 26) clearInterval(grow); }, 80);
-        return;
-      }
-      if (tip.y > 128 || tip.x > 296) { pushing = false; return; }
-      raf = requestAnimationFrame(loop);
-    };
-    raf = requestAnimationFrame(loop);
-    return () => cancelAnimationFrame(raf);
-  });
-  /** Winkel absenken: Spitze bleibt, die Kanüle wird flacher */
-  function lower() { a = Math.max(5, a - 10); }
-  function vorschieben() {
-    pushing = false;
-    if (beside) hit = 'beside';
-    else if (tipIn) hit = 'in';
-    else hit = wasIn ? 'through' : 'short';
-    if (hit === 'in' && inDist >= cfg.catheter) { orderItems = shuffle(cfg.order); phase = 'order'; } else finish(false);
+  function move(ev: PointerEvent) {
+    if (!dragging || !S || !D0 || done) return;
+    const q = svgPoint(ev);
+    if (!dir) {
+      const dx = q.x - S.x, dy = q.y - S.y, n = Math.hypot(dx, dy);
+      if (n < 6) return;
+      dir = { x: dx / n, y: dy / n };
+      wrongDir = dir.x > 0.3; // Richtung Hand = gegen den Blutfluss
+      if (!tensioned && Math.random() < 0.6) roll = (Math.random() < 0.5 ? -1 : 1) * (W + 3 + Math.random() * 5);
+    }
+    s = Math.max(0, base + (q.x - D0.x) * dir.x + (q.y - D0.y) * dir.y);
+    if (inArtery && !arterial) { arterial = true; flash = true; siteId = 'arterie'; dragging = false; return; }
+    if (inVein && flashAt == null) {
+      flashAt = s;
+      const v = cfg.veins.reduce((b, x) => (Math.hypot(x.x - tip!.x, x.y - tip!.y) < Math.hypot(b.x - tip!.x, b.y - tip!.y) ? x : b));
+      siteId = v.id;
+      setTimeout(() => (flash = true), 300);
+    }
+    if (flashAt != null && depth >= VD + R && lateral <= W) {
+      dragging = false; done = 'through'; flash = true;
+      const grow = setInterval(() => { hema = Math.min(18, hema + 1.5); if (hema >= 18) clearInterval(grow); }, 70);
+    }
   }
+  function up() { dragging = false; }
+
   function retry() {
-    pushing = false;
-    corrections++;
-    phase = 'ziel';
+    corrections++; S = null; dir = null; s = 0; flashAt = null; flash = false; msg = 'Zurückgezogen. Neu ansetzen, ohne nochmal zu tasten.';
   }
-
-  /* ---------- Phase 5: Reihenfolge */
+  let picked = $state<string[]>([]);
+  let orderItems = $state<string[]>([]);
+  let catheter = $state(false);
+  function vorschieben() {
+    catheter = inVein && flashAt != null && s - flashAt >= cfg.catheter;
+    done = 'in';
+    if (catheter) orderItems = shuffle(cfg.order); else finish('in');
+  }
   function pick(t: string) {
     if (picked.includes(t)) return;
     picked = [...picked, t];
-    if (picked.length === cfg.order.length) finish(true);
+    if (picked.length === cfg.order.length) finish('in');
   }
-
-  function finish(catheter: boolean) {
-    phase = 'done';
-    game.ivDone({ stauOk, vein: vein ?? '', early, retouched, tensioned, corrections, angle, hit: hit ?? 'short', catheter, order: picked });
+  let finished = false;
+  function finish(hit: 'in' | 'through' | 'short' | 'beside') {
+    if (finished) return;
+    finished = true;
+    game.ivDone({
+      stauOk: stau === 'ok', noStau: stau === 'none', vein: siteId || 'unterarm', early, retouched, offSite, wrongDir,
+      tensioned, corrections, angle: usedAngle, hit: arterial ? 'in' : hit, catheter, order: picked,
+    });
   }
+  const hint = $derived(
+    done === 'through' ? 'Durchgestochen, es bildet sich ein Hämatom.'
+    : arterial ? 'Hellrotes, pulsierendes Blut: Arterie getroffen!'
+    : flash ? 'Blut in der Kammer! Noch ein kleines Stück nachschieben, dann loslassen und die Kunststoffkanüle vorschieben.'
+    : S ? 'Weiter in Stichrichtung ziehen. Erneut drücken und ziehen schiebt weiter, zurückziehen geht auch.'
+    : tool === 'nadel' ? 'Auf die Einstichstelle drücken und in Stichrichtung ziehen (zum Herzen hin).'
+    : 'Werkzeug wählen und am Arm benutzen. Reihenfolge und Hygiene entscheidest du.',
+  );
 </script>
 
-{#if phase === 'stau'}
-  <p class="hint">Material liegt bereit, Handschuhe sind an. Wie staust du?</p>
-  <div class="options">
-    <button class="opt" onclick={() => stau(true)}>Stauband anlegen, nur so fest, dass der Radialispuls tastbar bleibt</button>
-    <button class="opt" onclick={() => stau(false)}>Stauband richtig fest anziehen, bis kein Puls mehr tastbar ist</button>
-  </div>
-{:else if phase === 'vene' || phase === 'desinf'}
-  <p class="hint">{phase === 'vene' ? 'Tippe auf die Stelle, die du punktieren willst.' : 'Desinfizieren und die Einwirkzeit abwarten.'}</p>
-  <svg bind:this={arm} class="iv-arm" viewBox="0 0 300 130" role="img" aria-label="Unterarm, Handinnenseite" onpointerdown={tapArm}>
-    <path class="skin" d="M10 40 Q120 30 240 42 L296 36 Q300 70 296 104 L240 98 Q120 112 10 104 Z" />
-    <path class="crease" d="M58 38 Q62 72 58 104" />
-    <g class="veins" class:filled={stauOk}>
-      <path d="M12 60 Q100 57 150 62 Q185 66 205 70" />
-      <path d="M205 70 Q235 62 268 57" />
-      <path d="M205 70 Q232 80 252 86" />
+<p class="hint ivhint">{hint}</p>
+<div class="iv-wrap">
+  <svg bind:this={arm} class="iv-arm" viewBox="0 0 300 150" role="img" aria-label="Unterarm von oben"
+    onpointerdown={down} onpointermove={move} onpointerup={up} onpointercancel={up}>
+    <path class="skin" d="M4 50 Q120 40 240 52 L298 46 Q302 84 298 124 L240 118 Q120 132 4 124 Z" />
+    <path class="crease" d="M58 46 Q62 86 58 124" />
+    <g class="veins" class:filled={stau === 'ok'} class:tight={stau === 'tight'} style="transform: translateY({roll}px)">
+      {#each VEINS as d, i (i)}<path {d} bind:this={probe[i]} />{/each}
     </g>
-    <path class="artery" d="M196 100 Q222 97 252 95" />
-    {#if stauOk}<rect class="band" x="20" y="34" width="10" height="74" rx="3" />{:else}<rect class="band tight" x="20" y="32" width="12" height="78" rx="3" />{/if}
-    {#if vein}
-      {@const v = cfg.veins.find((x) => x.id === vein)!}
-      <circle class="spot" cx={v.x} cy={v.y} r="7" />
-      {#if sprayed}<circle class="wet" cx={v.x} cy={v.y} r="16" />{/if}
+    <path class="artery" d={ARTERY} bind:this={probeA} />
+    {#if stau !== 'none'}<rect class="band" class:tightband={stau === 'tight'} x="18" y="40" width="11" height="90" rx="3" />{/if}
+    {#if spray}<circle class="wet" cx={spray.x} cy={spray.y} r="24" />{/if}
+    {#if feel}<circle class="feel" cx={feel.x} cy={feel.y} r="9" />{/if}
+    {#if thumb}<text class="thumb" x={thumb.x - 8} y={thumb.y + 6}>👍</text>{/if}
+    {#if hema}<ellipse class="hema" cx={tip?.x ?? 0} cy={tip?.y ?? 0} rx={hema * 1.4} ry={hema} />{/if}
+    {#if S}
+      <line class="needle" x1={ng.bx} y1={ng.by} x2={ng.tx} y2={ng.ty} />
+      <line class="cath" x1={ng.bx} y1={ng.by} x2={ng.cx} y2={ng.cy} />
+      <rect class="chamber" class:blood={flash} class:arterial x={ng.bx - 7} y={ng.by - 5} width="14" height="10" rx="2" />
+      <circle class="spot" cx={S.x} cy={S.y} r="2.5" />
     {/if}
   </svg>
-  {#if miss}<p class="hint warn">{miss}</p>{/if}
-  {#if phase === 'desinf'}
-    <div class="row">
-      <button class="btn small" onclick={spray}>🧴 Desinfizieren</button>
-      <button class="btn small ghost" onclick={touch}>☝️ Nochmal tasten</button>
-    </div>
-    <p class="hint">{#if sprayed}{left > 0 ? `${cfg.waitText}: noch ${left} s` : 'Trocken, Einwirkzeit vorbei.'}{:else}Noch nicht desinfiziert.{/if}</p>
-    <button class="btn wide accent" disabled={!sprayed} onclick={toStich}>Zum Punktieren</button>
+  {#if S}
+    <svg class="side" viewBox="0 0 120 60" aria-label="Seitenansicht">
+      <rect x="0" y="10" width="120" height="50" class="tissue" />
+      <line x1="0" y1="10" x2="120" y2="10" class="skinline" />
+      <rect x="0" y={10 + (VD - R) * 6} width="120" height={R * 12} class="lumen" class:off={lateral > W} class:hit={inVein} />
+      <line x1="20" y1="10" x2={20 + s * Math.cos(rad) * 1.6} y2={10 + depth * 6} class="needle" />
+    </svg>
   {/if}
-{:else if phase === 'ziel'}
-  <p class="hint">{corrections ? 'Zurückgezogen. Neu ausrichten:' : 'Ziel auf die Vene tippen, mit ▲▼ fein ausrichten.'} Die Spitze trifft erst ein Stück vor der Einstichstelle auf die Vene (gestrichelt).</p>
-  <svg bind:this={top} class="iv-top" viewBox="0 0 300 150" role="img" aria-label="Punktionsstelle von oben" onpointerdown={tapTop}>
-    <rect class="skin" x="0" y="0" width="300" height="150" rx="8" />
-    <path class="topvein" class:roll={rolled} d={veinPath} stroke-width={W * 2} />
-    {#if tensioned}<g class="thumb"><ellipse cx="292" cy={veinY(292)} rx="14" ry="20" /><text x="282" y={veinY(292) + 5}>👍</text></g>{/if}
-    {#if aim}
-      <line class="needle-top" x1={aim.x} y1={aim.y} x2={aim.x + 120} y2={aim.y} />
-      <line class="path-top" x1={aim.x - D} y1={aim.y} x2={aim.x} y2={aim.y} />
-      <circle class="tip-top" cx={aim.x - D} cy={aim.y} r="2.5" />
-      <circle class="spot" cx={aim.x} cy={aim.y} r="3" />
-    {/if}
-  </svg>
-  {#if rolled && roll}<p class="hint warn">Die Vene ist weggerollt!</p>{/if}
-  <div class="row">
-    <button class="btn small {tensioned ? 'set' : 'ghost'}" onclick={() => (tensioned = !tensioned)}>👍 Haut straffen</button>
-    <button class="btn small ghost" disabled={!aim} onclick={() => nudge(-1)}>▲</button>
-    <button class="btn small ghost" disabled={!aim} onclick={() => nudge(1)}>▼</button>
-  </div>
-  {#if !corrections}
-    <label class="angle">Winkel: <b>{angle}°</b><input type="range" min="5" max="60" bind:value={angle} /></label>
-  {/if}
-  <button class="btn wide accent" disabled={!aim} onclick={einstechen}>Einstechen</button>
-{:else if phase === 'stich'}
-  <p class="hint">{#if !flash}<b>Gedrückt halten</b> zum Vorschieben, bis Blut in der Kammer ist.{:else if hit === 'through'}Durchgestochen!{:else}Blut! Winkel absenken, noch ein Stück vorschieben, dann die Kunststoffkanüle vorschieben.{/if}</p>
-  <svg class="iv-cut" viewBox="0 0 300 130" role="img" aria-label="Seitenansicht Haut und Vene">
-    <rect class="tissue" x="0" y={SKIN} width="300" height={130 - SKIN} />
-    <line class="skinline" x1="0" y1={SKIN} x2="300" y2={SKIN} />
-    <rect class="vein-long" class:ghost={beside} class:hit={tipIn} x="0" y={VY - R} width="300" height={R * 2} rx={R} />
-    {#if hematoma}<ellipse class="hema" cx={tip.x} cy={VY + R} rx={hematoma * 1.6} ry={hematoma} />{/if}
-    <line class="needle" x1={tail.x} y1={tail.y} x2={tip.x} y2={tip.y} />
-    <line class="cath" x1={tail.x + 8 * Math.cos(rad)} y1={tail.y + 8 * Math.sin(rad)} x2={tip.x - cfg.catheter * Math.cos(rad)} y2={tip.y - cfg.catheter * Math.sin(rad)} />
-    <rect class="chamber" class:blood={flash && !beside} x={tail.x - 14} y={tail.y - 6} width="16" height="12" rx="2" transform="rotate({a} {tail.x} {tail.y})" />
-  </svg>
-  <p class="hint small">Winkel jetzt {a}° · Kunststoffkanüle (gelb) endet kurz hinter der Stahlspitze.</p>
-  {#if hit === 'through'}
-    <button class="btn wide accent" onclick={() => finish(false)}>Weiter</button>
-  {:else}
-    <div class="row">
-      <button class="btn accent push" onpointerdown={() => (pushing = true)} onpointerup={() => (pushing = false)} onpointerleave={() => (pushing = false)} oncontextmenu={(e) => e.preventDefault()}>Vorschieben (halten)</button>
-      <button class="btn small" disabled={!under || pushing} onclick={lower}>Winkel ↓</button>
-    </div>
-    <div class="row">
-      <button class="btn" disabled={!under || pushing} onclick={vorschieben}>Kunststoffkanüle vorschieben</button>
-      {#if under && !flash && corrections < 2}<button class="btn small ghost" disabled={pushing} onclick={retry}>Zurückziehen, neu zielen</button>{/if}
-    </div>
-  {/if}
-{:else if phase === 'order'}
-  <p class="hint">Blut in der Kammer! Was jetzt, in welcher Reihenfolge?</p>
-  <div class="order-picked">{#each picked as t, i (t)}<div class="op"><span class="n">{i + 1}.</span><span>{t}</span></div>{/each}</div>
-  <div class="options">{#each orderItems.filter((t) => !picked.includes(t)) as t (t)}<button class="opt" onclick={() => pick(t)}>{t}</button>{/each}</div>
-  {#if picked.length}<button class="btn small ghost" onclick={() => (picked = [])}>Zurücksetzen</button>{/if}
-{/if}
+</div>
+{#if msg}<p class="hint warn">{msg}</p>{/if}
 
+<div class="iv-controls">
 {#if prompt.result}
   <div class="place-result">
     {#each prompt.result.lines as l, i (i)}<div class="op {l.ok ? 'right' : 'wrong'}">{l.ok ? '✓' : '✗'}&nbsp;{l.text}</div>{/each}
   </div>
   <button class="btn wide accent" onclick={() => game.next()}>Weiter</button>
+{:else if orderItems.length}
+  <p class="hint">Kanüle liegt. Was jetzt, in welcher Reihenfolge?</p>
+  <div class="order-picked">{#each picked as t, i (t)}<div class="op"><span class="n">{i + 1}.</span><span>{t}</span></div>{/each}</div>
+  <div class="options">{#each orderItems.filter((t) => !picked.includes(t)) as t (t)}<button class="opt" onclick={() => pick(t)}>{t}</button>{/each}</div>
+{:else if done === 'through'}
+  <button class="btn wide accent" onclick={() => finish('through')}>Abbrechen, abdrücken</button>
+{:else if arterial}
+  <button class="btn wide accent" onclick={() => finish('in')}>Sofort raus, fest abdrücken</button>
+{:else if askStau}
+  <div class="options">
+    <button class="opt" onclick={() => { stau = 'ok'; askStau = false; }}>Venös stauen: Radialispuls bleibt tastbar</button>
+    <button class="opt" onclick={() => { stau = 'tight'; askStau = false; }}>Richtig fest, bis kein Puls mehr tastbar ist</button>
+  </div>
+{:else if S && !dragging}
+  <div class="row">
+    <button class="btn accent" disabled={!flash} onclick={vorschieben}>Kunststoffkanüle vorschieben</button>
+    {#if !flash && corrections < 2}<button class="btn small ghost" onclick={retry}>Zurückziehen, neu ansetzen</button>{/if}
+    {#if !flash}<button class="btn small ghost" onclick={() => finish(s > 0 ? 'beside' : 'short')}>Abbrechen</button>{/if}
+  </div>
+{:else if !S}
+  <div class="tools">
+    {#each [['stau', '🎗️', 'Stauband'], ['tasten', '☝️', 'Tasten'], ['spray', '🧴', 'Desinfizieren'], ['daumen', '👍', 'Haut straffen'], ['nadel', '💉', 'Kanüle']] as [k, ic, l] (k)}
+      <button class="tool {tool === k ? 'active' : ''}" onclick={() => { tool = k as Tool; msg = ''; }}><span>{ic}</span>{l}</button>
+    {/each}
+  </div>
+  {#if spray}<p class="hint small">{left > 0 ? `Einwirkzeit: noch ${left} s` : 'Desinfektion trocken.'}</p>{/if}
+  {#if tool === 'nadel'}
+    <div class="angles">Stichwinkel:
+      {#each [10, 20, 30, 45] as a (a)}<button class="chip {angle === a ? 'active' : ''}" onclick={() => (angle = a)}>{a}°</button>{/each}
+    </div>
+  {/if}
 {/if}
+</div>
 
 <style>
-  .iv-arm, .iv-cut { display: block; width: 100%; max-width: 420px; margin: 6px auto; touch-action: manipulation; user-select: none; -webkit-user-select: none; }
+  .iv-wrap { position: relative; }
+  .ivhint { min-height: 4.4em; }
+  .iv-controls { min-height: 170px; }
+  .iv-arm { display: block; width: 100%; max-width: 460px; margin: 6px auto; touch-action: none; user-select: none; -webkit-user-select: none; }
+  .side { position: absolute; right: 4px; top: 4px; width: 34%; max-width: 150px; border-radius: 8px; border: 1px solid #0003; background: #f0cdb2; }
   .skin { fill: #ecc6a6; stroke: #b48d72; }
   .crease { fill: none; stroke: #b48d72; stroke-width: 1; opacity: 0.6; }
-  .veins path { fill: none; stroke: #6c86c4; stroke-width: 2.5; opacity: 0.35; stroke-linecap: round; }
-  .veins.filled path { stroke-width: 5; opacity: 0.8; }
-  .artery { fill: none; stroke: #c0504d; stroke-width: 2.5; opacity: 0.5; animation: puls 0.85s ease-in-out infinite; }
-  @keyframes puls { 50% { stroke-width: 4; opacity: 0.85; } }
+  .veins { transition: transform 0.4s; }
+  .veins path { fill: none; stroke: #6c86c4; stroke-width: 3; opacity: 0.3; stroke-linecap: round; }
+  .veins.filled path { stroke-width: 6; opacity: 0.75; }
+  .veins.tight path { stroke-width: 4; opacity: 0.45; }
+  .artery { fill: none; stroke: #c0504d; stroke-width: 2.5; opacity: 0.45; animation: puls 0.85s ease-in-out infinite; }
+  @keyframes puls { 50% { stroke-width: 4; opacity: 0.8; } }
   .band { fill: #3f8cff; }
-  .band.tight { fill: #ff5a4e; }
-  .spot { fill: none; stroke: #fff; stroke-width: 2; }
-  .wet { fill: #9fd8ff55; stroke: #9fd8ff; stroke-width: 1; }
+  .band.tightband { fill: #ff5a4e; }
+  .wet { fill: #9fd8ff44; stroke: #9fd8ff; stroke-width: 1; }
+  .feel { fill: none; stroke: #fff; stroke-width: 1.5; stroke-dasharray: 2 2; }
+  .thumb { font-size: 16px; }
+  .hema { fill: #5b1f3a; opacity: 0.6; }
+  .needle { stroke: #cfd6de; stroke-width: 2.5; stroke-linecap: round; }
+  .cath { stroke: #f2c94c; stroke-width: 4; stroke-linecap: round; opacity: 0.85; }
+  .chamber { fill: #ffffffcc; stroke: #888; }
+  .chamber.blood { fill: #8a1c1c; }
+  .chamber.arterial { fill: #ff2b2b; animation: puls 0.6s infinite; }
+  .spot { fill: #fff; }
   .tissue { fill: #f0cdb2; }
-  .skinline { stroke: #b48d72; stroke-width: 2; }
-  .vein-long { fill: #6c86c4; opacity: 0.8; }
-  .vein-long.hit { fill: #8a2b2b; }
-  .vein-long.ghost { opacity: 0.15; }
-  .hema { fill: #5b1f3a; opacity: 0.7; }
-  .cath { stroke: #f2c94c; stroke-width: 4.5; stroke-linecap: round; opacity: 0.9; }
-  .iv-top { display: block; width: 100%; max-width: 420px; margin: 6px auto; touch-action: manipulation; }
-  .topvein { fill: none; stroke: #6c86c4; opacity: 0.75; stroke-linecap: round; transition: d 0.5s; }
-  .needle-top { stroke: #cfd6de; stroke-width: 3; }
-  .path-top { stroke: #fff; stroke-width: 1.5; stroke-dasharray: 3 3; }
-  .tip-top { fill: #fff; }
-  .thumb ellipse { fill: #e2b591; stroke: #b48d72; }
-  .thumb text { font-size: 14px; }
+  .skinline { stroke: #b48d72; stroke-width: 1.5; }
+  .lumen { fill: #6c86c4; opacity: 0.8; }
+  .lumen.off { opacity: 0.15; }
+  .lumen.hit { fill: #8a2b2b; }
+  .tools { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; margin: 8px 0; }
+  .tool { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 8px 2px; border-radius: 12px; border: 1px solid var(--line); background: var(--bg2); font-size: 11px; color: inherit; }
+  .tool span { font-size: 22px; }
+  .tool.active { border-color: var(--accent2); box-shadow: 0 0 0 2px var(--accent2) inset; }
+  .angles { display: flex; gap: 6px; align-items: center; justify-content: center; flex-wrap: wrap; font-size: 14px; }
+  .angles .chip { padding: 6px 12px; border-radius: 999px; border: 1px solid var(--line); background: var(--bg2); color: inherit; }
+  .angles .chip.active { border-color: var(--accent2); box-shadow: 0 0 0 2px var(--accent2) inset; }
+  .warn { color: var(--warn); }
   .small { font-size: 13px; }
-  :global(.btn.set) { background: #173426; color: var(--good); }
-  .needle { stroke: #cfd6de; stroke-width: 3; stroke-linecap: round; }
-  .chamber { fill: #ffffffaa; stroke: #888; }
-  .chamber.blood { fill: #b71c1c; }
-  .angle { display: flex; gap: 10px; align-items: center; justify-content: center; font-size: 15px; }
-  .angle input { flex: 1; max-width: 220px; }
-  .push { flex: 1; touch-action: none; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
-  .warn { color: var(--bad); }
 </style>

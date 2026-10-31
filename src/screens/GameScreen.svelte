@@ -33,6 +33,7 @@
       prompt: game.prompt ? structuredClone($state.snapshot(game.prompt)) : null,
       mon: game.monitor(),
       status: game.s.status,
+      scene: game.scene(),
       face: game.face(),
       time: clock(game.s.time),
       score: game.score,
@@ -88,7 +89,7 @@
 
     <div class="patient card">
       <PatientFace look={c.look} face={view.face} />
-      <div class="pt-txt">{view.status}</div>
+      <div class="pt-txt"><div class="scene-chip">{view.scene}</div>{view.status}</div>
     </div>
 
     <div class="log" aria-live="polite" bind:this={logEl}>

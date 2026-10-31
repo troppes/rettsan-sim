@@ -309,5 +309,6 @@
       ]
     }
   ],
-  "oddEcg": true
+  "oddEcg": true,
+  "scene": {"place":"biergarten","weather":["mild","hot","rain"]}
 }

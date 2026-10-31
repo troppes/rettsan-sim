@@ -278,5 +278,6 @@
       ]
     }
   ],
-  "oddEcg": true
+  "oddEcg": true,
+  "scene": {"place":"landstrasse","weather":["mild","rain","cold"]}
 }

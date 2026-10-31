@@ -360,5 +360,6 @@
       ]
     }
   ],
-  "oddEcg": true
+  "oddEcg": true,
+  "scene": {"place":"buero"}
 }

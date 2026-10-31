@@ -56,6 +56,9 @@ export interface GameState {
   quickAsk: number;
   over: boolean;
   rea: ReaState | null;
+  /** Aktueller Ort (places.json) und Wetter (nur draußen relevant) */
+  place: string;
+  weather: string | null;
 }
 
 /* ------------------------------------------------------------ Dialoge */

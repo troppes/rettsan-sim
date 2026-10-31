@@ -1,0 +1,217 @@
+{
+  "places": {
+    "wohnung": {"label":"Wohnung","icon":"🏠","tags":["indoor","home"]},
+    "wohnheim": {"label":"Studentenwohnheim","icon":"🏠","tags":["indoor","home"]},
+    "buero": {"label":"Büro","icon":"🏢","tags":["indoor","work"]},
+    "biergarten": {"label":"Biergarten","icon":"🍺","tags":["outdoor","public","crowd"]},
+    "zielbereich": {"label":"Zielbereich Stadtlauf","icon":"🏃","tags":["outdoor","public","crowd"]},
+    "park": {"label":"Park","icon":"🌳","tags":["outdoor","public"]},
+    "ubahn": {"label":"U-Bahnhof","icon":"🚇","tags":["indoor","public","crowd","underground"]},
+    "bahnhofsklo": {"label":"Bahnhofstoilette","icon":"🚻","tags":["indoor","public","narrow"]},
+    "supermarkt": {"label":"Supermarkt","icon":"🛒","tags":["indoor","public","crowd"]},
+    "landstrasse": {"label":"Landstraße","icon":"🛣️","tags":["outdoor","public","crowd","road"]},
+    "rtw": {
+      "label": "Im RTW",
+      "icon": "🚑",
+      "tags": ["indoor","rtw","vehicle"],
+      "enter": "Patient liegt auf der Trage im RTW: trocken, warm, gutes Licht und keine Zuschauer."
+    }
+  },
+  "weather": {
+    "mild": {"label":"mild","icon":"⛅"},
+    "hot": {"label":"heiß","icon":"☀️","perMin":{"temp":0.02}},
+    "rain": {"label":"Regen","icon":"🌧️","perMin":{"temp":-0.03}},
+    "cold": {"label":"kalt","icon":"🥶","perMin":{"temp":-0.04}},
+    "snow": {"label":"Schnee","icon":"❄️","perMin":{"temp":-0.05}}
+  },
+  "rtwAction": "m_rtw",
+  "events": [
+    {
+      "id": "regen",
+      "who": "Wetter",
+      "if": {"all":[{"at":"outdoor"},{"weather":"rain"}]},
+      "say": "Es fängt an zu regnen, erst leicht, dann kräftig. Der Patient wird nass und beginnt zu frieren.",
+      "options": [
+        {
+          "t": "Zügig auf die Trage (bei Trauma immobilisiert) und in den RTW, dort weiter versorgen.",
+          "pts": 3,
+          "move": "rtw",
+          "reply": "Im RTW ist es trocken und warm."
+        },
+        {
+          "t": "Rettungsdecke drüber und draußen weitermachen.",
+          "pts": 1,
+          "why": "Besser als nichts, aber Nässe und Wind kühlen weiter aus. Wenn nichts dagegen spricht: in den RTW."
+        },
+        {
+          "t": "Weitermachen, das bisschen Regen.",
+          "pts": -2,
+          "delta": {"temp":-0.3},
+          "why": "Nässe entzieht dem Körper viel Wärme. Auskühlung verschlechtert Kreislauf und Gerinnung."
+        },
+        {
+          "t": "Er soll schnell selbst zum RTW laufen.",
+          "pts": -3,
+          "why": "Kranke oder Verletzte nicht selbst laufen lassen: Trage oder Tragestuhl."
+        }
+      ]
+    },
+    {
+      "id": "kaelte",
+      "who": "Wetter",
+      "if": {"all":[{"at":"outdoor"},{"any":[{"weather":"cold"},{"weather":"snow"}]}]},
+      "say": "Ein eisiger Wind fegt über die Einsatzstelle. Der Patient zittert stark und hat kalte, blasse Hände.",
+      "options": [
+        {
+          "t": "Wärmeerhalt (Decke, Kopf bedecken, vom Boden isolieren) und so bald wie möglich in den RTW.",
+          "pts": 3,
+          "move": "rtw",
+          "reply": "Im RTW läuft die Heizung, das Zittern lässt nach."
+        },
+        {
+          "t": "Nur die Jacke zumachen, das reicht.",
+          "pts": 0,
+          "why": "Zu wenig: Über den Boden und den Kopf verliert er viel Wärme. Decke, Isolation, RTW."
+        },
+        {
+          "t": "Kräftig Arme und Beine reiben, damit er warm wird.",
+          "pts": -2,
+          "why": "Reiben bringt kaltes Blut aus den Extremitäten zum Kern (Afterdrop) und hilft nicht. Passiv wärmen, Wärmeerhalt."
+        },
+        {
+          "t": "Ignorieren, die Versorgung geht vor.",
+          "pts": -2,
+          "delta": {"temp":-0.3},
+          "why": "Wärmeerhalt gehört zur Versorgung (E in xABCDE), besonders bei Trauma und alten Menschen."
+        }
+      ]
+    },
+    {
+      "id": "sonne",
+      "who": "Wetter",
+      "if": {"all":[{"at":"outdoor"},{"weather":"hot"}]},
+      "say": "Die Sonne knallt, nirgends Schatten. Der Patient schwitzt und wird unruhig, du selbst merkst die Hitze auch.",
+      "options": [
+        {
+          "t": "Schatten schaffen und den Patienten in den klimatisierten RTW bringen.",
+          "pts": 3,
+          "move": "rtw",
+          "reply": "Im RTW ist es kühl, er wird etwas ruhiger."
+        },
+        {
+          "t": "Ihm Wasser zum Trinken geben und draußen weitermachen.",
+          "pts": 0,
+          "why": "Trinken nur, wenn er wach ist und schlucken kann. Wichtiger: raus aus der Sonne."
+        },
+        {
+          "t": "Ihm eine Rettungsdecke mit der goldenen Seite nach außen überlegen.",
+          "pts": 1,
+          "why": "Das schirmt etwas Sonne ab, staut aber Wärme. Schatten bzw. RTW ist besser."
+        },
+        {
+          "t": "Weiter in der Sonne versorgen.",
+          "pts": -2,
+          "delta": {"temp":0.3},
+          "why": "Hitze belastet Kreislauf und Patient. Schatten suchen."
+        }
+      ]
+    },
+    {
+      "id": "hund",
+      "who": "Hund",
+      "if": {"at":"home"},
+      "say": "Ein großer Hund springt bellend um euch herum und schnüffelt am offenen Notfallrucksack.",
+      "options": [
+        {
+          "t": "Angehörige bitten, den Hund in ein anderes Zimmer zu bringen und die Tür zu schließen.",
+          "pts": 3,
+          "reply": "„Entschuldigung! Komm, Bruno.“ Die Tür geht zu, es ist ruhig."
+        },
+        {
+          "t": "Den Hund selbst am Halsband wegziehen.",
+          "pts": -1,
+          "why": "Eigenschutz: Fremde Hunde können in Stresssituationen beißen. Halter machen lassen."
+        },
+        {
+          "t": "Ignorieren und weiterarbeiten.",
+          "pts": -1,
+          "why": "Ablenkung, Beißgefahr und verschmutztes Material. Kurz für Ruhe sorgen."
+        },
+        {
+          "t": "Über die Leitstelle die Polizei anfordern.",
+          "pts": -2,
+          "why": "Überzogen: Die Halter können das Tier wegsperren. Polizei nur bei echter Gefahr."
+        }
+      ]
+    },
+    {
+      "id": "zug",
+      "who": "U-Bahn",
+      "if": {"at":"underground"},
+      "say": "Ein Zug fährt donnernd ein. Du verstehst kein Wort und kannst nichts abhören.",
+      "options": [
+        {
+          "t": "Kurz warten, bis der Zug steht und es leiser ist, dann nochmal fragen bzw. abhören.",
+          "pts": 3,
+          "reply": "Nach einer halben Minute ist es wieder ruhiger."
+        },
+        {
+          "t": "Den Befund schätzen und weitermachen.",
+          "pts": -2,
+          "why": "Geschätzte Befunde sind keine Befunde. Lieber kurz warten oder in den RTW."
+        },
+        {
+          "t": "Über die Leitstelle den Zugverkehr stoppen lassen.",
+          "pts": -1,
+          "why": "Fürs Abhören nicht nötig. Den Zugverkehr stoppen lassen nur bei Gefahr im Gleisbereich."
+        }
+      ]
+    },
+    {
+      "id": "kollegen",
+      "who": "Büro",
+      "if": {"at":"work"},
+      "say": "Mehrere Kollegen drängen sich in der Tür, einer fragt laut: „Ist das ansteckend?“",
+      "options": [
+        {
+          "t": "Freundlich bitten, draußen zu warten. Die Kollegin, die alles gesehen hat, darf bleiben.",
+          "pts": 3,
+          "reply": "Die anderen gehen, die Kollegin bleibt und hilft mit Infos."
+        },
+        {
+          "t": "Alle bleiben lassen, die stören ja nicht.",
+          "pts": -1,
+          "why": "Privatsphäre des Patienten: Zuschauer raus."
+        },
+        {
+          "t": "Alle rausschicken, auch die Kollegin.",
+          "pts": 0,
+          "why": "Zuschauer raus ist richtig, aber die Zeugin hat wichtige Infos (Fremdanamnese)."
+        }
+      ]
+    },
+    {
+      "id": "heizung",
+      "who": "RTW",
+      "if": {"at":"rtw"},
+      "say": "Im RTW ist es kühl, die Heizung lief während der Anfahrt nicht. Der Patient zieht die Decke hoch.",
+      "options": [
+        {
+          "t": "Heizung hoch und Patienten zudecken: Wärmeerhalt gilt fast immer.",
+          "pts": 3,
+          "reply": "Nach ein paar Minuten ist es angenehm warm."
+        },
+        {
+          "t": "So lassen, die Fahrt ist ja kurz.",
+          "pts": -1,
+          "why": "Auch kurze Auskühlung schadet, besonders bei Schock, Trauma und alten Menschen."
+        },
+        {
+          "t": "Fenster auf, frische Luft tut gut.",
+          "pts": -2,
+          "why": "Kühlt weiter aus. Ausnahme: Hitzepatienten, die gekühlt werden sollen."
+        }
+      ]
+    }
+  ]
+}

@@ -161,7 +161,7 @@
     }
   ],
   "effects": {
-    "m_raus": {"text":"Ihr tragt ihn in den klimatisierten RTW.","delta":{"hr":-4}},
+    "m_raus": {"text":"Ihr tragt ihn in den klimatisierten RTW.","delta":{"hr":-4},"move":"rtw"},
     "m_kuehl": [
       {
         "if": {"done":"m_raus"},
@@ -188,7 +188,7 @@
   },
   "required": [
     {
-      "any": ["m_raus"],
+      "any": ["m_raus","m_rtw"],
       "pts": 10,
       "label": "Aus der Hitze gebracht",
       "why": "Wichtigster erster Schritt: Raus aus der Hitze."
@@ -267,5 +267,6 @@
       ]
     }
   ],
-  "oddEcg": true
+  "oddEcg": true,
+  "scene": {"place":"zielbereich","weather":["hot"]}
 }
