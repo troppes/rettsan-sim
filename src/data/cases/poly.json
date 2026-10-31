@@ -259,5 +259,23 @@
     "Dann A (HWS), B (O₂ 15 l), C (5 B prüfen, Beckenschlinge), D, E (Wärmeerhalt).",
     "Keine Schocklage bei Verdacht auf Becken- oder Wirbelsäulenverletzung.",
     "BZ messen, während er verblutet, ist ein typischer Reihenfolge-Fehler."
+  ],
+  "variants": [
+    {
+      "id": "antikoag",
+      "label": "Blutverdünner (Rivaroxaban): blutet stärker, wichtig für die Klinik.",
+      "answers": {"q_m":"„Xarelto… wegen einer Thrombose letztes Jahr.“","q_p":"„Thrombose im Bein, letztes Jahr.“"},
+      "required": [
+        {
+          "any": ["q_m"],
+          "pts": 5,
+          "label": "Medikamente erfragt (Blutverdünner)",
+          "why": "Unter Antikoagulation bluten Verletzungen stärker, auch innerlich. Gehört in die Voranmeldung."
+        }
+      ],
+      "teach": [
+        "Diesmal: Blutverdünner. Bei Trauma immer nach Antikoagulation fragen: höheres Blutungsrisiko, auch Kopf."
+      ]
+    }
   ]
 }

@@ -271,5 +271,56 @@
     "Beim ACS: Oberkörper hoch, nicht laufen lassen, beruhigen, Monitoring, 12-Kanal-EKG, NEF, Defi-Patches.",
     "Sauerstoff nur bei Atemnot oder SpO₂ unter 90 % (Schulmeinung: KI bei STEMI mit SpO₂ über 90 %).",
     "Medikamente (ASS, Heparin, Opioide) gibt NotSan/NA, der RettSan bereitet den Zugang vor."
+  ],
+  "variants": [
+    {
+      "id": "stauung",
+      "label": "Lungenstauung mit SpO₂ unter 90 %: Sauerstoff war diesmal angezeigt.",
+      "start": {
+        "spo2": 87,
+        "af": 26,
+        "status": "Sitzt blass und kaltschweißig auf dem Sofa, ringt um Luft, hält eine Hand auf den Oberbauch und wirkt sehr ängstlich."
+      },
+      "findings": {
+        "b_af": "Schnelle, angestrengte Atmung, er spricht nur in kurzen Sätzen.",
+        "b_ausk": "Feuchte, feinblasige Rasselgeräusche über beiden Lungenunterfeldern."
+      },
+      "problems": [
+        {
+          "id": "hypox",
+          "letter": "B",
+          "label": "Atemnot mit SpO₂ 87 %",
+          "fixedBy": ["m_o2_nb","m_o2_mask"],
+          "worsen": {"spo2":-0.3}
+        }
+      ],
+      "required": [
+        {
+          "any": ["m_o2_nb","m_o2_mask"],
+          "pts": 5,
+          "label": "O₂ bei SpO₂ unter 90 %",
+          "why": "Beim ACS O₂ nur bei Atemnot oder SpO₂ unter 90 %. Hier beides: Sauerstoff war richtig."
+        }
+      ],
+      "teach": [
+        "Diesmal: Lungenstauung beim Infarkt. O₂ ist beim ACS nur bei SpO₂ unter 90 % oder Atemnot angezeigt, dann nach Wirkung dosieren."
+      ]
+    },
+    {
+      "id": "ass",
+      "label": "ASS-Unverträglichkeit: Das muss der Notarzt wissen.",
+      "answers": {"q_a":"„Ja! Auf Aspirin krieg ich Asthma, das steht auch in meinem Allergiepass.“"},
+      "required": [
+        {
+          "any": ["q_a"],
+          "pts": 5,
+          "label": "Allergien erfragt (ASS-Unverträglichkeit)",
+          "why": "ASS ist beim ACS Standard, hier aber kontraindiziert. Allergien immer erfragen und an den NA übergeben."
+        }
+      ],
+      "teach": [
+        "Diesmal: ASS-Unverträglichkeit. SAMPLER vollständig erfragen, Kontraindikationen gehören in die Übergabe."
+      ]
+    }
   ]
 }

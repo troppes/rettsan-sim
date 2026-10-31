@@ -2,6 +2,10 @@
 import { describe, expect, it } from 'vitest';
 import { ACTIONS, CASES, ECG, PROCEDURES, REA, RULES } from '../src/lib/data';
 import radio from '../src/data/radio.json';
+import { applyVariant } from '../src/lib/engine/variants';
+
+/** Alle Fälle plus jede Variante als eigener Fall */
+const ALL = CASES.flatMap((c) => [c, ...(c.variants ?? []).map((v) => ({ ...applyVariant(c, v), id: `${c.id}+${v.id}` }))]);
 import type { Condition } from '../src/lib/types';
 import { createSignal } from '../src/lib/ecg/signal';
 
@@ -21,7 +25,15 @@ describe('Fälle', () => {
     expect(new Set(CASES.map((c) => c.id)).size).toBe(12);
   });
 
-  for (const c of CASES) {
+  it('Varianten: eindeutige IDs, entfernte Pflichtpunkte existieren', () => {
+    for (const c of CASES) {
+      const ids = (c.variants ?? []).map((v) => v.id);
+      expect(new Set(ids).size).toBe(ids.length);
+      for (const v of c.variants ?? []) for (const l of v.dropRequired ?? []) expect(c.required?.some((r) => r.label === l), `${c.id}+${v.id}: ${l}`).toBe(true);
+    }
+  });
+
+  for (const c of ALL) {
     describe(c.id, () => {
       const known = (id: string) => !!ACTIONS[id] || !!c.followups?.[id];
       const problems = new Set((c.problems ?? []).map((p) => p.id));
@@ -35,7 +47,7 @@ describe('Fälle', () => {
           }
         }
       };
-      walk(c);
+      walk({ ...c, variants: undefined });
 
       it('Startrhythmus existiert', () => expect(ECG.rhythms[c.start.rhythm]).toBeDefined());
       it('mindestens eine Einsatzmeldung', () => expect(c.dispatches.length).toBeGreaterThan(0));

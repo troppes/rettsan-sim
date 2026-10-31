@@ -194,5 +194,30 @@
     "Exsikkose: Tachykardie, niedriger RR, trockene Schleimhäute, stehende Hautfalten, Verwirrtheit.",
     "Akute Verwirrtheit ist kein Normalbefund bei Demenz → Delir, Ursache suchen (BZ, Temperatur, BE-FAST, Medikamente).",
     "Diuretika und Hitze verstärken den Flüssigkeitsverlust."
+  ],
+  "variants": [
+    {
+      "id": "hwi",
+      "label": "Fieber durch Harnwegsinfekt: an Sepsis denken.",
+      "start": {
+        "temp": 38.9,
+        "hr": 118,
+        "status": "Liegt im Bett, wirkt verwirrt und schläfrig, die Lippen sind trocken. Sie fühlt sich heiß an, in der Wohnung riecht es nach Urin."
+      },
+      "findings": {
+        "e_body": "Stehende Hautfalten, keine Verletzungen. Inkontinenzeinlage nass, der Urin ist trüb und riecht streng."
+      },
+      "required": [
+        {
+          "any": ["e_temp"],
+          "pts": 3,
+          "label": "Fieber erkannt",
+          "why": "Fieber + Verwirrtheit + Tachykardie beim alten Menschen: an Sepsis denken (qSOFA), Klinik informieren."
+        }
+      ],
+      "teach": [
+        "Diesmal: Infekt als Auslöser. Exsikkose und Delir haben oft eine Ursache: Harnwegsinfekt, Pneumonie, Sepsis."
+      ]
+    }
   ]
 }

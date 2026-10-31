@@ -234,5 +234,37 @@
     "Raus aus der Hitze, aktiv kühlen (Hals, Achseln, Leisten), NEF bei Bewusstseinsstörung.",
     "Trinken nur, wenn der Patient wach ist und sicher schluckt.",
     "Sonnenstich = Hirnhautreizung durch Sonne auf den Kopf, Körpertemperatur normal."
+  ],
+  "variants": [
+    {
+      "id": "krampf",
+      "label": "Krampfanfall durch die Hitze: Schutz vor Verletzungen, dann kühlen.",
+      "rules": [
+        {
+          "id": "hitzekrampf",
+          "if": {"time":30},
+          "set": {"gcs":7,"spo2":90},
+          "status": "Er krampft am ganzen Körper, die Augen sind verdreht.",
+          "alert": "Er krampft! Generalisierter Krampfanfall durch die Hitze."
+        },
+        {
+          "id": "hitzekrampf_ende",
+          "if": {"time":150},
+          "set": {"gcs":11,"spo2":94},
+          "status": "Der Krampf hat aufgehört. Er ist schläfrig und heiß."
+        }
+      ],
+      "required": [
+        {
+          "any": ["m_polster"],
+          "pts": 5,
+          "label": "Beim Krampf vor Verletzungen geschützt",
+          "why": "Umgebung sichern, Kopf polstern, nicht festhalten."
+        }
+      ],
+      "teach": [
+        "Diesmal: Krampfanfall durch Hitzschlag. Während des Krampfes schützen, danach Atemweg sichern und weiter konsequent kühlen."
+      ]
+    }
   ]
 }

@@ -195,5 +195,19 @@
     "Immer BZ messen, Zeitfenster („zuletzt gesund gesehen“) erfragen, Stroke Unit voranmelden, zügig transportieren.",
     "Kein i.v.-Zugang durch RettSan beim stabilen Schlaganfall, nichts oral, Blutdruck nicht selbst senken.",
     "Vorhofflimmern ist eine häufige Ursache (Gerinnsel aus dem Vorhof)."
+  ],
+  "variants": [
+    {
+      "id": "wakeup",
+      "label": "Beim Aufwachen bemerkt: Das Zeitfenster zählt ab zuletzt gesund gesehen.",
+      "answers": {
+        "q_o": "„Ich hab sie heute früh um sieben so gefunden. Gestern Abend um zehn war noch alles normal.“",
+        "q_e": "„Sie ist gestern um zehn ins Bett, heute früh lag sie so da.“",
+        "q_t": "„So was hatte sie noch nie.“"
+      },
+      "teach": [
+        "Diesmal: Wake-up-Stroke. Beginn = zuletzt gesund gesehen (gestern 22 Uhr), nicht der Fund. Trotzdem Stroke Unit: Bildgebung kann Therapie noch möglich machen."
+      ]
+    }
   ]
 }

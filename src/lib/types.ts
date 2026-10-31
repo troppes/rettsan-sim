@@ -51,6 +51,8 @@ export interface Rule extends Mutation {
   if: Condition;
   alert?: string;
   info?: string;
+  /** Probleme, die damit behoben sind (z. B. der Notarzt behandelt) */
+  fix?: string[];
 }
 
 /** Stetige Veränderung pro Minute, solange die Bedingung gilt */
@@ -164,6 +166,36 @@ export interface CaseDef {
     variants?: { if: Condition; options: string[]; answer: number }[];
   };
   teach: string[];
+  /** Zufällige Abwandlungen beim Neuspielen (andere Werte, Vorerkrankungen, Kontraindikationen) */
+  variants?: CaseVariant[];
+  /** Gewicht der unveränderten Grundversion beim Auslosen (Standard 1) */
+  baseWeight?: number;
+  /** Gesetzt, wenn eine Variante ausgelost wurde: wird in der Auswertung genannt */
+  variantNote?: string;
+}
+
+/** Eine Fallvariante: überschreibt Teile des Falls. Objekte werden je Schlüssel ersetzt, Listen ergänzt. */
+export interface CaseVariant {
+  id: string;
+  /** Kurz, für die Auswertung: was diesmal anders war */
+  label: string;
+  weight?: number;
+  start?: Partial<Vitals & { status: string }>;
+  look?: Partial<Look>;
+  dispatches?: Dispatch[];
+  findings?: Record<string, Finding>;
+  answers?: Record<string, Answer>;
+  followups?: Record<string, Followup>;
+  effects?: Record<string, TreatEffect | TreatEffect[]>;
+  react?: Record<string, string>;
+  problems?: Problem[];
+  rules?: Rule[];
+  moments?: Moment[];
+  quizzes?: Quiz[];
+  required?: Required[];
+  /** Pflichtpunkte des Falls, die in dieser Variante wegfallen (nach label) */
+  dropRequired?: string[];
+  teach?: string[];
 }
 
 /* ------------------------------------------------------------ Aktionen & Abläufe */

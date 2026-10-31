@@ -12,6 +12,8 @@ export interface Debrief {
   title: string;
   person: string;
   solution: string;
+  /** Was in diesem Einsatz anders war (Fallvariante) */
+  variant?: string;
   reaPath?: string;
   pct: number;
   score: number;
@@ -64,6 +66,7 @@ export function debrief(g: Game): Debrief {
     title: s.dispatch.short,
     person: c.person,
     solution: d.options[d.answer],
+    variant: g.c.variantNote,
     reaPath: s.rea ? s.rea.path.map((k) => (k === 'rosc' ? 'ROSC' : ECG.rhythms[k].name.split(' (')[0])).join(' → ') : undefined,
     pct, score, max,
     grade: { label: grade.label, tone: grade.tone },

@@ -3,10 +3,12 @@ import { describe, expect, it } from 'vitest';
 import { CASES, caseById } from '../src/lib/data';
 import { Game } from '../src/lib/engine/game';
 import { answerPrompts, play } from './play';
+import { applyVariant, randomize } from '../src/lib/engine/variants';
+import type { CaseDef } from '../src/lib/types';
 
 /** Gute Reihenfolge aus den Daten ableiten: SSS, Ersteindruck, Probleme nach xABCDE, Pflichtmaßnahmen */
-function goodPlan(id: string): string[] {
-  const c = caseById(id)!;
+function goodPlan(id: string | CaseDef): string[] {
+  const c = typeof id === 'string' ? caseById(id)! : id;
   const plan = ['sss', 'ansprechen', 'q_hallo'];
   const letters = ['x', 'A', 'B', 'C', 'D', 'E'];
   const probs = [...(c.problems ?? [])].sort((a, b) => letters.indexOf(a.letter) - letters.indexOf(b.letter));
@@ -16,6 +18,23 @@ function goodPlan(id: string): string[] {
 }
 
 describe('Fälle durchspielen', () => {
+  for (const c of CASES) for (const v of c.variants ?? []) {
+    it(`Variante ${c.id}+${v.id} endet mit Auswertung und nennt die Variante`, () => {
+      const cv = applyVariant(c, v);
+      const g = play(cv, goodPlan(cv), true);
+      expect(g.result).not.toBeNull();
+      expect(g.result!.pct).toBeGreaterThan(40);
+      expect(g.result!.variant).toBe(v.label);
+    });
+  }
+  it('Auslosen und Streuung bleiben im Rahmen', () => {
+    for (const c of CASES) for (let i = 0; i < 30; i++) {
+      const r = randomize(c);
+      if (!c.rea) expect(Math.abs(r.start.hr - (applyVariant(c, c.variants?.find((v) => v.label === r.variantNote) ?? null).start.hr))).toBeLessThanOrEqual(5);
+      if (!c.rea) expect(r.start.dia).toBeLessThan(r.start.sys);
+    }
+  });
+
   for (const c of CASES.filter((x) => !x.rea)) {
     for (const detail of [true, false]) {
       it(`${c.id} (${detail ? 'mit' : 'ohne'} Detail-Maßnahmen) endet mit Auswertung`, () => {

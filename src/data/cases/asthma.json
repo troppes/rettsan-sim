@@ -221,5 +221,63 @@
     "Asthma: sitzen lassen (Kutschersitz), Lippenbremse, O₂ bei SpO₂ unter 92 %, Hilfe beim eigenen Spray (max. 2 Hübe).",
     "Giemen und verlängertes Ausatmen = Enge in den unteren Atemwegen.",
     "Persistierende oder schwere Atemnot → NEF."
+  ],
+  "variants": [
+    {
+      "id": "tachy",
+      "label": "HF über 140/min: Das eigene Spray war kontraindiziert.",
+      "start": {
+        "hr": 146,
+        "status": "Sitzt vornübergebeugt auf der Bettkante, stützt die Arme auf die Knie, spricht nur in Satzfetzen. Das Herz rast, beim Ausatmen hört man ein Pfeifen."
+      },
+      "answers": {"q_m":"„Salbutamol-Spray… hab vorhin… schon fünf, sechs Hübe… Herz rast total.“"},
+      "dropRequired": ["Hilfe beim eigenen Notfallspray"],
+      "required": [
+        {
+          "any": ["c_puls","c_ekg","b_spo2"],
+          "pts": 5,
+          "label": "Herzfrequenz vor dem Spray geprüft",
+          "why": "β₂-Spray: KI bei HF über 140/min. Hier schon 146/min, nach mehreren Hüben."
+        }
+      ],
+      "teach": [
+        "Diesmal: HF über 140/min (viele Hübe vorab). Dann kein weiteres β₂-Spray, sondern O₂, Kutschersitz, Lippenbremse und NEF."
+      ]
+    },
+    {
+      "id": "silent",
+      "label": "Silent Chest: lebensbedrohlicher Asthmaanfall.",
+      "start": {
+        "spo2": 84,
+        "af": 30,
+        "gcs": 14,
+        "status": "Sitzt erschöpft auf der Bettkante, kann kaum noch sprechen, die Lippen sind bläulich. Ein Pfeifen hört man kaum noch."
+      },
+      "findings": {
+        "b_ausk": "Kaum noch Atemgeräusch über beiden Lungen (Silent Chest)! Das ist kein gutes Zeichen, sondern zu wenig Luftbewegung.",
+        "ansprechen": "Er nickt nur noch, sprechen geht kaum."
+      },
+      "required": [
+        {
+          "any": ["m_nef"],
+          "pts": 5,
+          "label": "NEF früh nachgefordert (Silent Chest)",
+          "why": "Leise Lunge bei schwerer Atemnot = lebensbedrohlich. Sofort NEF."
+        }
+      ],
+      "teach": [
+        "Diesmal: Silent Chest. Wenig Giemen heißt beim schweren Anfall nicht Entwarnung, sondern kaum Luftfluss: sofort NEF, O₂ hoch."
+      ],
+      "problems": [
+        {
+          "id": "hypox",
+          "letter": "B",
+          "blocking": true,
+          "label": "Atemnot mit SpO₂ 84 %, Silent Chest",
+          "fixedBy": ["m_o2_mask","m_o2_nb"],
+          "worsen": {"spo2":-0.8,"hr":1.5,"af":0.5}
+        }
+      ]
+    }
   ]
 }

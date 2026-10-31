@@ -119,6 +119,7 @@ export class Game {
       if (s.rulesDone[r.id] || !test(r.if, this.ctx)) continue;
       s.rulesDone[r.id] = true;
       mutate(s, r);
+      for (const id of r.fix ?? []) s.fixed[id] = true;
       if (r.alert) { this.addLog('alert', '⚠️ ' + r.alert); this.toast('⚠️ Zustand verändert', 'bad'); }
       if (r.info) this.addLog('info', 'ℹ️ ' + r.info);
     }

@@ -304,5 +304,60 @@
     "Wach (GCS 14–15): Glucose oral oder gesüßtes Getränk. Bewusstseinsgetrübt: nichts oral (Aspiration), NEF.",
     "Glucose i.v. durch RettSan nur bei GCS 3 und gefährdetem Atemweg im Rahmen des § 34.",
     "Hypos können aussehen wie Schlaganfall, Rausch oder Psychose: Immer BZ messen!"
+  ],
+  "variants": [
+    {
+      "id": "somnolent",
+      "label": "Bewusstseinsgetrübt (GCS 9): nichts oral, Seitenlage und NEF.",
+      "start": {
+        "gcs": 9,
+        "hr": 116,
+        "status": "Liegt zusammengesackt neben dem Schreibtisch, reagiert nur auf Schmerzreiz und schwitzt stark."
+      },
+      "problems": [
+        {
+          "id": "hypo",
+          "letter": "D",
+          "label": "Unterzuckerung mit Bewusstseinsstörung",
+          "fixedBy": ["m_gluc_iv"],
+          "worsen": {"bz":-1.5}
+        }
+      ],
+      "rules": [
+        {
+          "id": "na_glucose",
+          "if": {"all":[{"not":{"fixed":"hypo"}},{"sinceFlag":"nefAt","over":360}]},
+          "fix": ["hypo"],
+          "set": {"bz":88,"gcs":13},
+          "flags": {"glucAt":{"now":0}},
+          "status": "Der Notarzt hat Glucose 20 % i.v. gegeben. Sie wird langsam wacher.",
+          "alert": "Der Notarzt ist da und gibt Glucose 20 % i.v."
+        }
+      ],
+      "dropRequired": ["Glucose gegeben","Etwas Langwirksames essen lassen"],
+      "required": [
+        {
+          "any": ["m_ssl"],
+          "pts": 10,
+          "label": "Stabile Seitenlage",
+          "why": "Bewusstseinsgetrübt: Atemweg schützen, Absaugbereitschaft."
+        },
+        {
+          "any": ["m_nef"],
+          "pts": 10,
+          "label": "NEF nachalarmiert",
+          "why": "GCS 9 bei Hypo: Glucose i.v. durch den NA."
+        },
+        {
+          "any": ["m_ivz_vorb","m_ivz"],
+          "pts": 5,
+          "label": "Zugang vorbereitet",
+          "why": "Damit der NA sofort Glucose geben kann."
+        }
+      ],
+      "teach": [
+        "Diesmal: GCS 9. Keine orale Glucose (Aspiration), Seitenlage, NEF, Zugang vorbereiten. RettSan gibt i.v. nur bei GCS 3 mit gefährdetem Atemweg (§ 34)."
+      ]
+    }
   ]
 }

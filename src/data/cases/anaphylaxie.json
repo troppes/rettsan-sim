@@ -246,5 +246,67 @@
     "Anaphylaxie Stadium III: Allergen stoppen, NEF, O₂ 15 l, Schocklage (Schock vor Atemnot), Adrenalin 0,3 mg i.m. (§ 34), PVK + VEL.",
     "Adrenalin i.m. ist sicher. Zögern tötet, Antihistaminika ersetzen kein Adrenalin.",
     "Patienten im Schock nie aufstehen lassen („empty heart“)."
+  ],
+  "variants": [
+    {
+      "id": "betablocker",
+      "label": "Betablocker: Schock ohne Tachykardie, Adrenalin wirkt schwächer.",
+      "start": {"hr":84,"rhythm":"sinus"},
+      "findings": {"c_puls":"Normal schnell, aber flach und schwer tastbar. Trotzdem Schock!"},
+      "answers": {"q_m":"„Die Pille und Bisoprolol, für den Blutdruck.“","q_p":"„Wespengiftallergie und Bluthochdruck.“"},
+      "effects": {
+        "m_epipen": [
+          {
+            "text": "Autoinjektor in den seitlichen Oberschenkel, 10 Sekunden halten. Es wird nur etwas besser: Unter Betablocker wirkt Adrenalin schwächer.",
+            "delta": {"sys":16,"dia":8,"hr":4,"spo2":2},
+            "set": {"gcs":15},
+            "status": "Liegt mit erhöhten Beinen, etwas wacher, aber noch blass mit Quaddeln.",
+            "penalties": [
+              {
+                "if": {"not":{"done":"m_nef"}},
+                "pts": -5,
+                "why": "§ 34 StGB: Voraussetzung ist, dass das NEF nachalarmiert ist. Erst NEF, dann Adrenalin."
+              }
+            ]
+          }
+        ]
+      },
+      "required": [
+        {
+          "any": ["q_m"],
+          "pts": 5,
+          "label": "Medikamente erfragt (Betablocker)",
+          "why": "Betablocker verhindern die Tachykardie und schwächen Adrenalin ab. Wichtig für NA und Einschätzung."
+        }
+      ],
+      "teach": [
+        "Diesmal: Betablocker. Ein normaler Puls schließt den Schock nicht aus, entscheidend sind RR, Haut und Bewusstsein."
+      ]
+    },
+    {
+      "id": "zunge",
+      "label": "Schwellung im Mund: Der Atemweg war bedroht.",
+      "start": {
+        "spo2": 88,
+        "status": "Liegt auf einer Bank, Gesicht und Hals sind rot und geschwollen, überall Quaddeln. Die Stimme klingt kloßig, beim Einatmen pfeift es."
+      },
+      "findings": {
+        "a_check": "Zunge und Lippen geschwollen, kloßige Sprache, beim Einatmen ein Stridor! Atemweg bedroht.",
+        "ansprechen": "„Mein… Hals… wird so eng.“ Die Stimme klingt kloßig."
+      },
+      "teach": [
+        "Diesmal: Zungenschwellung und Stridor. A-Problem: schnell Adrenalin (über NEF/§ 34), O₂ hoch, Oberkörper eher hoch, solange der Kreislauf es zulässt."
+      ],
+      "problems": [
+        {
+          "id": "hypox",
+          "letter": "B",
+          "blocking": true,
+          "label": "Atemnot mit SpO₂ 88 %, Stridor",
+          "fixedBy": ["m_o2_mask"],
+          "worsen": {"spo2":-0.8}
+        }
+      ]
+    }
   ]
 }

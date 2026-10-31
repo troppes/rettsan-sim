@@ -18,7 +18,7 @@
     {#if r.face}
       <div class="end-face"><PatientFace look={r.face.look} face={r.face.state} size={64} /><span>So ging es dem Patienten am Ende mit dir.</span></div>
     {/if}
-    <div class="ditem"><b>{r.person} {r.title}</b><small>Lösung: {r.solution}{#if r.reaPath} · Rhythmusverlauf: {r.reaPath}{/if}</small></div>
+    <div class="ditem"><b>{r.person} {r.title}</b><small>Lösung: {r.solution}{#if r.reaPath} · Rhythmusverlauf: {r.reaPath}{/if}{#if r.variant}<br />Diesmal anders: {r.variant}{/if}</small></div>
 
     <h4>Erledigt</h4>
     {#each r.done as x (x.label)}<div class="ditem good"><span class="p">+{x.pts}</span>✓ {x.label}<small>{x.why}</small></div>{:else}<div class="ditem">Nichts davon.</div>{/each}

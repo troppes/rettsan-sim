@@ -5,6 +5,7 @@
   import { account } from '../lib/account/account.svelte';
   import { caseById } from '../lib/data';
   import { Game } from '../lib/engine/game';
+  import { randomize } from '../lib/engine/variants';
   import type { ActionKind } from '../lib/types';
   import { clock } from '../lib/util';
   import ActionSheet from '../components/ActionSheet.svelte';
@@ -16,7 +17,7 @@
 
   // Ein Einsatz pro Komponente: App baut sie bei jedem Start neu auf
   const game = untrack(() => {
-    const c = caseById(caseId)!;
+    const c = randomize(caseById(caseId)!);
     return new Game(c, { ...app.settings }, dispatch != null ? c.dispatches[dispatch] : undefined);
   });
   const c = game.c;
