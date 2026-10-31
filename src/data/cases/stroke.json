@@ -1,0 +1,176 @@
+{
+  "id": "stroke",
+  "level": 1,
+  "person": "👵",
+  "icon": "🛋️",
+  "name": "Frau Schulz",
+  "mood": 4,
+  "nonverbal": true,
+  "dispatches": [
+    {
+      "short": "Verwirrte Seniorin, 71 J.",
+      "text": "RTW, Verwirrtheit. Weiblich, 71 Jahre, Seniorenwohnung. Die Tochter: „Meine Mutter redet so komisch.“"
+    },
+    {
+      "short": "Hilflose Person, 71 J.",
+      "text": "RTW, hilflose Person. Weiblich, 71 Jahre, Seniorenwohnung. Die Tochter ruft an."
+    },
+    {
+      "short": "Sprachstörung, 71 J.",
+      "text": "RTW, Sprachstörung. Weiblich, 71 Jahre, Seniorenwohnung. Die Tochter ruft an."
+    }
+  ],
+  "start": {
+    "hr": 88,
+    "rhythm": "vhf",
+    "spo2": 96,
+    "sys": 175,
+    "dia": 95,
+    "af": 16,
+    "bz": 124,
+    "temp": 36.8,
+    "gcs": 14,
+    "status": "Sitzt im Sessel. Der rechte Mundwinkel hängt, sie spricht verwaschen und findet die Wörter nicht. Der rechte Arm liegt schlaff auf der Lehne."
+  },
+  "answerer": [{"who":"Tochter"}],
+  "problems": [{"id":"stroke","letter":"D","label":"Verdacht auf Schlaganfall","fixedBy":[]}],
+  "findings": {
+    "ansprechen": "Sie versucht zu antworten, aber es kommt nur: „Ja… das… Dings…“",
+    "c_puls": "Unregelmäßig!",
+    "c_12": "Absolute Arrhythmie bei Vorhofflimmern, keine ST-Hebungen.",
+    "d_gcs": "GCS 14 (Augen spontan, verwirrte Sprache, befolgt Aufforderungen links).",
+    "d_pup": "Pupillen gleich groß, prompte Lichtreaktion.",
+    "d_befast": "B: Stehen nicht möglich. E: Sehen unauffällig. F: rechter Mundwinkel hängt. A: rechter Arm sinkt sofort ab. S: verwaschen, Wortfindungsstörung. T: zuletzt gesund um 9:15 Uhr (vor 45 Minuten).",
+    "e_body": "Keine Sturzverletzungen."
+  },
+  "answers": {
+    "q_s": "„Sie kann nicht mehr richtig sprechen und der rechte Arm hängt.“",
+    "q_a": "„Keine.“",
+    "q_m": "„Ramipril und eigentlich Apixaban, ein Blutverdünner. Den vergisst sie aber oft.“",
+    "q_p": "„Bluthochdruck und Vorhofflimmern.“",
+    "q_l": "„Frühstück um acht.“",
+    "q_e": "„Um 9:15 haben wir telefoniert, da war alles normal. Um halb zehn kam ich her, da war es so.“",
+    "q_o": "„Zuletzt normal war sie um 9:15 Uhr am Telefon.“",
+    "q_t": "„So was hatte sie noch nie.“"
+  },
+  "followups": {
+    "f_kopf": {
+      "after": "q_s",
+      "label": "Hatte sie Kopfschmerzen oder ist sie gestürzt?",
+      "ans": "„Nein, kein Sturz. Kopfschmerzen hat sie nicht erwähnt.“"
+    },
+    "f_apixaban": {
+      "after": "q_m",
+      "label": "Wann hat sie das Apixaban zuletzt genommen?",
+      "ans": "„Ich glaube, gestern früh. Die Dose von heute ist noch voll.“"
+    }
+  },
+  "moments": [
+    {
+      "id": "hand",
+      "after": ["q_s","q_e","q_o"],
+      "who": "Frau Schulz",
+      "say": "Die Patientin greift mit der linken Hand nach deinem Arm und schaut dich ängstlich an. Sie versucht etwas zu sagen.",
+      "options": [
+        {
+          "t": "Sie direkt ansprechen: „Frau Schulz, wir glauben, dass in Ihrem Kopf ein Gefäß verstopft ist. Wir fahren Sie schnell in eine Spezialklinik. Sie sind nicht allein.“",
+          "mood": 3,
+          "pts": 3,
+          "reply": "Sie drückt deine Hand und nickt langsam."
+        },
+        {
+          "t": "Weiter nur mit der Tochter sprechen.",
+          "mood": -2,
+          "pts": -2,
+          "why": "Patienten mit Sprachstörung verstehen oft viel mehr, als sie sagen können. Immer auch den Patienten selbst ansprechen."
+        }
+      ]
+    },
+    {
+      "id": "tochter",
+      "after": ["m_voranm","d_befast"],
+      "who": "Tochter",
+      "say": "„Wird sie wieder gesund? Ich hätte früher kommen sollen, das ist alles meine Schuld!“",
+      "options": [
+        {
+          "t": "„Sie haben genau richtig gehandelt und schnell angerufen. Bitte packen Sie den Medikamentenplan ein und bleiben Sie telefonisch erreichbar, die Klinik braucht vielleicht Ihre Auskunft.“",
+          "pts": 3,
+          "reply": "Sie wischt sich die Tränen ab und holt die Medikamente."
+        },
+        {
+          "t": "„Na ja, eine halbe Stunde früher wäre schon besser gewesen.“",
+          "pts": -3,
+          "why": "Schuldzuweisung hilft niemandem. Angehörige stärken und einbinden (Zeitpunkt, Medikamente, Erreichbarkeit)."
+        }
+      ]
+    }
+  ],
+  "effects": {
+    "m_ok30": {"text":"Oberkörper 30° hoch gelagert."},
+    "m_ok_hoch": {"text":"Oberkörper hoch gelagert."},
+    "m_zeit": {
+      "needs": ["q_o","q_e","q_t"],
+      "needText": "Welche Uhrzeit willst du notieren? Frag erst, wann sie zuletzt gesund gesehen wurde.",
+      "text": "Notiert: zuletzt gesund gesehen 9:15 Uhr. Das Zeitfenster für Lyse (bis 4,5 h) und Thrombektomie ist offen."
+    },
+    "m_voranm": {
+      "text": "Stroke Unit ist vorangemeldet: Symptome, Zeitfenster, Antikoagulation, Telefonnummer der Tochter."
+    },
+    "m_betreuung": {"text":"Du erklärst ihr ruhig, was ihr tut. Die Tochter packt Medikamentenplan und Arztbriefe ein."},
+    "m_ivz": {
+      "pts": -5,
+      "why": "Schulmeinung: Kein i.v.-Zugang durch RettSan beim kreislaufstabilen Schlaganfall. Invasive Maßnahme ohne Rechtsgrundlage."
+    },
+    "m_trinken": {"pts":-5,"why":"Schluckstörung möglich → Aspiration. Nichts zu essen oder zu trinken."},
+    "m_gluc_oral": {"pts":-5,"why":"BZ ist normal, und mit Schluckstörung nichts oral."},
+    "m_laufen": {"pts":-5,"why":"Mit Halbseitenlähmung nicht laufen lassen: Sturzgefahr."}
+  },
+  "required": [
+    {
+      "any": ["d_bz"],
+      "pts": 10,
+      "label": "Blutzucker gemessen",
+      "why": "Fixierungsfehler vermeiden: Eine Hypo kann wie ein Schlaganfall aussehen."
+    },
+    {"any":["d_befast"],"pts":10,"label":"BE-FAST geprüft","why":"Strukturierter Schlaganfall-Test."},
+    {
+      "any": ["m_zeit","q_o","q_e"],
+      "pts": 10,
+      "label": "Zeitfenster erfragt",
+      "why": "Lyse bis 4,5 h, Thrombektomie bis ca. 6 h: Ohne Uhrzeit keine Therapieentscheidung."
+    },
+    {
+      "any": ["m_ok30","m_ok_hoch"],
+      "pts": 5,
+      "label": "Oberkörper 30° hoch",
+      "why": "Bei ansprechbaren Patienten Oberkörper ca. 30° hoch."
+    },
+    {
+      "any": ["m_voranm"],
+      "pts": 10,
+      "label": "Stroke Unit vorangemeldet",
+      "why": "Time is brain: Die Klinik bereitet das CT vor."
+    }
+  ],
+  "quizzes": [
+    {
+      "on": "treat",
+      "type": "mc",
+      "q": "Bevor du „Schlaganfall“ sagst: Was musst du unbedingt gemessen haben?",
+      "options": ["Blutzucker","Temperatur","Blutdruck an beiden Armen","Sauerstoffsättigung"],
+      "answer": 0,
+      "explain": "Eine Hypoglykämie kann genau wie ein Schlaganfall aussehen (Fixierungsfehler)."
+    }
+  ],
+  "diagnosis": {
+    "options": ["Schlaganfall (Zeitfenster offen)","Hypoglykämie","Krampfanfall mit Lähmung danach","Hypertensive Krise"],
+    "answer": 0,
+    "guard": {"if":{"not":{"done":"d_bz"}},"pts":-5,"why":"Fixierungsfehler: Diagnose Schlaganfall ohne BZ-Messung."}
+  },
+  "teach": [
+    "BE-FAST: Balance, Eyes, Face, Arms, Speech, Time.",
+    "Immer BZ messen, Zeitfenster („zuletzt gesund gesehen“) erfragen, Stroke Unit voranmelden, zügig transportieren.",
+    "Kein i.v.-Zugang durch RettSan beim stabilen Schlaganfall, nichts oral, Blutdruck nicht selbst senken.",
+    "Vorhofflimmern ist eine häufige Ursache (Gerinnsel aus dem Vorhof)."
+  ]
+}

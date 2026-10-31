@@ -1,0 +1,272 @@
+{
+  "id": "krampf",
+  "level": 2,
+  "person": "👨",
+  "icon": "⚡",
+  "name": "Herr Nowak",
+  "mood": 5,
+  "dispatches": [
+    {
+      "short": "Person zusammengebrochen am Bahnsteig, 28 J.",
+      "text": "RTW, Person zusammengebrochen. Männlich, ca. 28 Jahre, U-Bahnhof. Passanten rufen an."
+    },
+    {
+      "short": "Bewusstlose Person, U-Bahnhof",
+      "text": "RTW, bewusstlose Person. Männlich, ca. 28 Jahre, U-Bahnhof."
+    },
+    {
+      "short": "Krampfanfall am Bahnsteig, 28 J.",
+      "text": "RTW, Krampfanfall. Männlich, 28 Jahre, U-Bahnhof. Passanten rufen an."
+    }
+  ],
+  "start": {
+    "hr": 134,
+    "rhythm": "sinustachy",
+    "spo2": 86,
+    "sys": 160,
+    "dia": 95,
+    "af": 8,
+    "bz": 98,
+    "temp": 37.2,
+    "gcs": 3,
+    "status": "Liegt auf dem Bahnsteig und zuckt rhythmisch an Armen und Beinen, Schaum vor dem Mund, die Augen sind verdreht. Neben ihm eine Bank mit scharfer Kante."
+  },
+  "answerer": [{"if":{"vital":"gcs","op":"<","value":13},"who":"Passantin"}],
+  "problems": [
+    {
+      "id": "atemweg",
+      "letter": "A",
+      "blocking": true,
+      "label": "Schnarchende Atmung nach dem Anfall (Zunge)",
+      "fixedBy": ["m_ssl","m_esmarch"],
+      "activeIf": {"flag":"postiktal"}
+    },
+    {
+      "id": "hypox",
+      "letter": "B",
+      "label": "SpO₂ niedrig",
+      "fixedBy": ["m_o2_mask","m_o2_nb"],
+      "activeIf": {"flag":"postiktal"}
+    }
+  ],
+  "rules": [
+    {
+      "id": "anfallsende",
+      "if": {"time":120},
+      "set": {"hr":108,"spo2":90,"af":12,"sys":145,"dia":85,"gcs":8},
+      "flags": {"postiktal":true},
+      "status": "Der Krampf hat aufgehört. Er liegt schlaff da, atmet schnarchend und reagiert auf Schmerz nur mit Stöhnen. Hose eingenässt.",
+      "alert": "Der Krampf hat aufgehört (Dauer ca. 4 Minuten). Jetzt postiktal: schnarchende Atmung!"
+    },
+    {
+      "id": "aufwachen",
+      "if": {"all":[{"flag":"postiktal"},{"fixed":"atemweg"},{"fixed":"hypox"},{"time":601}]},
+      "set": {"gcs":13,"hr":92},
+      "flags": {"wach":true},
+      "status": "Er wird langsam wacher, ist noch desorientiert und müde.",
+      "info": "Der Patient wird langsam wacher."
+    }
+  ],
+  "findings": {
+    "sss": "Bahnsteig: Abstand zur Bahnsteigkante! Passanten zurückhalten, der Passant mit Handy filmt.",
+    "ansprechen": [
+      {"if":{"flag":"postiktal"},"text":"Keine Antwort, nur Stöhnen auf Schmerzreiz."},
+      {"text":"Keine Reaktion, er krampft."}
+    ],
+    "x_check": "Keine kritische Blutung. Platzwunde am Kinn, blutet leicht.",
+    "a_check": [
+      {
+        "if": {"not":{"flag":"postiktal"}},
+        "text": "Schaum vor dem Mund, Zähne zusammengebissen. Nichts in den Mund stecken!"
+      },
+      {"if":{"fixed":"atemweg"},"text":"Atemweg frei, Speichel läuft ab."},
+      {"text":"Schnarchende Atmung: Die Zunge ist zurückgefallen!"}
+    ],
+    "b_af": [
+      {"if":{"not":{"flag":"postiktal"}},"text":"Kaum effektive Atmung während des Krampfens."},
+      {"text":"Atmung flach."}
+    ],
+    "c_rr": [{"if":{"not":{"flag":"postiktal"}},"text":"Während des Krampfens nicht sinnvoll messbar."},{"text":""}],
+    "d_gcs": [
+      {"if":{"not":{"flag":"postiktal"}},"text":"GCS 3, krampft."},
+      {"if":{"vital":"gcs","op":">=","value":13},"text":"GCS 13, desorientiert."},
+      {"text":"GCS 8 (Augen auf Schmerz, Stöhnen, Abwehr)."}
+    ],
+    "d_pup": "Pupillen weit, gleich groß, träge Reaktion.",
+    "e_body": "Zungenbiss seitlich, Platzwunde am Kinn, eingenässt. Keine weiteren Verletzungen. Im Portemonnaie ein Epilepsie-Ausweis."
+  },
+  "answers": {
+    "q_s": {"pt":"„Kopf tut weh… so müde.“","by":"„Er ist einfach umgefallen und hat angefangen zu zucken.“"},
+    "q_m": {"pt":"„Levetiracetam… hab ich die letzten Tage vergessen.“","by":"„Keine Ahnung, ich kenn ihn nicht.“"},
+    "q_p": {"pt":"„Epilepsie, seit Jahren.“","by":"„Weiß ich nicht.“"},
+    "q_e": {
+      "pt": "„Weiß nichts mehr… war gestern lange feiern.“",
+      "by": "„Er stand an der Bahnsteigkante, ist umgekippt und hat gezuckt. Vor vielleicht zwei Minuten.“"
+    },
+    "q_o": {"pt":"„Weiß nicht…“","by":"„Kurz bevor ich angerufen habe.“"}
+  },
+  "followups": {
+    "f_aura": {
+      "after": "q_e",
+      "label": "Hat er vorher etwas gesagt oder gemerkt?",
+      "ans": {
+        "pt": "„Mir war so komisch… so ein Geruch… dann weiß ich nichts mehr.“",
+        "by": "„Er hat sich an den Kopf gefasst und dann ging es los.“"
+      }
+    },
+    "f_drogen": {
+      "after": "q_e",
+      "label": "Alkohol oder Drogen?",
+      "ans": {"pt":"„Gestern ein paar Bier… und wenig geschlafen.“","by":"„Keine Ahnung.“"}
+    }
+  },
+  "moments": [
+    {
+      "id": "stift",
+      "at": 10,
+      "who": "Passantin",
+      "say": "„Soll ich ihm was zwischen die Zähne stecken? Ich hab hier einen Kugelschreiber, sonst beißt er sich die Zunge ab!“",
+      "options": [
+        {
+          "t": "„Bitte nichts in den Mund! Treten Sie einen Schritt zurück und halten Sie die Leute auf Abstand. Danke!“",
+          "pts": 3,
+          "reply": "Sie nickt und schickt die Schaulustigen weg."
+        },
+        {
+          "t": "„Ja, gute Idee.“",
+          "pts": -10,
+          "why": "Nichts in den Mund eines Krampfenden: Zähne brechen ab, Aspiration, Bissverletzungen beim Helfer."
+        }
+      ]
+    },
+    {
+      "id": "wo",
+      "who": "Herr Nowak",
+      "say": "„Wo bin ich? Was ist passiert…? Haben die Leute das gefilmt?“",
+      "options": [
+        {
+          "t": "Ruhig orientieren: wer du bist, wo er ist, dass er einen Anfall hatte. Sichtschutz, Schaulustige weg.",
+          "mood": 3,
+          "pts": 3,
+          "reply": "„Oh nein… schon wieder. Danke, dass Sie die Leute weggeschickt haben.“"
+        },
+        {
+          "t": "„Sie hatten einen Anfall. Jetzt erst mal nicht reden.“",
+          "mood": -1,
+          "pts": 0,
+          "why": "Postiktal sind Patienten verwirrt und beschämt: Orientieren und Würde wahren hilft mehr."
+        }
+      ],
+      "if": {"flag":"wach"}
+    }
+  ],
+  "effects": {
+    "m_polster": [
+      {"if":{"flag":"postiktal"},"text":"Umgebung ist sicher."},
+      {"text":"Bank weggeschoben, Jacke unter den Kopf. Er schlägt sich nicht mehr an."}
+    ],
+    "m_zeit": {"text":"Uhrzeit notiert: Beginn laut Passantin vor ca. 2 Minuten."},
+    "m_absaug": {"text":"Absaug- und Beatmungsbereitschaft hergestellt."},
+    "m_festhalten": {
+      "pts": -10,
+      "why": "Krampfende Patienten nie festhalten: Verletzungsgefahr (Brüche, Luxationen) für Patient und Helfer."
+    },
+    "m_beisskeil": {
+      "pts": -10,
+      "why": "Kein Beißkeil, nichts in den Mund: Zähne brechen, Verletzungsgefahr für Helfer, Aspiration."
+    },
+    "m_ssl": [
+      {
+        "if": {"flag":"postiktal"},
+        "text": "Stabile Seitenlage, Speichel läuft ab, das Schnarchen hört auf.",
+        "delta": {"spo2":3}
+      },
+      {
+        "text": "Während des Krampfens nicht möglich. Warte, bis der Anfall vorbei ist.",
+        "nopts": true,
+        "noCount": true
+      }
+    ],
+    "m_esmarch": [
+      {"if":{"flag":"postiktal"},"text":"Esmarch: Das Schnarchen hört auf.","delta":{"spo2":2}},
+      {"text":"Während des Krampfens nicht möglich.","nopts":true,"noCount":true}
+    ],
+    "m_o2_mask": [
+      {"if":{"flag":"postiktal"},"text":"O₂ über Reservoirmaske.","delta":{"spo2":6}},
+      {"text":"O₂ über Reservoirmaske.","delta":{"spo2":1}}
+    ],
+    "m_o2_nb": [
+      {"if":{"flag":"postiktal"},"text":"O₂ über Nasenbrille.","delta":{"spo2":4}},
+      {"text":"O₂ über Nasenbrille.","delta":{"spo2":1}}
+    ],
+    "m_guedel": [
+      {
+        "if": {"flag":"postiktal"},
+        "pts": -3,
+        "why": "Bei erhaltenen Schutzreflexen würgt er am Guedel-Tubus. Seitenlage reicht."
+      },
+      {"pts":-5,"why":"Nichts in den Mund des Krampfenden!"}
+    ],
+    "m_trinken": {"pts":-5,"why":"Nichts oral bei Bewusstseinstrübung."}
+  },
+  "required": [
+    {
+      "any": ["sss"],
+      "pts": 5,
+      "label": "Gefahr Bahnsteigkante erkannt",
+      "why": "Eigenschutz und Patientenschutz zuerst."
+    },
+    {
+      "any": ["m_polster"],
+      "pts": 5,
+      "label": "Vor Verletzungen geschützt",
+      "why": "Umgebung sichern, Kopf polstern."
+    },
+    {
+      "any": ["m_zeit"],
+      "pts": 5,
+      "label": "Zeit gestoppt",
+      "why": "Dauer über 5 Minuten = Status epilepticus, Medikamente durch NA/NotSan."
+    },
+    {"any":["m_absaug"],"pts":5,"label":"Absaugbereitschaft","why":"Speichel, Erbrochenes nach dem Anfall."},
+    {"any":["m_nef"],"pts":5,"label":"NEF alarmiert","why":"Folie Tag 8: NEF alarmieren."},
+    {"any":["d_bz"],"pts":10,"label":"Blutzucker gemessen","why":"Hypoglykämie kann Krampfanfälle auslösen."},
+    {
+      "pts": 10,
+      "label": "Nach dem Anfall Atemweg gesichert (Seitenlage)",
+      "why": "Postiktal: Zunge fällt zurück, Aspirationsgefahr.",
+      "if": {"fixed":"atemweg"}
+    },
+    {
+      "any": ["m_o2_mask","m_o2_nb"],
+      "pts": 5,
+      "label": "Sauerstoff nach dem Anfall",
+      "why": "Folie: nach dem Anfall O₂."
+    },
+    {"any":["e_body"],"pts":5,"label":"Nach Verletzungen gesucht","why":"Zungenbiss, Sturzverletzungen."}
+  ],
+  "quizzes": [
+    {
+      "on": "treat",
+      "type": "mc",
+      "q": "Er krampft noch. Was tust du jetzt NICHT?",
+      "options": [
+        "Kopf polstern, Umgebung sichern",
+        "Uhrzeit merken",
+        "Festhalten und einen Beißkeil einlegen",
+        "Absaugbereitschaft herstellen"
+      ],
+      "answer": 2,
+      "explain": "Nie festhalten, kein Beißkeil: Verletzungsgefahr und Aspiration."
+    }
+  ],
+  "diagnosis": {
+    "options": ["Generalisierter Krampfanfall bei bekannter Epilepsie","Hypoglykämie","Synkope","Alkoholintoxikation"],
+    "answer": 0
+  },
+  "teach": [
+    "Im Anfall: nicht festhalten, kein Beißkeil, Kopf polstern, Uhrzeit, Absaugbereitschaft, NEF, BZ.",
+    "Nach dem Anfall: Seitenlage, O₂, nach Verletzungen suchen (Zungenbiss).",
+    "Über 5 Minuten = Status epilepticus → Benzodiazepine durch NotSan/NA."
+  ]
+}

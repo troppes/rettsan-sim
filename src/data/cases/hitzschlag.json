@@ -1,0 +1,190 @@
+{
+  "id": "hitzschlag",
+  "level": 2,
+  "person": "🏃",
+  "icon": "☀️",
+  "name": "Tim",
+  "mood": 4,
+  "dispatches": [
+    {
+      "short": "Person hilflos beim Stadtlauf, 24 J.",
+      "text": "RTW, hilflose Person. Männlich, 24 Jahre, Ziel eines Stadtlaufs, 34 °C im Schatten."
+    },
+    {
+      "short": "Krampfanfall? Läufer, 24 J.",
+      "text": "RTW, Person krampft. Männlich, 24 Jahre, Ziel eines Stadtlaufs. Ein Ordner: „Er zuckt mit den Beinen!“"
+    },
+    {
+      "short": "Kollaps im Ziel eines Stadtlaufs, 24 J.",
+      "text": "RTW, Person kollabiert. Männlich, 24 Jahre, Ziel eines Stadtlaufs, 34 °C im Schatten."
+    }
+  ],
+  "start": {
+    "hr": 138,
+    "rhythm": "sinustachy",
+    "spo2": 96,
+    "sys": 92,
+    "dia": 55,
+    "af": 28,
+    "bz": 92,
+    "temp": 41.2,
+    "gcs": 12,
+    "status": "Liegt in der prallen Sonne hinter der Ziellinie. Die Haut ist heiß und hochrot, noch etwas verschwitzt. Er ist verwirrt, murmelt und will aufstehen, kippt aber wieder um."
+  },
+  "answerer": [{"if":{"vital":"gcs","op":"<","value":14},"who":"Laufpartnerin"}],
+  "problems": [
+    {
+      "id": "hitze",
+      "letter": "E",
+      "label": "Hyperthermie über 40 °C",
+      "fixedBy": ["m_kuehl"],
+      "worsen": {"temp":0.06,"hr":0.5}
+    }
+  ],
+  "rules": [
+    {
+      "id": "besser",
+      "if": {"all":[{"fixed":"hitze"},{"vital":"temp","op":"<","value":39.5}]},
+      "set": {"gcs":14,"hr":112,"sys":104},
+      "flags": {"besser":true},
+      "status": "Er liegt im kühlen RTW, wird klarer und fragt, ob er ins Ziel gekommen ist.",
+      "info": "Die Kerntemperatur sinkt, der Patient wird klarer."
+    },
+    {
+      "id": "sonne",
+      "if": {"all":[{"setting":"worsen"},{"not":{"done":"m_raus"}},{"time":301}]},
+      "delta": {"temp":0.3},
+      "flags": {"warnRaus":true},
+      "alert": "Er liegt immer noch in der Sonne. Die Temperatur steigt weiter!"
+    }
+  ],
+  "trends": [
+    {"if":{"all":[{"fixed":"hitze"},{"done":"m_raus"}]},"perMin":{"temp":-0.25},"min":{"temp":38.4}},
+    {"if":{"all":[{"fixed":"hitze"},{"not":{"done":"m_raus"}}]},"perMin":{"temp":-0.08},"min":{"temp":38.4}}
+  ],
+  "findings": {
+    "sss": "Pralle Sonne, viele Zuschauer. Patient so schnell wie möglich aus der Hitze bringen (Schatten, kühler RTW).",
+    "ansprechen": "Er murmelt: „Muss… weiter… ins Ziel…“",
+    "b_af": "Schnelle, tiefe Atmung.",
+    "c_puls": "Schnell, flach.",
+    "c_rekap": "Rekap 3 s. Haut heiß, hochrot, leicht verschwitzt.",
+    "d_gcs": [
+      {"if":{"vital":"gcs","op":">=","value":14},"text":"GCS 14, wird klarer."},
+      {"text":"GCS 12 (Augen auf Ansprache, verwirrt, befolgt Aufforderungen). D-Problem!"}
+    ],
+    "d_pup": "Isokor, prompt.",
+    "e_body": "Haut heiß und gerötet, Wadenkrämpfe. Keine Verletzungen."
+  },
+  "answers": {
+    "q_s": {"pt":"„Mir ist so heiß… Kopfweh.“","by":"„Er hat ab Kilometer 9 über Schwindel geklagt.“"},
+    "q_a": {"pt":"„Nein.“","by":"„Nicht dass ich wüsste.“"},
+    "q_m": {"pt":"„Keine.“","by":"„Keine.“"},
+    "q_p": {"pt":"„Gesund.“","by":"„Er ist gesund und trainiert viel.“"},
+    "q_l": {"pt":"„Kaum getrunken…“","by":"„Er hat unterwegs kaum getrunken, wollte keine Zeit verlieren.“"},
+    "q_e": {"pt":"„Weiß nicht mehr…“","by":"„Im Ziel ist er einfach umgekippt.“"}
+  },
+  "moments": [
+    {
+      "id": "aufstehen",
+      "at": 20,
+      "who": "Tim",
+      "say": "„Lasst mich… ich muss ins Ziel…“ Er versucht aufzustehen und schwankt.",
+      "options": [
+        {
+          "t": "Ruhig ansprechen, Laufpartnerin einbinden: „Tim, du bist im Ziel, du hast es geschafft. Bleib liegen, wir kümmern uns.“",
+          "mood": 3,
+          "pts": 3,
+          "reply": "Er lässt sich zurücksinken: „Geschafft…?“"
+        },
+        {
+          "t": "Festhalten und auf die Trage drücken.",
+          "mood": -3,
+          "delta": {"hr":6},
+          "pts": -3,
+          "why": "Gewalt eskaliert bei verwirrten Patienten. Erst ruhig ansprechen und Bezugspersonen einbinden."
+        },
+        {
+          "t": "Ihn aufstehen lassen, er will ja.",
+          "pts": -5,
+          "delta": {"sys":-8},
+          "why": "Bewusstseinsgetrübt und hypoton: Sturz- und Kollapsgefahr."
+        }
+      ]
+    }
+  ],
+  "effects": {
+    "m_raus": {"text":"Ihr tragt ihn in den klimatisierten RTW.","delta":{"hr":-4}},
+    "m_kuehl": [
+      {
+        "if": {"done":"m_raus"},
+        "text": "Feuchtkalte Tücher, Kältepacks (mit Kompresse) an Hals, Achseln und Leisten, Lüftung an."
+      },
+      {"text":"Kältepacks und feuchte Tücher, aber er liegt noch in der Sonne. Das wirkt nur schwach."}
+    ],
+    "m_kalt_wasch": {"text":"Feucht abwaschen und Luftstrom: Das hilft beim Kühlen.","fix":["hitze"]},
+    "m_flach": {"text":"Flache Lagerung."},
+    "m_schock": {"text":"Beine hoch. Der Puls wird etwas langsamer.","delta":{"sys":6,"hr":-3}},
+    "m_trinken": [
+      {
+        "if": {"vital":"gcs","op":">=","value":14},
+        "text": "Er trinkt in kleinen Schlucken ein isotonisches Getränk."
+      },
+      {
+        "pts": -10,
+        "why": "Bewusstseinsgetrübt (GCS unter 14): Aspirationsgefahr! Trinken nur, wenn er wach ist."
+      }
+    ],
+    "m_waerme": {"pts":-5,"why":"Beim Hitzschlag nicht zudecken, sondern kühlen!","delta":{"temp":0.3}},
+    "m_laufen": {"pts":-10,"why":"Kollabierter Patient mit Bewusstseinsstörung: nicht laufen lassen."},
+    "m_o2_mask": {"pts":-2,"why":"SpO₂ 96 % ohne Atemnot: Sauerstoff ist nicht nötig."}
+  },
+  "required": [
+    {
+      "any": ["m_raus"],
+      "pts": 10,
+      "label": "Aus der Hitze gebracht",
+      "why": "Wichtigster erster Schritt: Raus aus der Hitze."
+    },
+    {
+      "any": ["e_temp"],
+      "pts": 10,
+      "label": "Körperkerntemperatur gemessen",
+      "why": "Über 40 °C plus Bewusstseinsstörung = Hitzschlag."
+    },
+    {
+      "any": ["m_kuehl","m_kalt_wasch"],
+      "pts": 10,
+      "label": "Aktiv gekühlt",
+      "why": "Hals, Achseln, Leisten; feuchte Tücher und Luftstrom."
+    },
+    {"any":["m_nef"],"pts":10,"label":"NEF nachalarmiert","why":"Bewusstseinsstörung (D-Problem) → NEF."},
+    {"any":["d_bz"],"pts":5,"label":"BZ gemessen","why":"Bewusstseinsstörung: BZ immer messen."},
+    {
+      "any": ["m_flach","m_schock"],
+      "pts": 5,
+      "label": "Flach gelagert",
+      "why": "Niedriger RR: flach bzw. Beine hoch."
+    }
+  ],
+  "quizzes": [
+    {
+      "on": "treat",
+      "type": "order",
+      "q": "Hitzschlag im Ziel. Bring die Schritte in eine sinnvolle Reihenfolge.",
+      "items": [
+        "SSS, xABCDE, Kerntemperatur messen",
+        "Raus aus der Hitze (Schatten, kühler RTW)",
+        "Aktiv kühlen: Hals, Achseln, Leisten",
+        "Bei Bewusstseinsstörung NEF",
+        "Trinken lassen, sobald er wach ist"
+      ]
+    }
+  ],
+  "diagnosis": {"options":["Hitzschlag (Hyperthermie)","Sonnenstich","Hypoglykämie","Synkope"],"answer":0},
+  "teach": [
+    "Hitzschlag: Kerntemperatur über 40 °C, heiße Haut (bei Anstrengung oft noch schweißig), Bewusstseinsstörung.",
+    "Raus aus der Hitze, aktiv kühlen (Hals, Achseln, Leisten), NEF bei Bewusstseinsstörung.",
+    "Trinken nur, wenn der Patient wach ist und sicher schluckt.",
+    "Sonnenstich = Hirnhautreizung durch Sonne auf den Kopf, Körpertemperatur normal."
+  ]
+}

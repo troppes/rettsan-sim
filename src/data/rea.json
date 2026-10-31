@@ -1,0 +1,142 @@
+{
+  "paths": [
+    ["vf","vf","vf","rosc"],
+    ["pvt","vf","vf","rosc"],
+    ["asystolie","asystolie","pea","rosc"],
+    ["pea","pea","rosc"]
+  ],
+  "shockable": ["vf","pvt"],
+  "rosc": {
+    "vitals": {"hr":96,"rhythm":"stemi","spo2":91,"sys":102,"dia":64,"af":12,"gcs":3},
+    "status": "ROSC! Der Patient hat einen tastbaren Puls, ist aber bewusstlos und atmet flach. Er liegt auf dem Rücken.",
+    "log": "💚 ROSC! Jetzt: Rückenlage, Absaugbereitschaft, ABCDE, 12-Kanal-EKG, SpO₂ 94–98 %."
+  },
+  "analysisRates": {"sinus":96,"pea":44},
+  "required": [
+    {
+      "check": "bak",
+      "pts": 5,
+      "label": "BAK geprüft (Atmung 10 s, Puls 5 s)",
+      "why": "Kein Bewusstsein + keine normale Atmung = Reanimation."
+    },
+    {
+      "check": "hdm",
+      "pts": 10,
+      "label": "Herzdruckmassage gestartet",
+      "why": "Ohne HDM keine Durchblutung von Herz und Gehirn."
+    },
+    {
+      "check": "hdmBeforeDefi",
+      "pts": 5,
+      "label": "Erst drücken, dann kleben",
+      "why": "Die HDM läuft, während der Kollege die Elektroden klebt."
+    },
+    {"check":"defi","pts":5,"label":"Defi-Elektroden geklebt","why":"Frühanalyse so schnell wie möglich."},
+    {
+      "check": "nefInTime",
+      "pts": 10,
+      "label": "NEF rechtzeitig nachalarmiert",
+      "why": "Durchfallkriterium: spätestens bis Ende des 2. Blocks."
+    },
+    {
+      "check": "airway",
+      "pts": 5,
+      "label": "Beatmung (Beutel-Maske / Larynxtubus)",
+      "why": "30:2, Oxygenierung ist bei der Rea entscheidend."
+    },
+    {"check":"ivz","pts":5,"label":"i.v.-Zugang","why":"Für Adrenalin (RettSan darf das bei der Rea)."},
+    {
+      "check": "adrenalin",
+      "pts": 10,
+      "label": "Adrenalin 1 mg zum richtigen Zeitpunkt",
+      "why": "Nicht schockbar: sofort; schockbar: nach dem 3. Schock; dann alle 4 min."
+    },
+    {
+      "check": "rosc",
+      "pts": 10,
+      "label": "ROSC erreicht und erkannt",
+      "why": "Puls prüfen bei organisiertem Rhythmus."
+    },
+    {
+      "check": "twelveLead",
+      "pts": 5,
+      "label": "Nach ROSC 12-Kanal-EKG",
+      "why": "Herzinfarkt als Ursache? Zielklinik mit Herzkatheter."
+    },
+    {
+      "check": "suction",
+      "pts": 5,
+      "label": "Absaugbereitschaft",
+      "why": "Erbrechen und Aspiration während und nach der Rea."
+    }
+  ],
+  "decision": {
+    "options": [
+      {"id":"shock","label":"⚡ Laden, „Alle weg!“, Schock abgeben"},
+      {"id":"noshock","label":"✋ Kein Schock, sofort weiter HDM"},
+      {"id":"rosc","label":"💚 Puls tastbar: ROSC, HDM stoppen"}
+    ],
+    "rosc": {
+      "ok": "ROSC! Der eigene Kreislauf ist zurück.",
+      "shock": "Durchfallkriterium: Ein Patient mit Puls wird nicht geschockt!",
+      "other": "Der Patient hat einen Puls: HDM stoppen, ROSC-Versorgung."
+    },
+    "shockable": {
+      "ok": "Richtig: VF/pVT ist schockbar. Laden während HDM, „Achtung Defibrillation, alle weg!“, Schock, sofort weiter drücken.",
+      "wrong": "Durchfallkriterium: VF/pVT nicht geschockt!"
+    },
+    "nonShockable": {
+      "ok": "Richtig: Asystolie/PEA ist nicht schockbar. Sofort weiter drücken, Adrenalin so früh wie möglich, reversible Ursachen (4 H / HITS) suchen.",
+      "shock": "Durchfallkriterium: Asystolie/PEA geschockt!",
+      "rosc": "Kein Puls: Das ist eine PEA, kein ROSC! Weiter drücken."
+    },
+    "pts": 5,
+    "penalty": 10
+  },
+  "texts": {
+    "bak": "Keine Reaktion auf Ansprache und Schmerzreiz. Atmung (10 s): nur vereinzelte Schnappatmung, keine normale Atmung. Puls an der Carotis (5 s): nicht tastbar. → Kreislaufstillstand!",
+    "assessNoPriority": "Während der Reanimation hat diese Untersuchung keine Priorität. Drücken, schocken, beatmen!",
+    "assessNoTime": "Keine Zeit dafür, der Patient ist im Kreislaufstillstand.",
+    "nef": "NEF ist nachalarmiert.",
+    "treatWrong": "„{action}“ passt nicht zur Reanimation.",
+    "hdmAfterRosc": "Der Patient hat einen Puls (ROSC)! Keine Herzdruckmassage mehr.",
+    "hdmNoBak": "Vor der Herzdruckmassage BAK prüfen: Bewusstsein, Atmung (10 s), Puls (5 s).",
+    "hdmRunning": "Die Druckmassage läuft bereits.",
+    "hdmStart": "„Reanimation, Druckmassage Start!“ Dein Kollege drückt: Mitte Brustbein, 100–120/min, 5–6 cm, vollständig entlasten.",
+    "hdmStatus": "Reanimation läuft. Der Brustkorb wird rhythmisch komprimiert.",
+    "defiDone": "Elektroden kleben bereits.",
+    "defiNoHdm": "Erst die Druckmassage starten, dann parallel kleben. Jede Sekunde ohne HDM zählt.",
+    "defi": "Elektroden unter dem rechten Schlüsselbein und links seitlich an der Herzspitze. Der Monitor zeigt einen Rhythmus (durch die HDM verwackelt).",
+    "analysisNoDefi": "Erst die Defi-Elektroden kleben.",
+    "analysisRosc": "ROSC: Jetzt ABCDE, 12-Kanal-EKG.",
+    "analysisTooSoon": "Nächste Analyse erst nach einem 2-Minuten-Block. Unnötige Pausen kosten Durchblutung.",
+    "analysisWaitBlock": "Erst den 2-Minuten-Block durchführen.",
+    "pulsePresent": "Puls an der Carotis tastbar!",
+    "pulseAbsent": "Kein Puls tastbar.",
+    "pulseWrongTime": "Pulskontrolle nur bei organisiertem Rhythmus in der Analyse. Sonst nicht unterbrechen.",
+    "blockNoHdm": "Starte zuerst die Herzdruckmassage.",
+    "blockAfterRosc": "Der Patient hat einen Puls (ROSC)!",
+    "blockEarlyAnalysis": "Nach dem Kleben direkt die Frühanalyse machen, nicht erst 2 Minuten drücken.",
+    "block": "Block {n}: 5 Zyklen 30:2. Der Drücker zählt laut, die letzten 5 laut runter.",
+    "blockNoAirway": "Keine Beatmung in diesem Block. Durchfallkriterium: keine Beatmung über 2 Zyklen. Beutel-Maske oder Larynxtubus!",
+    "blockNoNef": "Durchfallkriterium: Das NEF muss spätestens bis Ende des 2. Blocks nachalarmiert sein.",
+    "blockAdrEarly": "Nicht schockbarer Rhythmus: Adrenalin so früh wie möglich, sobald der Zugang liegt.",
+    "blockAdrRepeat": "Adrenalin alle 4 Minuten (= alle 2 Blöcke) wiederholen (Schulmeinung).",
+    "blockEnd": "Block beendet: Zeit für Rhythmusanalyse und Helferwechsel.",
+    "bmvDone": "Die Beatmung läuft bereits.",
+    "bmv": "Beutel-Masken-Beatmung mit O₂ (Reservoir, 15 l/min), 2 Hübe nach 30 Kompressionen, je 1 s.",
+    "ltDone": "Der Larynxtubus liegt bereits.",
+    "lt": "Larynxtubus liegt, Lagekontrolle mit Kapnografie (etCO₂). Weiter 30:2.",
+    "ivzDone": "Der Zugang liegt bereits.",
+    "ivz": "i.v.-Zugang liegt, VEL läuft zum Nachspülen.",
+    "suction": "„Absaugbereitschaft ist hergestellt.“",
+    "adrNoIvz": "Kein Zugang! Erst i.v.-Zugang legen.",
+    "adrAfterRosc": "Nach ROSC kein Reanimations-Adrenalin.",
+    "adrBeforeShock3": "Bei VF/pVT Adrenalin erst nach dem 3. erfolglosen Schock (Schulmeinung).",
+    "adrTooSoon": "Zu früh wiederholt: Adrenalin alle 4 Minuten (alle 2 Blöcke).",
+    "adr": "Double-Check im 4-Augen-Prinzip: 1 mg Adrenalin (1 ml) + 9 ml NaCl. Gegeben, Arm hoch, mit Infusion nachgespült.",
+    "organizedNoPulse": "Bei einem organisierten Rhythmus immer den Puls prüfen, um PEA und ROSC zu unterscheiden!"
+  },
+  "redirects": {"c_ekg":"r_defi","m_defi_kleben":"r_defi","m_absaug":"r_absaug","m_bmv":"r_bmv","m_ivz":"r_ivz"},
+  "allowedTreat": ["m_betreuung","m_zeit"]
+}

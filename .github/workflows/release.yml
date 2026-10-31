@@ -1,0 +1,58 @@
+name: Release
+
+# Ein Tag wie v2.1.0 baut das Spiel, erstellt ein GitHub-Release mit Notizen
+# und veröffentlicht genau diese Version auf GitHub Pages.
+on:
+  push:
+    tags: ['v*.*.*']
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Tag passt zur Version in package.json
+        run: |
+          v=$(node -p "require('./package.json').version")
+          [ "v$v" = "$GITHUB_REF_NAME" ] || { echo "Tag $GITHUB_REF_NAME passt nicht zu package.json ($v)"; exit 1; }
+      - run: npm ci
+      - run: npm run check
+      - run: npm test
+      - run: npm run build
+        env:
+          BASE_PATH: /${{ github.event.repository.name }}/
+      - name: ZIP für das Release
+        run: cd dist && zip -qr ../rettsan-sim-${GITHUB_REF_NAME}.zip .
+      - name: GitHub-Release erstellen
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          pre=""; case "$GITHUB_REF_NAME" in *-*) pre="--prerelease";; esac
+          gh release create "$GITHUB_REF_NAME" rettsan-sim-${GITHUB_REF_NAME}.zip --title "$GITHUB_REF_NAME" --generate-notes --verify-tag $pre
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    if: ${{ !contains(github.ref_name, '-') }}
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

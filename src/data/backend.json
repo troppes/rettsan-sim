@@ -1,0 +1,5 @@
+{
+  "url": "https://wvmeekunlpxrwjtxwiao.supabase.co",
+  "publishableKey": "sb_publishable_6ra7hihbfRoXI2k7zBwj-A_tuLdtgiB",
+  "tables": { "cases": "rettsan_einsaetze", "ecg": "rettsan_ekg" }
+}

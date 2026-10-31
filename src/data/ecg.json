@@ -1,0 +1,310 @@
+{
+  "morphology": {
+    "p": [[0,0.025,0.15]],
+    "narrow": [[-0.035,0.009,-0.12],[0,0.011,1.2],[0.035,0.011,-0.3],[0.27,0.05,0.3]],
+    "escape": [[0,0.04,1],[0.07,0.03,-0.35],[0.32,0.07,-0.35]],
+    "ectopic": [[0,0.05,-1.3],[0.09,0.04,0.5],[0.32,0.07,0.45]],
+    "vt": [[0,0.05,1.1],[0.13,0.05,-0.55]],
+    "pleth": [[0.12,0.06,1],[0.34,0.07,0.35]]
+  },
+  "analysisOptions": {
+    "rate": {
+      "brady": "Unter 60/min",
+      "normal": "60–100/min",
+      "tachy": "Über 100/min",
+      "none": "Keine geordneten Kammerkomplexe"
+    },
+    "regular": {"ja":"Regelmäßig","nein":"Unregelmäßig","nb":"Nicht beurteilbar"},
+    "qrs": {
+      "schmal": "Schmal (unter 0,12 s = unter 3 kleinen Kästchen)",
+      "breit": "Breit (0,12 s oder mehr)",
+      "teils": "Teils schmal, teils breit",
+      "keine": "Keine QRS-Komplexe erkennbar"
+    },
+    "p": {
+      "normal": "Vor jedem QRS eine P-Welle, gleicher Abstand",
+      "langPQ": "Vor jedem QRS eine P-Welle, aber PQ-Zeit verlängert (über 0,2 s)",
+      "zunehmend": "PQ-Zeit wird länger, bis ein QRS ausfällt",
+      "ausfall": "Gleiche PQ-Zeit, aber einzelne P-Wellen ohne QRS",
+      "dissoziiert": "P-Wellen und QRS laufen unabhängig voneinander",
+      "flatter": "Sägezahnartige Flatterwellen statt P-Wellen",
+      "keine": "Keine erkennbaren P-Wellen (Grundlinie unruhig oder P versteckt)",
+      "spike": "Keine P-Wellen, schmaler Strich (Spike) vor jedem QRS",
+      "nichts": "Keine elektrische Aktivität erkennbar"
+    },
+    "todo": {
+      "schock": "Reanimation, so schnell wie möglich defibrillieren (schockbar)",
+      "keinSchock": "Reanimation ohne Schock, Adrenalin so früh wie möglich (nicht schockbar)",
+      "instabil": "Patient gefährdet: Defi-Patches kleben, NEF nachalarmieren, auf Instabilität achten",
+      "stemi": "12-Kanal-EKG, NEF nachalarmieren, Herzkatheter voranmelden",
+      "beobachten": "Monitoring, Symptome und Ursache klären, je nach Zustand NEF"
+    }
+  },
+  "rhythms": {
+    "sinus": {
+      "name": "Sinusrhythmus",
+      "pulse": true,
+      "shockable": false,
+      "analysis": {"rate":"normal","regular":"ja","qrs":"schmal","p":"normal","todo":"beobachten"},
+      "pattern": {"type":"sinus","hr":[65,90],"pq":0.16},
+      "help": "Regelmäßig, 60–100/min, schmale QRS, vor jedem QRS eine P-Welle.",
+      "hint": "Regelmäßig, vor jedem schmalen QRS eine P-Welle, Frequenz 60–100/min.",
+      "monitorRate": 78,
+      "vignettes": ["68 J., Routinekontrolle nach Sturz, beschwerdefrei. RR 135/80."]
+    },
+    "sinustachy": {
+      "name": "Sinustachykardie",
+      "pulse": true,
+      "shockable": false,
+      "analysis": {"rate":"tachy","regular":"ja","qrs":"schmal","p":"normal","todo":"beobachten"},
+      "pattern": {"type":"sinus","hr":[110,140],"pq":0.13},
+      "help": "Wie Sinus, aber über 100/min. Meist eine Reaktion (Schmerz, Fieber, Volumenmangel): Ursache suchen.",
+      "hint": "Wie Sinus (P vor jedem QRS, schmal, regelmäßig), aber über 100/min.",
+      "monitorRate": 128,
+      "vignettes": [
+        "24 J., hohes Fieber, Schüttelfrost. RR 115/70.",
+        "35 J., nach Fahrradsturz, starke Schmerzen am Arm. RR 140/85."
+      ]
+    },
+    "sinusbrady": {
+      "name": "Sinusbradykardie",
+      "pulse": true,
+      "shockable": false,
+      "analysis": {"rate":"brady","regular":"ja","qrs":"schmal","p":"normal","todo":"beobachten"},
+      "pattern": {"type":"sinus","hr":[38,52],"pq":0.17},
+      "help": "Wie Sinus, aber unter 60/min. Bei Sportlern normal, sonst an Medikamente (Betablocker) denken.",
+      "hint": "Wie Sinus (P vor jedem QRS, schmal, regelmäßig), aber unter 60/min.",
+      "monitorRate": 42,
+      "vignettes": ["29 J., Marathonläufer, beschwerdefrei. RR 120/70.","74 J., nimmt Betablocker, etwas müde. RR 110/65."]
+    },
+    "vhf": {
+      "name": "Tachyarrhythmia absoluta bei Vorhofflimmern",
+      "pulse": true,
+      "shockable": false,
+      "analysis": {"rate":"tachy","regular":"nein","qrs":"schmal","p":"keine","todo":"beobachten"},
+      "pattern": {"type":"irregular","rr":[0.3,0.7],"baseline":"fib"},
+      "help": "Völlig unregelmäßige Abstände („absolute Arrhythmie“), keine P-Wellen, zittrige Grundlinie.",
+      "hint": "Unregelmäßige Abstände der QRS-Komplexe („absolute Arrhythmie“), keine klaren P-Wellen, zittrige Grundlinie.",
+      "monitorRate": 115,
+      "vignettes": ["79 J., Herzrasen seit dem Morgen, leichte Atemnot. RR 125/80."]
+    },
+    "flattern": {
+      "name": "Vorhofflattern",
+      "pulse": true,
+      "shockable": false,
+      "analysis": {"rate":"tachy","regular":"ja","qrs":"schmal","p":"flatter","todo":"beobachten"},
+      "pattern": {"type":"flutter","flutterInterval":0.2,"ratios":[2]},
+      "help": "Sägezahn-Grundlinie (Flatterwellen ca. 300/min), Kammer z. B. 2:1 übergeleitet → ca. 150/min.",
+      "vignettes": ["66 J., Herzklopfen und Schwindel seit 2 Stunden. RR 115/75."]
+    },
+    "svt": {
+      "name": "Supraventrikuläre Tachykardie (SVT)",
+      "pulse": true,
+      "shockable": false,
+      "analysis": {"rate":"tachy","regular":"ja","qrs":"schmal","p":"keine","todo":"instabil"},
+      "pattern": {"type":"regular","hr":[170,210],"complex":"narrow"},
+      "help": "Sehr schnell (oft 160–220/min), regelmäßig, schmale QRS, P-Wellen nicht sichtbar (stecken im QRS).",
+      "vignettes": ["31 J., plötzliches Herzrasen beim Bücken, „wie ein Schalter“. RR 105/70."]
+    },
+    "avb1": {
+      "name": "AV-Block I. Grades",
+      "pulse": true,
+      "shockable": false,
+      "analysis": {"rate":"normal","regular":"ja","qrs":"schmal","p":"langPQ","todo":"beobachten"},
+      "pattern": {"type":"sinus","hr":[60,80],"pq":[0.3,0.38]},
+      "help": "Jede P-Welle wird übergeleitet, aber verzögert: PQ-Zeit über 0,2 s (mehr als ein großes Kästchen).",
+      "vignettes": ["70 J., Kontroll-EKG, beschwerdefrei. RR 140/85."]
+    },
+    "wenckebach": {
+      "name": "AV-Block II. Grades Typ Wenckebach (Mobitz I)",
+      "pulse": true,
+      "shockable": false,
+      "analysis": {"rate":"normal","regular":"nein","qrs":"schmal","p":"zunehmend","todo":"beobachten"},
+      "pattern": {"type":"wenckebach","atrialHr":[86,100],"cycles":[3,4],"pq":0.16,"pqStep":0.08},
+      "help": "PQ wird von Schlag zu Schlag länger, dann fällt ein QRS aus. Danach geht es von vorn los.",
+      "vignettes": ["58 J., nachts gemessen, leichtes Stolpern. RR 130/80."]
+    },
+    "mobitz2": {
+      "name": "AV-Block II. Grades Typ Mobitz II",
+      "pulse": true,
+      "shockable": false,
+      "analysis": {"rate":"brady","regular":"nein","qrs":"schmal","p":"ausfall","todo":"instabil"},
+      "pattern": {"type":"mobitz2","atrialHr":[70,84],"ratios":[2,3],"pq":0.18},
+      "help": "PQ bleibt gleich, aber plötzlich folgt einer P-Welle kein QRS. Gefährlich: kann in einen AV-Block III übergehen.",
+      "vignettes": ["76 J., zweimal kurz schwarz vor Augen. RR 105/60."]
+    },
+    "avb3": {
+      "name": "AV-Block III. Grades (totaler AV-Block)",
+      "pulse": true,
+      "shockable": false,
+      "analysis": {"rate":"brady","regular":"ja","qrs":"breit","p":"dissoziiert","todo":"instabil"},
+      "pattern": {"type":"dissociated","atrialHr":[72,90],"hr":[30,40],"complex":"escape"},
+      "help": "Vorhöfe und Kammern schlagen unabhängig: P-Wellen regelmäßig, QRS langsam (oft unter 40/min) und breit, kein fester Bezug.",
+      "vignettes": ["82 J., Synkope in der Küche, jetzt blass und schwindelig. RR 85/50."]
+    },
+    "ves": {
+      "name": "Sinusrhythmus mit ventrikulären Extrasystolen (Bigeminus)",
+      "pulse": true,
+      "shockable": false,
+      "analysis": {"rate":"normal","regular":"nein","qrs":"teils","p":"normal","todo":"beobachten"},
+      "pattern": {"type":"bigeminy","hr":[68,84],"pq":0.16,"coupling":0.6,"ectopic":"ectopic"},
+      "help": "Normale Schläge im Wechsel mit vorzeitigen, breiten, deformierten Schlägen ohne P-Welle. Jeder 2. Schlag = Bigeminus.",
+      "vignettes": ["55 J., spürt „Herzstolpern“, sonst gut. RR 130/80."]
+    },
+    "pacer": {
+      "name": "Schrittmacher-Rhythmus",
+      "pulse": true,
+      "shockable": false,
+      "analysis": {"rate":"normal","regular":"ja","qrs":"breit","p":"spike","todo":"beobachten"},
+      "pattern": {"type":"paced","hr":[70,70],"complex":"escape"},
+      "help": "Schmaler senkrechter Strich (Spike) direkt vor einem breiten QRS. Patient hat einen Herzschrittmacher.",
+      "vignettes": ["84 J., Narbe unter dem linken Schlüsselbein, kommt wegen Sturz. RR 130/75."]
+    },
+    "stemi": {
+      "name": "Sinusrhythmus mit ST-Hebung (STEMI)",
+      "pulse": true,
+      "shockable": false,
+      "analysis": {"rate":"normal","regular":"ja","qrs":"schmal","p":"normal","todo":"stemi"},
+      "pattern": {"type":"sinus","hr":[70,95],"pq":0.16,"st":0.35},
+      "help": "Sinusrhythmus, aber die ST-Strecke ist angehoben („Grabstein“). Nur das 12-Kanal-EKG sichert die Diagnose.",
+      "hint": "Sinusrhythmus, aber die Strecke nach dem QRS (ST-Strecke) ist angehoben wie ein Grabstein („Grabstein-ST“).",
+      "monitorRate": 92,
+      "vignettes": ["61 J., drückender Brustschmerz seit 40 Minuten, kaltschweißig. RR 150/90."]
+    },
+    "vt": {
+      "name": "Ventrikuläre Tachykardie mit Puls",
+      "pulse": true,
+      "shockable": false,
+      "analysis": {"rate":"tachy","regular":"ja","qrs":"breit","p":"keine","todo":"instabil"},
+      "pattern": {"type":"regular","hr":[160,200],"complex":"vt"},
+      "help": "Schnell, regelmäßig, breite gleich aussehende QRS, keine P-Wellen. Puls tastbar → kein Rea, aber hochgefährlich.",
+      "hint": "Schnelle, breite, gleich aussehende Kammerkomplexe ohne P-Wellen. Puls ist tastbar.",
+      "monitorRate": 180,
+      "vignettes": ["67 J., bekannter Herzinfarkt vor 2 Jahren, Herzrasen, noch ansprechbar. RR 90/60."]
+    },
+    "pvt": {
+      "name": "Pulslose ventrikuläre Tachykardie (pVT)",
+      "pulse": false,
+      "shockable": true,
+      "analysis": {"rate":"tachy","regular":"ja","qrs":"breit","p":"keine","todo":"schock"},
+      "pattern": {"type":"regular","hr":[160,200],"complex":"vt"},
+      "help": "Wie VT, aber KEIN Puls: Kreislaufstillstand, schockbar.",
+      "hint": "Schnelle, breite, gleich aussehende Kammerkomplexe – aber KEIN Puls. Schockbar!",
+      "monitorRate": 190,
+      "vignettes": ["57 J., plötzlich zusammengebrochen, keine Reaktion, keine normale Atmung."]
+    },
+    "torsade": {
+      "name": "Torsade de pointes",
+      "pulse": false,
+      "shockable": true,
+      "analysis": {"rate":"tachy","regular":"nein","qrs":"breit","p":"keine","todo":"schock"},
+      "pattern": {"type":"continuous","wave":"torsade","hr":[240,240]},
+      "help": "Polymorphe VT: breite Komplexe, deren Höhe an- und abschwillt, als drehten sie sich um die Grundlinie. Ohne Puls schockbar.",
+      "vignettes": ["49 J., Alkoholkrankheit, mehrere Medikamente, plötzlich bewusstlos."]
+    },
+    "vf": {
+      "name": "Kammerflimmern (VF)",
+      "pulse": false,
+      "shockable": true,
+      "analysis": {"rate":"none","regular":"nb","qrs":"keine","p":"keine","todo":"schock"},
+      "pattern": {"type":"continuous","wave":"vf"},
+      "help": "Chaotische Zacken ohne erkennbare QRS-Komplexe. Schockbar.",
+      "hint": "Völlig chaotische Zacken ohne erkennbare Komplexe, unterschiedlich hoch. Schockbar!",
+      "vignettes": ["63 J., im Fitnessstudio zusammengebrochen, Schnappatmung."]
+    },
+    "asystolie": {
+      "name": "Asystolie",
+      "pulse": false,
+      "shockable": false,
+      "analysis": {"rate":"none","regular":"nb","qrs":"keine","p":"nichts","todo":"keinSchock"},
+      "pattern": {"type":"continuous","wave":"asystole"},
+      "help": "Nulllinie. Ableitung, Elektroden und Verstärkung prüfen. Nicht schockbar.",
+      "hint": "Fast eine Nulllinie. Vorher Elektroden und Ableitung prüfen. NICHT schockbar.",
+      "vignettes": ["88 J., leblos im Bett aufgefunden, keine Atmung."]
+    },
+    "pea": {
+      "name": "PEA (pulslose elektrische Aktivität)",
+      "pulse": false,
+      "shockable": false,
+      "analysis": {"rate":"brady","regular":"ja","qrs":"schmal","p":"normal","todo":"keinSchock"},
+      "pattern": {"type":"sinus","hr":[35,50],"pq":0.16},
+      "help": "Geordneter Rhythmus am Monitor, aber kein Puls. Nur die Pulskontrolle unterscheidet PEA vom Sinusrhythmus. Nicht schockbar.",
+      "hint": "Ein geordneter Rhythmus ist sichtbar, aber der Patient hat keinen Puls (Puls prüfen!). NICHT schockbar.",
+      "monitorRate": 46,
+      "vignettes": ["45 J., Messerstich in die Brust, bewusstlos, keine normale Atmung."]
+    }
+  },
+  "trainer": {
+    "basic": {
+      "title": "EKG-Trainer Basis",
+      "rhythms": ["sinus","sinustachy","sinusbrady","vhf","stemi","vt","pvt","vf","asystolie","pea"],
+      "extraWeight": ["vf","pvt","asystolie","pea"],
+      "choices": 5
+    },
+    "pro": {
+      "sets": {
+        "alle": {"label":"Alle 19","rhythms":"*"},
+        "rea": {"label":"Rea-Rhythmen","rhythms":["vf","pvt","asystolie","pea","torsade","vt","sinus"]},
+        "brady": {
+          "label": "Bradykardien",
+          "rhythms": ["sinusbrady","avb1","wenckebach","mobitz2","avb3","pacer","pea","sinus"]
+        },
+        "tachy": {"label":"Tachykardien","rhythms":["sinustachy","vhf","flattern","svt","vt","pvt","torsade","sinus"]}
+      },
+      "stripSeconds": 6,
+      "steps": [
+        {
+          "id": "rate",
+          "q": "1. Wie hoch ist die Kammerfrequenz?",
+          "field": "rate",
+          "pts": 1,
+          "help": "6-Sekunden-Methode: Zähle die QRS-Komplexe im ganzen Streifen (6 s) und nimm sie mal 10. Oder: 300 geteilt durch die Zahl der großen Kästchen zwischen zwei R-Zacken."
+        },
+        {
+          "id": "reg",
+          "q": "2. Ist der Rhythmus regelmäßig?",
+          "field": "regular",
+          "pts": 1,
+          "help": "Vergleiche die Abstände zwischen den R-Zacken (RR-Abstände). Sind sie überall gleich lang?"
+        },
+        {
+          "id": "qrs",
+          "q": "3. Wie breit sind die QRS-Komplexe?",
+          "field": "qrs",
+          "pts": 1,
+          "help": "Ein kleines Kästchen = 0,04 s, ein großes = 0,2 s. Breiter als 3 kleine Kästchen (0,12 s) = breit = Ursprung meist in der Kammer."
+        },
+        {
+          "id": "p",
+          "q": "4. Was ist mit den P-Wellen?",
+          "field": "p",
+          "pts": 1,
+          "choices": 5,
+          "help": "Schau vor jeden QRS: Gibt es eine kleine runde P-Welle? Gleicher Abstand (PQ unter 0,2 s = 1 großes Kästchen)? Gibt es P-Wellen ohne QRS?"
+        },
+        {
+          "id": "diag",
+          "q": "5. Welcher Rhythmus ist das?",
+          "field": "rhythm",
+          "pts": 3,
+          "choices": 5,
+          "help": "Setze die Befunde zusammen: Frequenz + Regelmäßigkeit + QRS-Breite + Verhältnis von P zu QRS."
+        },
+        {
+          "id": "todo",
+          "q": "6. Was machst du als RettSan?",
+          "field": "todo",
+          "pts": 2,
+          "needPulse": true,
+          "help": "Erst Puls prüfen: Kein Puls = Reanimation. Dann: schockbar oder nicht? Mit Puls: Ist der Rhythmus für den Patienten gefährlich?"
+        }
+      ],
+      "pulseTip": {
+        "rhythms": ["pea","pvt","vt"],
+        "text": "Tipp: Bei geordnetem oder schnellem breitem Rhythmus immer zuerst den Puls prüfen."
+      }
+    },
+    "caseQuiz": {"pool":["sinus","sinustachy","sinusbrady","vhf","stemi","vt"],"choices":4},
+    "reaQuiz": {"choices":["vf","pvt","asystolie","pea","sinus"],"roscLabel":"Organisierter Rhythmus mit Puls (ROSC)"}
+  }
+}

@@ -1,0 +1,184 @@
+{
+  "id": "asthma",
+  "level": 1,
+  "person": "🧑",
+  "icon": "🌬️",
+  "name": "Jonas",
+  "mood": 3,
+  "dispatches": [
+    {
+      "short": "Panikattacke? 22 J.",
+      "text": "RTW, Hyperventilation. Männlich, 22 Jahre, Studentenwohnheim. Der Mitbewohner: „Er hat eine Panikattacke!“"
+    },
+    {"short":"Atemnot, 22 J.","text":"RTW, Atemnot. Männlich, 22 Jahre, Studentenwohnheim."}
+  ],
+  "start": {
+    "hr": 118,
+    "rhythm": "sinustachy",
+    "spo2": 88,
+    "sys": 140,
+    "dia": 85,
+    "af": 28,
+    "bz": 110,
+    "temp": 36.9,
+    "gcs": 15,
+    "status": "Sitzt vornübergebeugt auf der Bettkante, stützt die Arme auf die Knie und spricht nur in Satzfetzen. Beim Ausatmen hört man ein Pfeifen."
+  },
+  "problems": [
+    {
+      "id": "hypox",
+      "letter": "B",
+      "blocking": true,
+      "label": "Atemnot mit SpO₂ 88 %",
+      "fixedBy": ["m_o2_mask","m_o2_nb"],
+      "worsen": {"spo2":-0.8,"hr":1.5,"af":0.5}
+    }
+  ],
+  "findings": {
+    "ansprechen": "„Krieg… keine… Luft.“",
+    "a_check": "Atemweg frei, er spricht aber nur 2–3 Wörter am Stück.",
+    "b_af": "Atemhilfsmuskulatur arbeitet, Ausatmung deutlich verlängert.",
+    "b_ausk": "Giemen und Brummen über beiden Lungen, verlängertes Ausatmen.",
+    "c_rekap": "Rekap unter 2 s, Haut rosig, leicht schweißig."
+  },
+  "answers": {
+    "q_s": "„Luft… geht nicht raus.“",
+    "q_a": "„Katzen… und Pollen.“",
+    "q_m": "„Salbutamol-Spray… vom Arzt… hab’s erst nicht gefunden. Und Kortisonspray.“",
+    "q_p": "„Asthma… seit Kindheit.“",
+    "q_l": "„Mittag.“",
+    "q_e": "„War bei Freunden… die haben ’ne Katze.“",
+    "q_r": "„Rauch nicht.“",
+    "q_o": "„Vor einer… halben Stunde.“",
+    "q_t": "„Kenn ich… aber so schlimm… lange nicht.“"
+  },
+  "followups": {
+    "f_spray": {"after":"q_m","label":"Wann hast du das Spray zuletzt genommen?","ans":"„Gestern… Abend.“"},
+    "f_anwendung": {
+      "after": "q_m",
+      "label": "Zeig mal, wie du das Spray benutzt.",
+      "ans": "„Schütteln… ausatmen… Mund drum… drücken… einatmen… Luft anhalten.“ (Er kennt die Anwendung.)"
+    },
+    "f_verordnet": {"after":"q_m","label":"Hat dir das ein Arzt verschrieben?","ans":"„Ja… vom Lungenarzt.“"}
+  },
+  "moments": [
+    {
+      "id": "panik",
+      "at": 30,
+      "who": "Jonas",
+      "say": "„Ich… erstick… gleich…!“ Er reißt die Augen auf und atmet hektisch.",
+      "options": [
+        {
+          "t": "Blickkontakt, ruhige Stimme: „Ich bin bei dir. Atme mit mir: durch die Nase ein, mit gespitzten Lippen ganz langsam aus.“",
+          "mood": 3,
+          "delta": {"af":-2},
+          "pts": 3,
+          "reply": "Er hält deinen Blick und atmet mit dir aus."
+        },
+        {
+          "t": "„Schnell, schnell, wir müssen sofort los!“",
+          "mood": -2,
+          "delta": {"hr":5,"af":2},
+          "pts": -3,
+          "why": "Hektik überträgt sich: Mehr Angst bedeutet mehr Atemnot."
+        },
+        {
+          "t": "„Jetzt stell dich nicht so an.“",
+          "mood": -3,
+          "delta": {"af":2},
+          "pts": -5,
+          "why": "Er hat echte Atemnot (Giemen, SpO₂ 88 %). Nie abwerten."
+        }
+      ]
+    }
+  ],
+  "react": {"m_o2_mask.noexplain":"„Nimm das weg… ich krieg… keine Luft!“ Er zerrt an der Maske."},
+  "effects": {
+    "m_ok_hoch": {"text":"Er bleibt aufrecht sitzen und stützt die Arme ab (Kutschersitz).","delta":{"af":-1}},
+    "m_lippen": {
+      "text": "Du atmest mit ihm: Durch die Nase ein, langsam gegen die locker geschlossenen Lippen aus. Er wird etwas ruhiger.",
+      "delta": {"af":-3,"spo2":1}
+    },
+    "m_betreuung": {"text":"Fenster auf, enge Kleidung geöffnet, ruhig zureden.","delta":{"hr":-3}},
+    "m_o2_mask": {"text":"Reservoirmaske mit 15 l/min. Hoch anfangen, später nach SpO₂ reduzieren.","delta":{"spo2":6}},
+    "m_o2_nb": {"text":"Nasenbrille. Das reicht bei dieser Atemnot nur knapp.","delta":{"spo2":3}},
+    "m_spray": [
+      {"if":{"vital":"hr","op":">","value":140},"pts":-5,"why":"KI für das β₂-Spray: HF über 140/min."},
+      {
+        "text": "Er nimmt 2 Hübe seines eigenen Salbutamol-Sprays. Nach ein paar Minuten wird das Pfeifen leiser.",
+        "delta": {"spo2":4,"af":-6,"hr":8},
+        "status": "Sitzt aufrecht, atmet deutlich ruhiger und kann wieder ganze Sätze sprechen.",
+        "penalties": [
+          {
+            "if": {"not":{"any":[{"done":"q_m"},{"done":"q_p"}]}},
+            "pts": -3,
+            "why": "Vor der Hilfe beim Spray abfragen: bekanntes Asthma, ärztlich verordnet, kennt die Anwendung."
+          }
+        ]
+      }
+    ],
+    "m_flach": {
+      "pts": -10,
+      "why": "Patienten mit Atemnot nie hinlegen: Die Atemhilfsmuskulatur kann dann nicht mithelfen.",
+      "delta": {"spo2":-3}
+    },
+    "m_laufen": {
+      "pts": -10,
+      "why": "Bei Atemnot nicht laufen lassen: Jede Anstrengung verbraucht Sauerstoff.",
+      "delta": {"spo2":-3}
+    }
+  },
+  "required": [
+    {
+      "any": ["m_ok_hoch"],
+      "pts": 5,
+      "label": "Atemerleichternde Sitzhaltung",
+      "why": "Kutschersitz: Die Atemhilfsmuskulatur kann mitarbeiten."
+    },
+    {
+      "any": ["m_o2_mask","m_o2_nb"],
+      "pts": 10,
+      "label": "Sauerstoff gegeben",
+      "why": "Atemnot mit SpO₂ unter 92 % → O₂ (Schulmeinung). Hoch anfangen, dann reduzieren."
+    },
+    {
+      "any": ["m_lippen"],
+      "pts": 5,
+      "label": "Lippenbremse angeleitet",
+      "why": "Gegendruck hält die Bronchien beim Ausatmen offen."
+    },
+    {
+      "any": ["m_spray"],
+      "pts": 10,
+      "label": "Hilfe beim eigenen Notfallspray",
+      "why": "Erlaubt bei bekanntem Asthma, verordnetem Spray, Patient kennt Anwendung; max. 2 Hübe."
+    },
+    {
+      "any": ["m_nef"],
+      "pts": 5,
+      "label": "NEF nachalarmiert",
+      "why": "Schwerer Anfall (SpO₂ 88 %, Satzfetzen): NA für vernebelte Medikamente und Kortison."
+    }
+  ],
+  "quizzes": [
+    {
+      "on": "treat",
+      "type": "mc",
+      "q": "Wann darfst du als RettSan beim eigenen Notfallspray des Patienten helfen?",
+      "options": [
+        "Erwachsener mit bekanntem Asthma/COPD, Spray ärztlich verordnet, Patient kennt die Anwendung; max. 2 Hübe",
+        "Immer bei Atemnot, so viele Hübe wie nötig",
+        "Nur nach Rücksprache mit der Leitstelle, max. 4 Hübe",
+        "Bei HF über 140/min, weil das Spray den Puls senkt"
+      ],
+      "answer": 0,
+      "explain": "Schulmeinung: alle drei Bedingungen, max. 2 Hübe. KI: HF über 140/min und pectanginöse Beschwerden."
+    }
+  ],
+  "diagnosis": {"options":["Asthmaanfall","Anaphylaxie","Hyperventilation","Lungenödem"],"answer":0},
+  "teach": [
+    "Asthma: sitzen lassen (Kutschersitz), Lippenbremse, O₂ bei SpO₂ unter 92 %, Hilfe beim eigenen Spray (max. 2 Hübe).",
+    "Giemen und verlängertes Ausatmen = Enge in den unteren Atemwegen.",
+    "Persistierende oder schwere Atemnot → NEF."
+  ]
+}

@@ -1,0 +1,157 @@
+{
+  "id": "exsikkose",
+  "level": 2,
+  "person": "👵",
+  "icon": "👵",
+  "name": "Frau Hoffmann",
+  "mood": 4,
+  "dispatches": [
+    {
+      "short": "Verdacht Schlaganfall, 86 J.",
+      "text": "RTW, V. a. Schlaganfall. Weiblich, 86 Jahre, Wohnung. Der Pflegedienst: „Sie ist so komisch, vielleicht ein Schlaganfall?“"
+    },
+    {
+      "short": "Verwirrtheit, 86 J.",
+      "text": "RTW, Verwirrtheit. Weiblich, 86 Jahre, Wohnung. Der Pflegedienst ruft an."
+    },
+    {
+      "short": "AZ-Verschlechterung, 86 J.",
+      "text": "RTW, Verschlechterung des Allgemeinzustands. Weiblich, 86 Jahre, Wohnung. Der Pflegedienst ruft an."
+    }
+  ],
+  "start": {
+    "hr": 112,
+    "rhythm": "sinustachy",
+    "spo2": 95,
+    "sys": 104,
+    "dia": 62,
+    "af": 18,
+    "bz": 168,
+    "temp": 37.6,
+    "gcs": 13,
+    "status": "Liegt im Bett, wirkt verwirrt und schläfrig. Die Lippen sind trocken und rissig. In der Wohnung ist es sehr warm, auf dem Nachttisch steht ein volles Glas Wasser."
+  },
+  "answerer": [{"who":"Pflegekraft"}],
+  "problems": [{"id":"volumen","letter":"C","label":"Flüssigkeitsmangel","fixedBy":[],"worsen":{"hr":0.4,"sys":-0.6}}],
+  "findings": {
+    "ansprechen": "Sie schaut dich an: „Wer sind Sie denn? Ist schon Abend?“",
+    "a_check": "Atemweg frei, Zunge trocken und borkig.",
+    "c_puls": "Schnell, flach, regelmäßig.",
+    "c_rekap": "Rekap 3 s. Hautfalte am Handrücken bleibt stehen. Schleimhäute trocken.",
+    "d_gcs": "GCS 13 (Augen spontan, desorientiert, befolgt Aufforderungen). Zeitlich und örtlich nicht orientiert.",
+    "d_befast": "Keine Lähmung, Mundwinkel symmetrisch, Arme halten. Sprache langsam, aber nicht verwaschen.",
+    "d_pup": "Isokor, prompt.",
+    "e_body": "Stehende Hautfalten, keine Verletzungen, kein Druckgeschwür, keine Beinödeme. Inkontinenzeinlage trocken."
+  },
+  "answers": {
+    "q_s": "„Seit drei Tagen trinkt sie kaum noch und isst fast nichts. Heute hat sie mich nicht erkannt.“",
+    "q_a": "„Penicillin.“",
+    "q_m": "„Torasemid, also eine Wassertablette, dazu Ramipril und Metformin.“",
+    "q_p": "„Herzschwäche, Diabetes Typ 2, eine leichte Demenz. Normalerweise ist sie aber viel klarer.“",
+    "q_l": "„Seit gestern fast nichts, und getrunken vielleicht ein halbes Glas.“",
+    "q_e": "„Bei der Hitze in der Wohnung hat sie kaum getrunken. Sie sagt immer, sie hat keinen Durst.“",
+    "q_o": "„Langsam über drei Tage, heute deutlich schlechter.“",
+    "q_r": "„Sie lebt allein, wir kommen zweimal am Tag.“"
+  },
+  "followups": {
+    "f_vollmacht": {
+      "after": "q_p",
+      "label": "Gibt es einen Betreuer oder eine Vorsorgevollmacht?",
+      "ans": "„Ja, ihr Sohn hat eine Vorsorgevollmacht. Die Nummer hängt am Kühlschrank.“"
+    },
+    "f_urin": {
+      "after": "q_s",
+      "label": "Wie oft war sie auf Toilette? Brennen?",
+      "ans": "„Kaum noch. Brennen hat sie nicht erwähnt.“"
+    }
+  },
+  "moments": [
+    {
+      "id": "nichtmit",
+      "after": ["d_bz","e_temp","d_befast"],
+      "who": "Frau Hoffmann",
+      "say": "„Ich will nicht ins Krankenhaus! Da stirbt man doch nur!“",
+      "options": [
+        {
+          "t": "Ruhig erklären, Pflegekraft einbinden und klären, ob es einen Betreuer oder eine Vorsorgevollmacht gibt (Sohn anrufen).",
+          "mood": 3,
+          "pts": 5,
+          "reply": "Der Sohn redet am Telefon mit ihr. Sie seufzt: „Na gut, wenn mein Junge das sagt.“"
+        },
+        {
+          "t": "„Na gut, dann bleiben Sie eben hier.“",
+          "pts": -5,
+          "why": "Bei akuter Verwirrtheit ist die Einwilligungsfähigkeit fraglich. Nicht einfach gehen: Vorsorgevollmacht/Betreuer klären, ggf. NA."
+        },
+        {
+          "t": "„Sie kommen jetzt mit, Schluss.“",
+          "mood": -3,
+          "pts": -3,
+          "why": "Druck eskaliert. Erst erklären und den Bevollmächtigten einbinden."
+        }
+      ]
+    }
+  ],
+  "effects": {
+    "m_trinken": {
+      "text": "Sie nimmt zwei kleine Schlucke und schluckt sicher. Den Flüssigkeitsmangel ausgleichen kann aber erst die Klinik mit Infusionen.",
+      "nopts": true
+    },
+    "m_gluc_oral": {"pts":-5,"why":"BZ 168 mg/dl: keine Glucose (KI: Hyperglykämie)."},
+    "m_schock": {"text":"Beine leicht hoch. Der Puls wird etwas langsamer.","delta":{"hr":-3,"sys":4}},
+    "m_flach": {"text":"Flache Lagerung."},
+    "m_betreuung": {
+      "text": "Du stellst dich langsam und deutlich vor und erklärst, dass ihr ins Krankenhaus fahrt. Sie nickt."
+    },
+    "m_laufen": {"pts":-5,"why":"Exsikkiert und verwirrt: hohe Sturzgefahr, Tragestuhl."},
+    "m_waerme": {"pts":-2,"why":"Die Wohnung ist schon sehr warm: nicht zusätzlich einpacken."},
+    "m_ivz": {"pts":-3,"why":"Kein Kreislaufstillstand und kein Notstand nach § 34: Infusionen gibt hier die Klinik."}
+  },
+  "required": [
+    {"any":["d_bz"],"pts":10,"label":"Blutzucker gemessen","why":"Verwirrung: immer BZ (Hypo? Hyper?)."},
+    {"any":["e_temp"],"pts":5,"label":"Temperatur gemessen","why":"Fieber, Hitze, Infektion?"},
+    {
+      "any": ["d_befast"],
+      "pts": 5,
+      "label": "Schlaganfall ausgeschlossen (BE-FAST)",
+      "why": "Neue Verwirrtheit bei Älteren: auch an Schlaganfall denken."
+    },
+    {
+      "any": ["q_m"],
+      "pts": 5,
+      "label": "Medikamente erfragt (Diuretikum!)",
+      "why": "Wassertabletten verstärken den Flüssigkeitsverlust."
+    },
+    {
+      "any": ["c_rekap","e_body"],
+      "pts": 5,
+      "label": "Hautfalten und Schleimhäute geprüft",
+      "why": "Typische Zeichen der Exsikkose."
+    },
+    {"any":["q_l","q_s","q_e"],"pts":5,"label":"Trinkmenge erfragt","why":"Die Anamnese bringt die Diagnose."}
+  ],
+  "quizzes": [
+    {
+      "on": "treat",
+      "type": "mc",
+      "q": "Warum sind alte Menschen besonders gefährdet für eine Exsikkose?",
+      "options": [
+        "Sie schwitzen mehr als junge Menschen",
+        "Weniger Durstgefühl, Diuretika, Demenz und eingeschränkte Mobilität",
+        "Ihre Nieren halten das Wasser zu stark zurück",
+        "Sie trinken grundsätzlich zu viel Kaffee"
+      ],
+      "answer": 1,
+      "explain": "Durstgefühl und Nierenfunktion lassen im Alter nach. Diuretika und Demenz verschärfen das."
+    }
+  ],
+  "diagnosis": {
+    "options": ["Exsikkose mit Verwirrtheit (Delir)","Schlaganfall","Hypoglykämie","Demenz, sonst nichts Akutes"],
+    "answer": 0
+  },
+  "teach": [
+    "Exsikkose: Tachykardie, niedriger RR, trockene Schleimhäute, stehende Hautfalten, Verwirrtheit.",
+    "Akute Verwirrtheit ist kein Normalbefund bei Demenz → Delir, Ursache suchen (BZ, Temperatur, BE-FAST, Medikamente).",
+    "Diuretika und Hitze verstärken den Flüssigkeitsverlust."
+  ]
+}
