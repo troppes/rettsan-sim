@@ -161,7 +161,7 @@
     finished = true;
     game.ivDone({
       stauOk: stau === 'ok', noStau: stau === 'none', vein: siteId || 'unterarm', early, retouched, offSite, wrongDir,
-      tensioned, corrections, angle: usedAngle, hit: arterial ? 'in' : hit, catheter, order: picked,
+      tensioned, corrections, angle: usedAngle, hit: arterial ? 'artery' : hit, catheter, order: picked,
     });
   }
   const hint = $derived(

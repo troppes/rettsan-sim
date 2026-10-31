@@ -194,6 +194,7 @@
       "id": "heizung",
       "who": "RTW",
       "if": {"at":"rtw"},
+      "except": ["hitzschlag"],
       "say": "Im RTW ist es kühl, die Heizung lief während der Anfahrt nicht. Der Patient zieht die Decke hoch.",
       "options": [
         {

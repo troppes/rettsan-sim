@@ -7,7 +7,7 @@ import placesJson from '../../data/places.json';
 
 export interface PlaceDef { label: string; icon: string; tags: string[]; enter?: string }
 export interface WeatherDef { label: string; icon: string; perMin?: VitalNumbers }
-export interface SceneEvent extends Moment { if: NonNullable<Moment['if']> }
+export interface SceneEvent extends Moment { if: NonNullable<Moment['if']>; except?: string[] }
 
 export const PLACES = placesJson.places as Record<string, PlaceDef>;
 export const WEATHER = placesJson.weather as Record<string, WeatherDef>;

@@ -26,8 +26,8 @@
     }
   ],
   "start": {
-    "hr": 56,
-    "rhythm": "sinusbrady",
+    "hr": 92,
+    "rhythm": "sinustachy",
     "spo2": 92,
     "sys": 108,
     "dia": 66,
@@ -169,13 +169,11 @@
   "rules": [
     {"id":"imRtw","if":{"at":"rtw"},"flags":{"rtwAt":{"now":0}}},
     {
-      "id": "klarer",
+      "id": "warm",
       "if": {"all":[{"sinceFlag":"rtwAt","over":150},{"done":"m_waerme"}]},
-      "set": {"gcs":14},
-      "delta": {"temp":0.5,"hr":6},
-      "flags": {"klar":true},
-      "status": "Liegt im warmen RTW in Decken gewickelt, die nasse Kleidung ist aus. Er zittert noch, wird aber klarer und schaut dich an.",
-      "info": "Im Warmen wird er klarer (GCS 14). Jetzt schluckt er sicher."
+      "delta": {"temp":0.1,"hr":-4},
+      "status": "Liegt im warmen RTW in Decken gewickelt, die nasse Kleidung ist aus. Er zittert noch und bleibt verwirrt.",
+      "info": "Im Warmen kühlt er nicht weiter aus. Wach wird er davon aber nicht: Bei 34,6 °C erklärt die Kälte die Verwirrtheit nicht."
     },
     {
       "id": "eintruebung",
@@ -190,7 +188,7 @@
       "if": {"all":[{"not":{"fixed":"hypo"}},{"sinceFlag":"nefAt","over":420}]},
       "fix": ["hypo"],
       "set": {"bz":90,"gcs":14},
-      "flags": {"glucAt":{"now":0},"naGluc":true},
+      "flags": {"glucAt":{"now":0},"naGluc":true,"klar":true},
       "status": "Der Notarzt hat Glucose i.v. gegeben. Er wird wacher.",
       "alert": "Der Notarzt ist da und gibt Glucose 20 % i.v."
     }
@@ -215,12 +213,12 @@
         "text": "Er trinkt langsam einen warmen, gezuckerten Tee bzw. Glucose-Gel (ca. 20 g). Er schluckt sicher.",
         "fix": ["hypo"],
         "set": {"bz":72},
-        "flags": {"glucAt":{"now":0}},
+        "flags": {"glucAt":{"now":0},"klar":true},
         "penalties": [{"if":{"not":{"done":"d_bz"}},"pts":-3,"why":"Erst BZ messen, dann Glucose."}]
       },
       {
         "pts": -10,
-        "why": "Bei GCS unter 14 nichts oral: Aspirationsgefahr. Erst aufwärmen bzw. NEF für Glucose i.v.",
+        "why": "Bei GCS unter 14 nichts oral: Aspirationsgefahr. NEF nachalarmieren, der NA gibt Glucose i.v.",
         "delta": {"spo2":-3}
       }
     ],
@@ -233,7 +231,7 @@
     ],
     "m_gluc_iv": {
       "pts": -3,
-      "why": "Glucose i.v. durch RettSan nur bei GCS 3 mit gefährdetem Atemweg (§ 34). Hier: aufwärmen, NEF, ggf. oral, sobald er wach genug ist.",
+      "why": "Glucose i.v. ist hier Sache des NA (RettSan nach Schulmeinung nur im Notfall nach § 34 bei tiefer Bewusstlosigkeit). Aufwärmen, NEF, Glucose über den NA.",
       "fix": ["hypo"],
       "set": {"bz":85},
       "flags": {"glucAt":{"now":0}}
@@ -324,7 +322,7 @@
   "teach": [
     "„Betrunken“ ist eine Ausschlussdiagnose: BZ, Temperatur, BE-FAST und Bodycheck immer.",
     "Unterkühlung: ins Warme, nasse Kleidung erst im Warmen raus, passiv wärmen, nicht laufen lassen, nicht reiben.",
-    "Glucose oral nur bei GCS 14–15 und sicherem Schlucken. Erst aufwärmen: Im Warmen wurde er wach genug.",
+    "Leichte Unterkühlung (32–35 °C) macht zittrig, aber kaum bewusstlos: Ist er bei 34,6 °C eingetrübt, steckt etwas anderes dahinter, hier der Zucker. Oral nur bei GCS 14–15 und sicherem Schlucken, sonst NA. Passive Erwärmung schafft nur etwa 0,5–2 °C pro Stunde.",
     "Kalte Finger: SpO₂ unzuverlässig, Ohrläppchen oder Stirnsensor versuchen."
   ]
 }

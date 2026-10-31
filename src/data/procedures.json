@@ -608,7 +608,8 @@
           "catheterPara": "Kunststoffkanüle paravenös: Beim ersten Blut liegt nur die Stahlspitze in der Vene, die Kunststoffkanüle endet ein Stück dahinter. Nach dem Rückfluss noch 2–3 mm flach nachschieben, dann erst die Kunststoffkanüle vorschieben.",
           "stauNone": "Nicht gestaut: Die Venen sind kaum gefüllt und schwer zu treffen.",
           "offSite": "Außerhalb der desinfizierten Stelle (oder ganz ohne Desinfektion) gestochen.",
-          "wrongDir": "Gegen den Blutfluss gestochen: Die Kanüle zeigt Richtung Hand. Immer in Richtung Herz punktieren."
+          "wrongDir": "Gegen den Blutfluss gestochen: Die Kanüle zeigt Richtung Hand. Immer in Richtung Herz punktieren.",
+          "hitArtery": "Arterie punktiert: Fehlschlag. Sofort raus, mindestens 5 Minuten fest abdrücken, Arzt informieren, nie dort etwas spritzen."
         },
         "catheter": 5
       }

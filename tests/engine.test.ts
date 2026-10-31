@@ -372,6 +372,9 @@ describe('Einsatzort und Wetter', () => {
     g.advance(600);
     expect(g.s.v.temp).toBeCloseTo(t1, 5);
   });
+  it('RTW-Heizung kommt beim Hitzschlag nicht', () => {
+    for (let i = 0; i < 30; i++) expect(new Game(caseById('hitzschlag')!, { worsen: true, detail: false }).moments.some((m) => m.id.includes('heizung'))).toBe(false);
+  });
   it('Gaffer und zweiter Patient nur an belebten Orten, Ortsereignisse passen zum Ort', () => {
     for (let i = 0; i < 40; i++) {
       const home = new Game(caseById('acs')!, { worsen: false, detail: false }).moments.map((m) => m.id);
@@ -380,15 +383,18 @@ describe('Einsatzort und Wetter', () => {
       expect(ubahn.some((id) => /hund|regen|kollegen/.test(id))).toBe(false);
     }
   });
-  it('Story-Fall Parkbank: erst im Warmen wach genug für Glucose oral', () => {
+  it('Story-Fall Parkbank: Wärme hilft gegen Kälte, wach macht erst die Glucose vom NA', () => {
     const g = new Game(caseById('parkbank')!, { worsen: true, detail: false });
     expect(isOutdoor(g)).toBe(true);
     for (const id of ['sss', 'ansprechen', 'e_body', 'd_bz', 'm_rtw', 'm_waerme']) { g.act(id); answerPrompts(g); }
     expect(g.s.place).toBe('rtw');
-    g.advance(200); g.act('d_gcs'); answerPrompts(g);
-    expect(g.s.flags.klar).toBe(true);
-    g.act('m_gluc_oral'); answerPrompts(g);
+    g.advance(200);
+    expect(g.s.v.gcs).toBe(12); // Wärme allein macht ihn nicht wach
+    expect(g.s.flags.klar).toBeFalsy();
+    g.act('m_nef'); answerPrompts(g);
+    g.advance(430);
     expect(g.s.fixed.hypo).toBe(true);
+    expect(g.s.flags.klar).toBe(true);
     expect(g.s.events.filter((e) => e.pts < 0).every((e) => !e.text.includes('Aspiration'))).toBe(true);
   });
 });

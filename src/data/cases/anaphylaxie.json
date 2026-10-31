@@ -61,18 +61,18 @@
     "b_ausk": "Leises Giemen über beiden Lungen.",
     "c_puls": "Schnell, flach, schwer tastbar.",
     "c_rekap": "Rekap 3 s. Haut gerötet, warm, Quaddeln.",
-    "e_body": "Einstichstelle am rechten Unterarm, der Stachel steckt noch! Quaddeln am ganzen Körper."
+    "e_body": "Einstichstelle am rechten Unterarm, gerötet und geschwollen (Wespen lassen keinen Stachel zurück). Quaddeln am ganzen Körper."
   },
   "answers": {
     "q_s": "„Alles juckt, mir ist schwindelig und die Luft wird knapp.“",
-    "q_a": "„Ich weiß, dass ich auf Wespen allergisch bin. Ich hab so einen Pen, aber der liegt zu Hause.“",
+    "q_a": "„Ich weiß, dass ich auf Wespen allergisch bin. Ich hab so einen Pen… irgendwo in der Handtasche, glaub ich. Ich kann gerade nicht suchen.“",
     "q_m": "„Nur die Pille.“",
     "q_p": "„Wespengiftallergie, sonst nichts.“",
     "q_e": "„Die Wespe saß am Glas, hat mich am Arm gestochen, und nach fünf Minuten fing das an.“",
     "q_o": "„Vor zehn Minuten.“"
   },
   "followups": {
-    "f_set": {"after":"q_a","label":"Wo ist Ihr Notfallset?","ans":"„Zu Hause im Bad… ich hab’s heute vergessen.“"},
+    "f_set": {"after":"q_a","label":"Wo ist Ihr Notfallset?","ans":"„In der Handtasche, glaub ich… Ich krieg die gerade nicht auf.“"},
     "f_frueher": {
       "after": "q_a",
       "label": "Wie schlimm war es beim letzten Stich?",
@@ -145,7 +145,7 @@
     "m_allergen": {
       "needs": ["e_body","q_e"],
       "needText": "Du weißt noch nicht, wo oder was das Allergen ist. Erst untersuchen (Bodycheck) oder fragen, was passiert ist.",
-      "text": "Stachel mit dem Fingernagel weggewischt (nicht drücken), Stichstelle gekühlt."
+      "text": "Patientin weg von den Wespen gebracht, Getränke abgedeckt, Stichstelle gekühlt."
     },
     "m_o2_mask": {"text":"O₂ 15 l/min über Reservoirmaske.","delta":{"spo2":5}},
     "m_o2_nb": {
@@ -191,7 +191,7 @@
       "any": ["m_allergen"],
       "pts": 5,
       "label": "Allergenzufuhr gestoppt",
-      "why": "Stachel weg, sonst wird weiter Gift abgegeben."
+      "why": "Weitere Stiche verhindern und die Stichstelle kühlen. Bei Bienen zusätzlich den Stachel wegwischen, Wespen lassen keinen zurück."
     },
     {
       "any": ["m_nef"],
@@ -225,7 +225,7 @@
       "type": "order",
       "q": "Rückblick: Anaphylaktischer Schock nach Wespenstich. Bring die Maßnahmen in die Reihenfolge der Schulmeinung.",
       "items": [
-        "Allergenzufuhr stoppen (Stachel wegwischen)",
+        "Allergenzufuhr stoppen (weg von den Wespen, kühlen)",
         "NEF nachalarmieren",
         "Sauerstoff 15 l/min",
         "Schocklage",

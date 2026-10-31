@@ -121,7 +121,7 @@
     "Keine Reaktion + keine normale Atmung = Reanimation. Schnappatmung ist keine normale Atmung!",
     "Schockbar: VF und pVT. Nicht schockbar: Asystolie und PEA.",
     "Adrenalin 1 mg: nicht schockbar sofort, wenn der Zugang liegt; schockbar nach dem 3. Schock; dann alle 4 Minuten (Schulmeinung).",
-    "NEF spätestens bis Ende des 2. Blocks nachalarmieren. Hands-off unter 5 s (Beatmung) bzw. 10 s (Analyse).",
+    "NEF spätestens bis Ende des 2. Blocks nachalarmieren. Pausen kurz halten: 2 Beatmungen höchstens 10 s, Pause vor dem Schock unter 5 s.",
     "Nach ROSC: Rückenlage, Absaugbereitschaft, ABCDE, 12-Kanal-EKG, SpO₂ 94–98 %."
   ],
   "scene": {"place":"supermarkt"}

@@ -59,8 +59,9 @@ export class Game {
     const possible = (m: Moment) => !m.if || test(m.if, this.ctx) || inRtw(m);
     const pool = shuffle(st.pool.filter((m) => !(m.except ?? []).includes(this.c.id) && (!m.only || m.only.includes(this.c.id)) && possible(m)));
     // Dazu ein Ereignis, das zum Ort passt (Wetter, Hund, U-Bahn …)
-    const here = SCENE_EVENTS.filter((m) => test(m.if, this.ctx));
-    const local = shuffle(here.length && Math.random() < 0.75 ? here : SCENE_EVENTS.filter(possible)).slice(0, 1);
+    const fits = SCENE_EVENTS.filter((m) => !(m.except ?? []).includes(this.c.id));
+    const here = fits.filter((m) => test(m.if, this.ctx));
+    const local = shuffle(here.length && Math.random() < 0.75 ? here : fits.filter(possible)).slice(0, 1);
     const picked = [...local, ...pool.slice(0, n)];
     const [from, to] = st.window;
     return picked.map((m, i) => {
@@ -692,7 +693,7 @@ export class Game {
     const angleOk = r.angle >= lo && r.angle <= hi;
     const orderOk = r.order.length === order.length && r.order.every((x, i) => x === order[i]);
     const inVein = r.hit === 'in';
-    const hitText = { in: T2.hitIn, through: T2.hitThrough, short: T2.hitShort, beside: T2.hitBeside }[r.hit];
+    const hitText = { in: T2.hitIn, through: T2.hitThrough, short: T2.hitShort, beside: T2.hitBeside, artery: T2.hitArtery }[r.hit];
     const lines: { ok: boolean; text: string; pts: number }[] = [
       { ok: r.stauOk, text: r.stauOk ? T2.stauOk : r.noStau ? T2.stauNone : T2.stauBad, pts: r.stauOk ? P.stau : 0 },
       { ok: vein?.quality === 'good', text: `${vein?.label ?? '?'}: ${vein?.why ?? ''}`, pts: vein?.quality === 'good' ? P.vein : vein?.quality === 'ok' ? Math.ceil(P.vein / 2) : 0 },

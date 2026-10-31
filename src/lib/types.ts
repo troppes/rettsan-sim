@@ -285,7 +285,7 @@ export interface IvRun {
   corrections: number;
   angle: number;
   /** in = in der Vene; through = Hinterwand durchstochen; short = nicht tief genug; beside = an der Vene vorbei */
-  hit: 'in' | 'through' | 'short' | 'beside';
+  hit: 'in' | 'through' | 'short' | 'beside' | 'artery';
   /** Kunststoffkanüle sitzt in der Vene (nach dem Rückfluss noch ein Stück vorgeschoben, nicht durchgestochen) */
   catheter: boolean;
   order: string[];
