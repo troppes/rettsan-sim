@@ -192,9 +192,9 @@
   ],
   "quizzes": [
     {
-      "on": "treat",
+      "on": "finish",
       "type": "order",
-      "q": "Verdacht auf ACS. Bring die ersten Maßnahmen in eine sinnvolle Reihenfolge.",
+      "q": "Rückblick: Verdacht auf ACS. Bring die ersten Maßnahmen in eine sinnvolle Reihenfolge.",
       "items": [
         "Oberkörper hoch lagern, nicht laufen lassen",
         "Monitoring und 12-Kanal-EKG",

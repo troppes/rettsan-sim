@@ -29,6 +29,42 @@
           "label": "Finger kräftig ausquetschen, bis genug Blut kommt",
           "wrong": "Starkes Quetschen drückt Gewebsflüssigkeit heraus: Das verdünnt das Blut und verfälscht den Wert."
         }
+      ],
+      "quick": "Du erklärst kurz, ziehst Handschuhe an, desinfizierst und stichst seitlich in die Fingerbeere. Klappt auf Anhieb.",
+      "questions": [
+        {
+          "q": "Warum wischst du den ersten Blutstropfen ab?",
+          "options": [
+            "Er kann Reste vom Desinfektionsmittel und Gewebsflüssigkeit enthalten und den Wert verfälschen",
+            "Er ist meistens zu klein für den Teststreifen",
+            "Er enthält mehr rote Blutkörperchen und ergibt zu hohe Werte",
+            "Nur aus Hygienegründen, der Wert wäre derselbe"
+          ],
+          "answer": 0,
+          "explain": "Desinfektionsmittel und Gewebsflüssigkeit verdünnen bzw. verfälschen den ersten Tropfen. Deshalb abwischen und den zweiten nehmen."
+        },
+        {
+          "q": "Wo stichst du für die Blutzuckermessung am besten?",
+          "options": [
+            "Seitlich in die Fingerbeere, z. B. Mittel- oder Ringfinger",
+            "Mittig in die Fingerbeere, dort kommt am meisten Blut",
+            "In den Daumen, die Haut ist dort am dünnsten",
+            "Ins Ohrläppchen, das ist bei Erwachsenen der Standard"
+          ],
+          "answer": 0,
+          "explain": "Seitlich ist es weniger schmerzhaft, und die Tastfläche bleibt geschont. Das Ohrläppchen ist nur eine Alternative."
+        },
+        {
+          "q": "Das Messgerät zeigt „LO“ an. Was bedeutet das?",
+          "options": [
+            "Der Wert liegt unter dem Messbereich: schwere Hypoglykämie, sofort handeln",
+            "Der Akku ist schwach",
+            "Es war zu wenig Blut, das Ergebnis kann man ignorieren",
+            "Der Wert ist niedrig-normal, kein Handlungsbedarf"
+          ],
+          "answer": 0,
+          "explain": "„LO“ heißt: unterhalb des Messbereichs (je nach Gerät etwa unter 20 mg/dl). „HI“ heißt: oberhalb."
+        }
       ]
     },
     "c_rr": {
@@ -53,6 +89,42 @@
           "needs": ["manschette"],
           "invasive": true
         }
+      ],
+      "quick": "Du machst den Oberarm frei, legst die passende Manschette an und misst. Klappt.",
+      "questions": [
+        {
+          "q": "Die Manschette ist für den kräftigen Oberarm zu schmal. Was passiert?",
+          "options": [
+            "Der Blutdruck wird zu hoch gemessen",
+            "Der Blutdruck wird zu niedrig gemessen",
+            "Kein Unterschied, es ist nur unbequem",
+            "Die Messung bricht immer ab"
+          ],
+          "answer": 0,
+          "explain": "Zu schmale Manschette: zu hohe Werte. Zu breite Manschette: zu niedrige Werte."
+        },
+        {
+          "q": "Wo soll der Arm beim Blutdruckmessen sein?",
+          "options": [
+            "Locker auf Herzhöhe",
+            "Ausgestreckt über dem Kopf",
+            "Hängend neben dem Körper",
+            "Egal, das Gerät gleicht die Höhe aus"
+          ],
+          "answer": 0,
+          "explain": "Liegt der Arm unter Herzhöhe, misst du zu hoch. Liegt er darüber, misst du zu niedrig."
+        },
+        {
+          "q": "An welchem Arm misst du den Blutdruck nicht?",
+          "options": [
+            "Am Arm mit Dialyse-Shunt oder nach Lymphknotenentfernung (z. B. Brust-OP)",
+            "Grundsätzlich nie am linken Arm",
+            "Am Arm, an dem die Uhr getragen wird",
+            "Am rechten Arm bei Rechtshändern"
+          ],
+          "answer": 0,
+          "explain": "Nicht am Shunt-Arm, nicht nach Lymphknotenentfernung und nicht am Arm mit laufender Infusion."
+        }
       ]
     },
     "b_spo2": {
@@ -70,6 +142,42 @@
         },
         {"id":"finger","label":"Warmen Finger ohne Nagellack wählen"},
         {"id":"clip","label":"Clip anstecken, saubere Pulskurve abwarten","final":true,"needs":["finger"]}
+      ],
+      "quick": "Du steckst den Clip an einen warmen Finger, die Pulskurve ist sauber.",
+      "questions": [
+        {
+          "q": "Verdacht auf Kohlenmonoxid-Vergiftung, das Pulsoxymeter zeigt 99 %. Was stimmt?",
+          "options": [
+            "Der Wert ist falsch hoch: CO-Hämoglobin wird wie sauerstoffbeladenes Hämoglobin gemessen",
+            "Die Sauerstoffversorgung ist damit sicher in Ordnung",
+            "Der Wert ist falsch niedrig",
+            "Das Gerät zeigt CO-Hämoglobin getrennt an"
+          ],
+          "answer": 0,
+          "explain": "Normale Pulsoxymeter unterscheiden CO-Hb nicht von O₂-Hb. Bei CO-Verdacht: hochdosiert O₂, egal was der Wert sagt."
+        },
+        {
+          "q": "Kalte Finger, keine saubere Pulskurve. Was tust du?",
+          "options": [
+            "Finger wärmen oder anderen Messort wählen, den Wert ohne Kurve nicht glauben",
+            "Den angezeigten Wert trotzdem übernehmen",
+            "Den Clip fester zudrücken",
+            "Pulsoxymetrie bei kalten Fingern grundsätzlich weglassen"
+          ],
+          "answer": 0,
+          "explain": "Ohne saubere Pulskurve ist der Wert unzuverlässig. Zentralisation, Kälte und Bewegung stören."
+        },
+        {
+          "q": "Was kann dir das Pulsoxymeter nicht sagen?",
+          "options": [
+            "Ob der Patient ausreichend CO₂ abatmet (Ventilation)",
+            "Die Pulsfrequenz",
+            "Die Sauerstoffsättigung",
+            "Ob überhaupt eine Pulswelle am Finger ankommt"
+          ],
+          "answer": 0,
+          "explain": "Unter O₂-Gabe kann die SpO₂ gut sein, obwohl der Patient zu wenig atmet und CO₂ ansteigt. Atemfrequenz und -tiefe selbst beurteilen."
+        }
       ]
     },
     "c_ekg": {
@@ -93,7 +201,111 @@
           "invasive": true
         },
         {"id":"ein","label":"Monitor an, Ableitung II, Kurve prüfen","final":true,"needs":["kleben"]}
-      ]
+      ],
+      "modes": {"place":5,"steps":2,"quick":1,"question":1},
+      "quick": "Du klebst die Elektroden nach der Ampel, der Monitor zeigt eine saubere Kurve.",
+      "questions": [
+        {
+          "q": "Der Monitor zeigt bei einem wachen, redenden Patienten wildes Zittern auf der Kurve. Was machst du zuerst?",
+          "options": [
+            "Patient anschauen: Bewegung, Zittern oder lose Elektrode als Artefakt prüfen",
+            "Sofort defibrillieren, das ist Kammerflimmern",
+            "Reanimation beginnen",
+            "Monitor ausschalten, das Gerät spinnt"
+          ],
+          "answer": 0,
+          "explain": "Behandle den Patienten, nicht den Monitor. Wer redet, hat kein Kammerflimmern."
+        },
+        {
+          "q": "Was zeigt dir das 3-Pol-Monitor-EKG nicht zuverlässig?",
+          "options": [
+            "Einen Herzinfarkt mit ST-Hebungen: dafür brauchst du das 12-Kanal-EKG",
+            "Die Herzfrequenz",
+            "Kammerflimmern",
+            "Ob der Rhythmus regelmäßig ist"
+          ],
+          "answer": 0,
+          "explain": "Das Monitor-EKG dient der Rhythmusüberwachung. Für die Infarktdiagnostik braucht es das 12-Kanal-EKG."
+        }
+      ],
+      "place": {
+        "task": "Tippe eine Elektrode an und dann die Stelle am Oberkörper. Achtung: Du schaust den Patienten von vorn an.",
+        "variants": [
+          {
+            "name": "3-Pol-EKG",
+            "electrodes": [
+              {
+                "id": "rot",
+                "label": "Rot",
+                "color": "#e53935",
+                "x": 60,
+                "y": 64,
+                "r": 20,
+                "where": "rechts unter dem Schlüsselbein"
+              },
+              {
+                "id": "gelb",
+                "label": "Gelb",
+                "color": "#fdd835",
+                "x": 140,
+                "y": 64,
+                "r": 20,
+                "where": "links unter dem Schlüsselbein"
+              },
+              {
+                "id": "gruen",
+                "label": "Grün",
+                "color": "#43a047",
+                "x": 136,
+                "y": 168,
+                "r": 22,
+                "where": "links am unteren Rippenbogen"
+              }
+            ]
+          },
+          {
+            "name": "4-Pol-EKG",
+            "electrodes": [
+              {
+                "id": "rot",
+                "label": "Rot",
+                "color": "#e53935",
+                "x": 60,
+                "y": 64,
+                "r": 20,
+                "where": "rechts unter dem Schlüsselbein"
+              },
+              {
+                "id": "gelb",
+                "label": "Gelb",
+                "color": "#fdd835",
+                "x": 140,
+                "y": 64,
+                "r": 20,
+                "where": "links unter dem Schlüsselbein"
+              },
+              {
+                "id": "gruen",
+                "label": "Grün",
+                "color": "#43a047",
+                "x": 136,
+                "y": 168,
+                "r": 22,
+                "where": "links am unteren Rippenbogen"
+              },
+              {
+                "id": "schwarz",
+                "label": "Schwarz",
+                "color": "#212121",
+                "x": 64,
+                "y": 168,
+                "r": 22,
+                "where": "rechts am unteren Rippenbogen"
+              }
+            ]
+          }
+        ]
+      }
     },
     "c_12": {
       "title": "12-Kanal-EKG schreiben",
@@ -127,7 +339,96 @@
           "final": true,
           "needs": ["extr","brust"]
         }
-      ]
+      ],
+      "modes": {"place":4,"steps":2,"question":2,"quick":1},
+      "quick": "Du klebst die Extremitäten- und Brustwandelektroden, der Patient liegt ruhig. Das EKG ist geschrieben.",
+      "questions": [
+        {
+          "q": "Wo klebst du V1?",
+          "options": [
+            "4. ICR rechts direkt neben dem Brustbein",
+            "4. ICR links direkt neben dem Brustbein",
+            "5. ICR links in der Medioklavikularlinie",
+            "2. ICR rechts neben dem Brustbein"
+          ],
+          "answer": 0,
+          "explain": "V1: 4. ICR rechts parasternal. V2: 4. ICR links parasternal. V4: 5. ICR links Medioklavikularlinie."
+        },
+        {
+          "q": "Wo klebst du V4?",
+          "options": [
+            "5. ICR links in der Medioklavikularlinie",
+            "4. ICR links neben dem Brustbein",
+            "5. ICR in der mittleren Axillarlinie",
+            "6. ICR in der vorderen Axillarlinie"
+          ],
+          "answer": 0,
+          "explain": "V4 sitzt im 5. ICR auf der Medioklavikularlinie. V5 (vordere) und V6 (mittlere Axillarlinie) liegen auf gleicher Höhe."
+        },
+        {
+          "q": "ST-Hebungen in II, III und aVF sprechen für einen Infarkt welcher Wand?",
+          "options": ["Hinterwand (inferior)","Vorderwand","Seitenwand","Das ist kein Infarktzeichen"],
+          "answer": 0,
+          "explain": "II, III, aVF schauen von unten aufs Herz: Hinterwand- bzw. inferiorer Infarkt."
+        }
+      ],
+      "place": {
+        "task": "Klebe die Brustwandelektroden. Die grauen Linien sind die Rippen, die Lücken dazwischen die Zwischenrippenräume (ICR). Du schaust den Patienten von vorn an.",
+        "variants": [
+          {
+            "name": "Brustwandableitungen V1–V6",
+            "electrodes": [
+              {
+                "id": "v1",
+                "label": "V1",
+                "color": "#e53935",
+                "x": 91,
+                "y": 107,
+                "r": 9,
+                "where": "4. ICR rechts neben dem Brustbein"
+              },
+              {
+                "id": "v2",
+                "label": "V2",
+                "color": "#fdd835",
+                "x": 109,
+                "y": 107,
+                "r": 9,
+                "where": "4. ICR links neben dem Brustbein"
+              },
+              {"id":"v3","label":"V3","color":"#43a047","x":119,"y":116,"r":9,"where":"zwischen V2 und V4"},
+              {
+                "id": "v4",
+                "label": "V4",
+                "color": "#8d6e63",
+                "x": 129,
+                "y": 125,
+                "r": 9,
+                "where": "5. ICR links, Medioklavikularlinie"
+              },
+              {
+                "id": "v5",
+                "label": "V5",
+                "color": "#212121",
+                "x": 145,
+                "y": 125,
+                "r": 9,
+                "where": "vordere Axillarlinie, Höhe V4"
+              },
+              {
+                "id": "v6",
+                "label": "V6",
+                "color": "#8e24aa",
+                "x": 157,
+                "y": 125,
+                "r": 9,
+                "where": "mittlere Axillarlinie, Höhe V4"
+              }
+            ]
+          }
+        ],
+        "view": [30,36,140,150]
+      }
     },
     "m_ivz": {
       "title": "i.v.-Zugang legen",
@@ -158,6 +459,42 @@
           "final": true,
           "needs": ["punktieren"]
         }
+      ],
+      "quick": "Du staust, desinfizierst und punktierst. Der Zugang sitzt beim ersten Versuch und läuft.",
+      "questions": [
+        {
+          "q": "Wo suchst du zuerst eine Vene?",
+          "options": [
+            "Handrücken oder Unterarm, von distal nach proximal",
+            "Am Hals, die Vene ist gut sichtbar",
+            "Am Fuß, damit die Arme frei bleiben",
+            "Immer zuerst in der Ellenbeuge, danach weiter unten"
+          ],
+          "answer": 0,
+          "explain": "Distal beginnen: Klappt es nicht, bleibt weiter oben noch Platz. Unterhalb einer Fehlpunktion zu stechen ist ungünstig."
+        },
+        {
+          "q": "Wie fest staust du?",
+          "options": [
+            "Venös: Der Radialispuls bleibt tastbar",
+            "So fest, dass kein Puls mehr tastbar ist",
+            "Gar nicht, Stauen macht nur Hämatome",
+            "Nur bei Kindern, bei Erwachsenen nicht nötig"
+          ],
+          "answer": 0,
+          "explain": "Der Stau soll den venösen Abfluss bremsen, nicht die arterielle Zufuhr."
+        },
+        {
+          "q": "Blut in der Rückflusskammer. Wie geht es weiter?",
+          "options": [
+            "Stahlkanüle etwas zurückziehen, Kunststoffkanüle vorschieben, Stau lösen",
+            "Stahlkanüle drinlassen und Infusion anschließen",
+            "Kunststoffkanüle zurückziehen und die Stahlkanüle weiter vorschieben",
+            "Hakt es, die zurückgezogene Stahlkanüle wieder vorschieben"
+          ],
+          "answer": 0,
+          "explain": "Die zurückgezogene Stahlkanüle nie wieder vorschieben: Sie kann die Kunststoffkanüle abscheren (Embolie)."
+        }
       ]
     },
     "m_o2_mask": {
@@ -180,6 +517,42 @@
           "final": true,
           "needs": ["flow"],
           "invasive": true
+        }
+      ],
+      "quick": "Du drehst den Flow auf, lässt das Reservoir füllen und setzt die Maske auf.",
+      "questions": [
+        {
+          "q": "Wie viel Sauerstoff gibst du über eine Reservoirmaske?",
+          "options": [
+            "12–15 l/min, Reservoirbeutel vorher füllen",
+            "2–4 l/min",
+            "6 l/min, mehr bringt nichts",
+            "1 l/min pro 10 kg Körpergewicht"
+          ],
+          "answer": 0,
+          "explain": "Die Reservoirmaske braucht hohen Flow, sonst fällt der Beutel zusammen und der Patient atmet Raumluft und CO₂."
+        },
+        {
+          "q": "Warum muss der Reservoirbeutel gefüllt sein, bevor die Maske aufs Gesicht kommt?",
+          "options": [
+            "Sonst sinkt die O₂-Konzentration, und der Patient atmet ausgeatmete Luft zurück",
+            "Damit die Maske besser am Gesicht hält",
+            "Der Beutel ist nur eine Füllstandsanzeige",
+            "Damit der Sauerstoff angefeuchtet wird"
+          ],
+          "answer": 0,
+          "explain": "Nur mit gefülltem Reservoir erreicht die Maske eine hohe O₂-Konzentration."
+        },
+        {
+          "q": "Der Patient sagt: „Unter der Maske krieg ich keine Luft!“ Was tust du?",
+          "options": [
+            "Erklären, die Maske erst vors Gesicht halten, dann behutsam aufsetzen",
+            "Fest fixieren, damit er sie nicht abnimmt",
+            "Sauerstoff abdrehen, das ist nur Panik",
+            "Auf Nasenbrille mit 15 l/min wechseln"
+          ],
+          "answer": 0,
+          "explain": "Angst nehmen und erklären. Eine Nasenbrille ist nur bis etwa 6 l/min sinnvoll."
         }
       ]
     },
@@ -205,6 +578,42 @@
           "wrong": "Ein lockeres Tourniquet staut nur die Venen: Es blutet noch stärker. Fest lassen, Schmerztherapie macht der NA."
         },
         {"id":"zeit","label":"Uhrzeit notieren","final":true,"needs":["zudrehen"]}
+      ],
+      "quick": "Du legst das Tourniquet oberhalb der Wunde an und drehst fest, bis die Blutung steht. Uhrzeit notiert.",
+      "questions": [
+        {
+          "q": "Wann ist das Tourniquet fest genug?",
+          "options": [
+            "Wenn die Blutung steht und unterhalb kein Puls mehr tastbar ist",
+            "Wenn es dem Patienten nicht mehr wehtut",
+            "Wenn die Haut unterhalb rot anläuft",
+            "Nach genau drei Umdrehungen"
+          ],
+          "answer": 0,
+          "explain": "Zu locker staut nur die Venen ab, und die Blutung wird stärker. Ein Tourniquet tut weh."
+        },
+        {
+          "q": "Was musst du nach dem Anlegen machen?",
+          "options": [
+            "Uhrzeit notieren und bei der Übergabe nennen",
+            "Alle 10 Minuten kurz öffnen",
+            "Nach 30 Minuten wieder abnehmen",
+            "Mit einem Verband überdecken, damit es nicht stört"
+          ],
+          "answer": 0,
+          "explain": "Die Anlagezeit ist für die Klinik wichtig. Das Tourniquet bleibt zu und sichtbar."
+        },
+        {
+          "q": "Wo legst du das Tourniquet an?",
+          "options": [
+            "Handbreit oberhalb der Wunde, nicht über einem Gelenk",
+            "Direkt auf die Wunde",
+            "Unterhalb der Wunde",
+            "Genau über dem Gelenk, da hält es am besten"
+          ],
+          "answer": 0,
+          "explain": "Über Gelenken sind die Gefäße geschützt, dort wirkt das Tourniquet schlecht."
+        }
       ]
     },
     "e_body": {
@@ -227,7 +636,65 @@
           "final": true,
           "invasive": true
         }
+      ],
+      "quick": "Du schützt den Patienten vor Blicken, untersuchst von Kopf bis Fuß und deckst ihn danach wieder zu.",
+      "questions": [
+        {
+          "q": "Warum deckst du den Patienten nach dem Bodycheck wieder zu?",
+          "options": [
+            "Wärmeerhalt und Intimsphäre: Auskühlung verschlechtert die Gerinnung",
+            "Nur damit es ordentlich aussieht",
+            "Damit er nicht friert, medizinisch spielt es keine Rolle",
+            "Damit Schaulustige nicht fotografieren, sonst egal"
+          ],
+          "answer": 0,
+          "explain": "Auskühlung gehört bei Traumapatienten zur „tödlichen Trias“ mit Azidose und Gerinnungsstörung."
+        },
+        {
+          "q": "Wo machst du den Bodycheck bei Schaulustigen am besten?",
+          "options": [
+            "Im RTW oder hinter Sichtschutz",
+            "Direkt auf der Straße, das spart Zeit",
+            "Gar nicht, das kann die Klinik machen",
+            "Nur oberflächlich über der Kleidung"
+          ],
+          "answer": 0,
+          "explain": "Der Bodycheck gehört gründlich gemacht, aber geschützt vor Blicken."
+        }
       ]
+    },
+    "m_defi_kleben": {
+      "title": "Defi-Elektroden kleben",
+      "steps": [],
+      "modes": {"place":1},
+      "place": {
+        "task": "Klebe die Defi-Pads in der Standardposition (anterolateral). Du schaust den Patienten von vorn an.",
+        "variants": [
+          {
+            "name": "Defi-Pads",
+            "electrodes": [
+              {
+                "id": "sternal",
+                "label": "Sternal",
+                "color": "#e53935",
+                "x": 66,
+                "y": 72,
+                "r": 20,
+                "where": "rechts unter dem Schlüsselbein, neben dem Brustbein"
+              },
+              {
+                "id": "apex",
+                "label": "Apex",
+                "color": "#1e88e5",
+                "x": 152,
+                "y": 134,
+                "r": 20,
+                "where": "links seitlich unter der Achsel, mittlere Axillarlinie"
+              }
+            ]
+          }
+        ]
+      }
     }
   }
 }

@@ -1,5 +1,5 @@
 /* Laufzeit-Zustand eines Einsatzes und die Dialoge, die die Oberfläche anzeigt. */
-import type { Dispatch, Letter, Moment, ProcStep, Quiz, Vitals } from '../types';
+import type { Dispatch, Electrode, Letter, Moment, ProcStep, Quiz, Vitals } from '../types';
 
 export interface Settings { worsen: boolean; detail: boolean }
 
@@ -66,6 +66,7 @@ export type Prompt =
   | { kind: 'order'; title: string; items: string[]; picked: string[]; result?: { item: string; ok: boolean; right: string }[] }
   | { kind: 'moment'; who: string; say: string; choices: Choice[]; answered: boolean; reply?: string; why?: string }
   | { kind: 'proc'; title: string; done: { label: string; bad?: boolean }[]; react?: { who: string; text: string }; steps: ProcStep[]; refusal?: Choice[]; finished: boolean }
+  | { kind: 'place'; title: string; task: string; view: string; variant: string; electrodes: Pick<Electrode, 'id' | 'label' | 'color'>[]; pos: Record<string, { x: number; y: number }>; result?: { id: string; ok: boolean; target: { x: number; y: number; r: number }; where: string }[] }
   | { kind: 'rhythm'; title: string; kicker: string; rhythm: string; rate?: number; pulseKnown: boolean; pulseText?: string; help?: { label: string; text: string }[]; choices: Choice[]; answered: boolean; explain?: string };
 
 export type PromptKind = Prompt['kind'];
@@ -77,4 +78,6 @@ export interface PromptCtl {
   next?: () => void;
   quiz?: Quiz;
   moment?: Moment;
+  /** Ziele beim Elektroden-Kleben */
+  targets?: Electrode[];
 }

@@ -168,9 +168,9 @@
   ],
   "quizzes": [
     {
-      "on": "treat",
+      "on": "finish",
       "type": "order",
-      "q": "Hitzschlag im Ziel. Bring die Schritte in eine sinnvolle Reihenfolge.",
+      "q": "Rückblick: Hitzschlag im Ziel. Bring die Schritte in eine sinnvolle Reihenfolge.",
       "items": [
         "SSS, xABCDE, Kerntemperatur messen",
         "Raus aus der Hitze (Schatten, kühler RTW)",

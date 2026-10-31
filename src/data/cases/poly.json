@@ -199,9 +199,9 @@
   ],
   "quizzes": [
     {
-      "on": "treat",
+      "on": "finish",
       "type": "order",
-      "q": "Polytrauma auf der Landstraße. Bring die Maßnahmen in die xABCDE-Reihenfolge.",
+      "q": "Rückblick: Polytrauma auf der Landstraße. Bring die Maßnahmen in die xABCDE-Reihenfolge.",
       "items": [
         "Einsatzstelle absichern (Verkehr!)",
         "Kritische Blutung stoppen (Tourniquet)",

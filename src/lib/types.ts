@@ -159,7 +159,29 @@ export interface ProcStep {
   needs?: string[];
   wrong?: string;
 }
-export interface Procedure { title: string; steps: ProcStep[] }
+/** Wie eine Maßnahme abgefragt wird: Schritte, klappt einfach, eine Frage, Elektroden selbst kleben */
+export type ProcMode = 'steps' | 'quick' | 'question' | 'place';
+
+export interface ProcQuestion { q: string; options: string[]; answer: number; explain?: string }
+
+/** Elektrode/Pad auf der Oberkörper-Figur: Ziel in Figur-Koordinaten (viewBox 200 × 260, Blick von vorn) */
+export interface Electrode { id: string; label: string; color: string; x: number; y: number; r: number; where: string }
+export interface Placement {
+  task: string;
+  /** Ausschnitt der Figur [x, y, Breite, Höhe], z. B. nur der Brustkorb */
+  view?: number[];
+  variants: { name: string; electrodes: Electrode[] }[];
+}
+
+export interface Procedure {
+  title: string;
+  steps: ProcStep[];
+  /** Gewichtung der Modi; fehlt sie, gilt rules.procedure.modes */
+  modes?: Partial<Record<ProcMode, number>>;
+  quick?: string;
+  questions?: ProcQuestion[];
+  place?: Placement;
+}
 
 /* ------------------------------------------------------------ EKG */
 /** Gauß-Welle: [Zeitpunkt relativ zum Ereignis in s, Breite in s, Amplitude in mV] */

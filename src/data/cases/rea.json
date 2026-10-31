@@ -68,9 +68,9 @@
   "required": [],
   "quizzes": [
     {
-      "on": "r_hdm",
+      "on": "finish",
       "type": "order",
-      "q": "Kreislaufstillstand. Bring die ersten Schritte in die richtige Reihenfolge.",
+      "q": "Rückblick: Kreislaufstillstand. Bring die ersten Schritte in die richtige Reihenfolge.",
       "items": [
         "SSS, Bewusstsein prüfen",
         "Atmung (10 s) und Puls (5 s) prüfen",

@@ -3,7 +3,7 @@ import { Game } from '../src/lib/engine/game';
 import type { CaseDef } from '../src/lib/types';
 import { PROCEDURES } from '../src/lib/data';
 
-type Internal = { ctl: { keys: (string | number)[]; quiz?: { type: string; items?: string[]; answer?: number } } | null };
+type Internal = { ctl: { keys: (string | number)[]; quiz?: { type: string; items?: string[]; answer?: number }; targets?: { id: string; x: number; y: number }[] } | null };
 
 export function answerPrompts(g: Game, limit = 30) {
   for (let n = 0; g.prompt && n < limit; n++) {
@@ -26,6 +26,10 @@ export function answerPrompts(g: Game, limit = 30) {
         g.choose(ctl.keys.indexOf(key));
         break;
       }
+      case 'place':
+        for (const t of ctl.targets!) g.placeSet(t.id, t.x, t.y);
+        g.placeCheck();
+        break;
       case 'rhythm':
         if (!p.pulseKnown) g.rhythmPulse();
         g.choose(ctl.keys.indexOf(p.rhythm));

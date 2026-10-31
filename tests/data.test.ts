@@ -79,7 +79,18 @@ describe('Abläufe', () => {
   for (const [id, p] of Object.entries(PROCEDURES)) {
     it(`${id}: Aktion existiert, genau ein Abschluss, Voraussetzungen bekannt`, () => {
       expect(ACTIONS[id]).toBeDefined();
-      expect(p.steps.filter((s) => s.final)).toHaveLength(1);
+      if (p.steps.length) expect(p.steps.filter((s) => s.final)).toHaveLength(1);
+      else expect(p.modes && Object.keys(p.modes).every((m) => m === 'place' || m === 'quick')).toBe(true);
+      for (const q of p.questions ?? []) {
+        expect(q.options).toHaveLength(4);
+        expect(q.answer).toBeLessThan(4);
+      }
+      for (const v of p.place?.variants ?? []) {
+        const ids = v.electrodes.map((e) => e.id);
+        expect(new Set(ids).size).toBe(ids.length);
+        // Ziele überlappen nicht, sonst wäre die Zuordnung zweideutig
+        for (const a of v.electrodes) for (const b of v.electrodes) if (a !== b) expect(Math.hypot(a.x - b.x, a.y - b.y), `${a.id}/${b.id}`).toBeGreaterThanOrEqual(Math.max(a.r, b.r));
+      }
       const ids = new Set(p.steps.map((s) => s.id));
       for (const s of p.steps) for (const n of s.needs ?? []) expect(ids.has(n), `${id}.${s.id} braucht ${n}`).toBe(true);
     });

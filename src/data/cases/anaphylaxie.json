@@ -173,9 +173,9 @@
   ],
   "quizzes": [
     {
-      "on": "treat",
+      "on": "finish",
       "type": "order",
-      "q": "Anaphylaktischer Schock nach Wespenstich. Bring die Maßnahmen in die Reihenfolge der Schulmeinung.",
+      "q": "Rückblick: Anaphylaktischer Schock nach Wespenstich. Bring die Maßnahmen in die Reihenfolge der Schulmeinung.",
       "items": [
         "Allergenzufuhr stoppen (Stachel wegwischen)",
         "NEF nachalarmieren",

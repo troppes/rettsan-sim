@@ -31,7 +31,7 @@ Svelte 5 + TypeScript + Vite. Die Spielinhalte sind **reine Daten (JSON)**, die 
 src/data/            Spielinhalte (JSON)
   cases/*.json       ein Fall pro Datei, Reihenfolge in cases/index.json
   actions.json       Untersuchungen, Fragen, Maßnahmen (xABCDE-Buchstabe, Zeitbedarf)
-  procedures.json    Maßnahmen Schritt für Schritt
+  procedures.json    Maßnahmen: Schritte, Kurzfragen, Elektroden-Positionen, Gewichtung der Modi
   rules.json         Standardbefunde, Fehlmaßnahmen, Punkte, Texte der Engine
   rea.json           Reanimation: Rhythmuspfade, Pflichtpunkte, Texte
   ecg.json           19 Rhythmen: Analyse-Eigenschaften, Erzeugungsmuster, Wellenformen, Trainer-Einstellungen

@@ -1,7 +1,7 @@
 /* Spiel-Engine: interpretiert die Falldaten. Keine Oberfläche, kein DOM. */
-import type { Action, ActionKind, CaseDef, Letter, Moment, Quiz, TreatEffect, VitalKey } from '../types';
+import type { Action, ActionKind, CaseDef, Letter, Moment, ProcMode, Quiz, TreatEffect, VitalKey } from '../types';
 import { ACTIONS, ACTION_GROUPS, ECG, LETTERS, PROCEDURES, REA, RULES } from '../data';
-import { clamp, fill, shuffle } from '../util';
+import { clamp, fill, pick, shuffle } from '../util';
 import { mutate, test, variant, type Ctx } from './conditions';
 import type { Choice, GameState, LogEntry, LogType, Prompt, PromptCtl, ScoreEvent, Settings } from './state';
 import { ProcSession } from './procedure';
@@ -21,6 +21,10 @@ export class Game {
   result: Debrief | null = null;
   private ctl: PromptCtl | null = null;
   private proc: ProcSession | null = null;
+  /** Für Tests: Modus der Maßnahmen festlegen statt zufällig wählen */
+  forceProcMode: ProcMode | null = null;
+  private lastProcMode: ProcMode | null = null;
+  private askedProcQ: Record<string, number[]> = {};
   readonly rea: Rea | null;
   onChange: () => void = () => {};
   onToast: (t: Toast) => void = () => {};
@@ -405,20 +409,22 @@ export class Game {
   }
 
   /* Quiz */
-  runQuiz(q: Quiz, next: () => void) {
+  runQuiz(q: Quiz, next: () => void, opt: { kicker?: string; label?: string; pts?: number } = {}) {
     if (q.type === 'order') {
       this.open({ kind: 'order', title: q.q, items: shuffle(q.items), picked: [] }, { keys: [], next, quiz: q });
       return;
     }
+    const pts = opt.pts ?? 5;
     const order = shuffle(q.options.map((_, i) => i));
-    const p: Prompt = { kind: 'mc', kicker: 'Quiz', title: q.q, choices: order.map((i) => ({ label: q.options[i] })), answered: false, cont: 'Weiter' };
+    const p: Prompt = { kind: 'mc', kicker: opt.kicker ?? 'Quiz', title: q.q, choices: order.map((i) => ({ label: q.options[i] })), answered: false, cont: 'Weiter' };
     this.open(p, {
       keys: order, next, quiz: q,
       onAnswer: (k) => {
         const ok = k === q.answer;
+        const label = opt.label ?? `Quiz: ${q.q}`;
         markChoices(p.choices, order, k, q.answer);
-        this.reward(ok ? 5 : 0, 5, `Quiz: ${q.q}`);
-        if (!ok) this.addEvent(0, 0, `Quiz falsch: ${q.q}`, q.options[q.answer], 'miss');
+        this.reward(ok ? pts : 0, pts, label);
+        if (!ok) this.addEvent(0, 0, `Falsch beantwortet: ${q.q}`, q.options[q.answer], 'miss');
         p.explain = q.explain;
       },
     });
@@ -490,14 +496,76 @@ export class Game {
     });
   }
 
-  /* Maßnahme Schritt für Schritt */
+  /* Maßnahmen: abwechselnd Schritt für Schritt, einfach klappen, eine Frage oder Elektroden kleben */
+  private procMode(id: string): ProcMode {
+    if (this.forceProcMode) return this.forceProcMode;
+    const P = PROCEDURES[id];
+    const w = { ...RULES.procedure.modes, ...(P.modes ?? {}) } as Record<ProcMode, number>;
+    const usable: Record<ProcMode, boolean> = {
+      steps: P.steps.length > 0,
+      quick: true,
+      question: (P.questions?.length ?? 0) > (this.askedProcQ[id]?.length ?? 0),
+      place: !!P.place,
+    };
+    let modes = (Object.keys(w) as ProcMode[]).filter((m) => w[m] > 0 && usable[m]);
+    if (modes.length > 1 && this.lastProcMode) modes = modes.filter((m) => m !== this.lastProcMode);
+    if (!modes.length) return 'quick';
+    let r = Math.random() * modes.reduce((t, m) => t + w[m], 0);
+    for (const m of modes) { r -= w[m]; if (r < 0) return m; }
+    return modes[modes.length - 1];
+  }
+
   private runProc(a: Action, next: () => void) {
-    this.proc = new ProcSession(this, a);
-    this.open(this.proc.prompt, { keys: [], next });
+    const P = PROCEDURES[a.id];
+    const PT = RULES.procedure;
+    const mode = this.procMode(a.id);
+    this.lastProcMode = mode;
+    if (mode === 'quick') {
+      this.addLog('info', fill(P.quick ?? PT.quickDefault, { title: P.title }));
+      next();
+    } else if (mode === 'question') {
+      const asked = (this.askedProcQ[a.id] ??= []);
+      const i = pick(P.questions!.map((_, k) => k).filter((k) => !asked.includes(k)));
+      asked.push(i);
+      const q = P.questions![i];
+      this.runQuiz({ on: a.id, type: 'mc', ...q }, next, { kicker: fill(PT.questionKicker, { title: P.title }), label: fill(PT.questionRight, { title: P.title }), pts: PT.questionPts });
+    } else if (mode === 'place') {
+      const v = pick(P.place!.variants);
+      this.open(
+        { kind: 'place', title: P.title, task: P.place!.task, view: (P.place!.view ?? [0, 0, 200, 260]).join(' '), variant: v.name, electrodes: v.electrodes.map(({ id, label, color }) => ({ id, label, color })), pos: {} },
+        { keys: [], next, targets: v.electrodes },
+      );
+    } else {
+      this.proc = new ProcSession(this, a);
+      this.open(this.proc.prompt, { keys: [], next });
+    }
   }
   procPick(stepId: string) {
     if (this.prompt?.kind !== 'proc' || !this.proc) return;
     this.proc.pick(stepId);
+    this.changed();
+  }
+  /** Elektrode auf die Figur setzen (Figur-Koordinaten) */
+  placeSet(id: string, x: number, y: number) {
+    const p = this.prompt;
+    if (p?.kind !== 'place' || p.result || !p.electrodes.some((e) => e.id === id)) return;
+    p.pos[id] = { x, y };
+    this.changed();
+  }
+  placeCheck() {
+    const p = this.prompt;
+    const targets = this.ctl?.targets;
+    if (p?.kind !== 'place' || p.result || !targets || targets.some((e) => !p.pos[e.id])) return;
+    const PT = RULES.procedure;
+    p.result = targets.map((e) => {
+      const at = p.pos[e.id];
+      return { id: e.id, ok: Math.hypot(at.x - e.x, at.y - e.y) <= e.r, target: { x: e.x, y: e.y, r: e.r }, where: e.where };
+    });
+    const right = p.result.filter((r) => r.ok).length;
+    const n = targets.length;
+    this.reward(Math.round((PT.placePts * right) / n), PT.placePts, fill(PT.placeScore, { title: p.title, right, n }));
+    const wrong = targets.filter((_, i) => !p.result![i].ok);
+    if (wrong.length) this.addEvent(0, 0, fill(PT.placeWrong, { title: p.title }), wrong.map((e) => `${e.label}: ${e.where}`).join(' · '), 'miss');
     this.changed();
   }
 

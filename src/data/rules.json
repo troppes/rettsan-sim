@@ -146,6 +146,14 @@
     "orderHint": "Reihenfolge: Vor „{step}“ kommt erst: {missing}.",
     "forgot": "{title}: vergessen: {steps}.",
     "clean": "{title}: sauber durchgeführt",
-    "withErrors": "{title}: mit Fehlern"
+    "withErrors": "{title}: mit Fehlern",
+    "modes": {"steps":3,"quick":2,"question":3},
+    "quickDefault": "{title}: klappt auf Anhieb.",
+    "questionKicker": "Kurz gefragt · {title}",
+    "questionRight": "{title}: Frage richtig beantwortet",
+    "questionPts": 2,
+    "placePts": 3,
+    "placeScore": "{title}: {right} von {n} richtig geklebt",
+    "placeWrong": "{title}: Elektroden falsch geklebt"
   }
 }

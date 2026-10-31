@@ -239,9 +239,9 @@
   ],
   "quizzes": [
     {
-      "on": "treat",
+      "on": "finish",
       "type": "order",
-      "q": "Wache Diabetikerin mit Verdacht auf Hypo. Bring die Maßnahmen in die richtige Reihenfolge.",
+      "q": "Rückblick: Wache Diabetikerin mit Verdacht auf Hypo. Bring die Maßnahmen in die richtige Reihenfolge.",
       "items": [
         "Blutzucker messen",
         "Glucose oral (sie ist wach und schluckt sicher)",

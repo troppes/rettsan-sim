@@ -243,3 +243,28 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .quiz-monitor canvas { width: 100%; height: 150px; display: block; background: var(--mon); border-radius: 10px; }
 .pre { white-space: pre-line; }
 .nowrap { white-space: nowrap; }
+
+/* Elektroden kleben */
+.place-chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0; }
+.place-chips .chip { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 999px; border: 1px solid var(--line); background: var(--bg2); font-size: 15px; }
+.place-chips .chip.active { border-color: var(--accent2); box-shadow: 0 0 0 2px var(--accent2) inset; }
+.place-chips .chip.right { border-color: var(--good); }
+.place-chips .chip.wrong { border-color: var(--bad); }
+.dot { display: inline-block; width: 12px; height: 12px; border-radius: 50%; border: 1px solid #fff6; flex: none; }
+.place-fig { display: block; width: 100%; max-width: 340px; max-height: 50dvh; margin: 6px auto; touch-action: manipulation; cursor: crosshair; user-select: none; -webkit-user-select: none; }
+.place-fig .skin { fill: #e8c4a8; stroke: #b48d72; stroke-width: 1; }
+.place-fig .bone { fill: none; stroke: #b48d72; stroke-width: 1.4; }
+.place-fig rect.bone { fill: #dcb59a; }
+.place-fig .rib { fill: none; stroke: #a58067; stroke-width: 0.8; opacity: 0.7; }
+.place-fig .nipple { fill: #b07a63; }
+.place-sides { display: flex; justify-content: space-between; max-width: 340px; margin: 4px auto 0; color: var(--muted); font-size: 13px; }
+.place-fig .pad circle { stroke: #fff; stroke-width: 1.5; }
+.place-fig .pad text { font-size: 9px; font-weight: 700; fill: #111; paint-order: stroke; stroke: #fff; stroke-width: 2.5px; }
+.place-fig .pad.bad circle { stroke: var(--bad); stroke-width: 2.5; }
+.place-fig .pad.ok circle { stroke: var(--good); stroke-width: 2.5; }
+.place-fig .target { fill: #35c47a33; stroke: var(--good); stroke-width: 1.2; stroke-dasharray: 3 2; }
+.place-fig .target-label { font-size: 8px; font-weight: 700; fill: #0b5d34; }
+.place-result { display: grid; gap: 4px; margin: 8px 0; }
+.place-result .op { display: flex; align-items: center; gap: 6px; padding: 6px 10px; border-radius: 10px; font-size: 14px; }
+.place-result .op.right { background: #173426; }
+.place-result .op.wrong { background: #3a1d1d; }

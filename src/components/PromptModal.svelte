@@ -3,6 +3,7 @@
   import type { Prompt } from '../lib/engine/state';
   import MonitorView from './MonitorView.svelte';
   import Options from './Options.svelte';
+  import PlaceBoard from './PlaceBoard.svelte';
 
   let { game, prompt }: { game: Game; prompt: Prompt } = $props();
 </script>
@@ -72,6 +73,11 @@
           {#each prompt.steps as st (st.id)}<button class="opt" onclick={() => game.procPick(st.id)}>{st.label}</button>{/each}
         </div>
       {/if}
+
+    {:else if prompt.kind === 'place'}
+      <div class="kicker">Selbst kleben · {prompt.variant}</div>
+      <h3>{prompt.title}</h3>
+      <PlaceBoard {game} {prompt} />
 
     {:else if prompt.kind === 'rhythm'}
       <div class="kicker">{prompt.kicker}</div>
