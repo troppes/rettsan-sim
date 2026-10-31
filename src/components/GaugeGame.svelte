@@ -251,8 +251,8 @@
     <span class="muted rate" class:ok={p > 0 && speed >= 2 && speed <= 3.5} class:bad={p > 0 && speed > cfg.maxRate}>{p > 0 && speed > 0.05 ? `≈ ${speed.toFixed(1).replace('.', ',')} mmHg/s` : valve < 0.2 ? 'zu' : 'offen'}</span>
   </label>
   <div class="valve">
-    <button class="btn small ghost" onclick={() => (valve = Math.max(0, +(valve - 0.5).toFixed(1)))} aria-label="Ventil etwas zu">− zu</button>
-    <button class="btn small ghost" onclick={() => (valve = Math.min(10, +(valve + 0.5).toFixed(1)))} aria-label="Ventil etwas auf">auf +</button>
+    <button class="btn small ghost" onclick={() => { dump = false; valve = Math.max(0, +(valve - 0.5).toFixed(1)); }} aria-label="Ventil etwas zu">− zu</button>
+    <button class="btn small ghost" onclick={() => { dump = false; valve = Math.min(10, +(valve + 0.5).toFixed(1)); }} aria-label="Ventil etwas auf">auf +</button>
   </div>
   <div class="row">
     <button class="btn accent pump" onclick={pump}>Pumpen</button>
