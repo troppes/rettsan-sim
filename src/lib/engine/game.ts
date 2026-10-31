@@ -1,5 +1,5 @@
 /* Spiel-Engine: interpretiert die Falldaten. Keine Oberfläche, kein DOM. */
-import type { Action, ActionKind, CaseDef, Letter, Moment, ProcMode, Quiz, StressConfig, TreatEffect, VitalKey } from '../types';
+import type { Action, ActionKind, CaseDef, IvRun, Letter, Moment, ProcMode, Quiz, StressConfig, TreatEffect, VitalKey } from '../types';
 import { ACTIONS, ACTION_GROUPS, ECG, LETTERS, PROCEDURES, REA, RULES } from '../data';
 import { clamp, fill, pick, shuffle } from '../util';
 import { mutate, test, variant, type Ctx } from './conditions';
@@ -48,6 +48,7 @@ export class Game {
 
   /** Zufällige Störungen (Funk, Telefon, Gaffer …), mehr bei schwereren Fällen */
   private pickStress(): Moment[] {
+    if (this.c.noStress) return [];
     const st = RULES.stress as unknown as StressConfig;
     const n = st.interruptions[String(this.c.level)] ?? 0;
     const pool = shuffle(st.pool.filter((m) => !(m.except ?? []).includes(this.c.id) && (!m.only || m.only.includes(this.c.id))));
@@ -548,6 +549,7 @@ export class Game {
       question: this.openQuestions(id).length > 0,
       place: !!P.place,
       gauge: !!P.gauge,
+      iv: !!P.iv,
     };
     let modes = (Object.keys(w) as ProcMode[]).filter((m) => w[m] > 0 && usable[m]);
     // Nicht zweimal hintereinander gleich: weder im Einsatz noch bei dieser Maßnahme seit dem letzten Mal
@@ -587,6 +589,8 @@ export class Game {
         { kind: 'place', title: P.title, task: P.place!.task, view: (P.place!.view ?? [0, 0, 200, 260]).join(' '), variant: v.name, electrodes: v.electrodes.map(({ id, label, color }) => ({ id, label, color })), pos: {} },
         { keys: [], next, targets: v.electrodes },
       );
+    } else if (mode === 'iv') {
+      this.open({ kind: 'iv', title: P.title, cfg: P.iv! }, { keys: [], next });
     } else if (mode === 'gauge') {
       const v = this.s.v;
       this.open({ kind: 'gauge', title: P.title, cfg: P.gauge!, hr: Math.round(v.hr), sys: Math.round(v.sys), dia: Math.round(v.dia) }, { keys: [], next });
@@ -594,6 +598,14 @@ export class Game {
       this.proc = new ProcSession(this, a);
       this.open(this.proc.prompt, { keys: [], next });
     }
+  }
+  /** Übungsmodus: eine Maßnahme direkt in einem festen Modus starten */
+  practice(id: string, mode: ProcMode, done: () => void) {
+    const a = this.actionFor(id);
+    if (!a || this.prompt) return;
+    this.forceProcMode = mode;
+    this.runProc(a, done);
+    this.changed();
   }
   procPick(stepId: string) {
     if (this.prompt?.kind !== 'proc' || !this.proc) return;
@@ -629,6 +641,33 @@ export class Game {
     this.reward(right * g.pts.value + (!low && !fast ? g.pts.technique : 0), max, fill(g.texts.score, { right }));
     const wrong = lines.filter((l) => !l.ok);
     if (wrong.length) this.addEvent(0, 0, p.title + ': manuell ungenau', wrong.map((l) => l.text).join(' '), 'miss');
+    this.changed();
+  }
+  /** Ergebnis des i.v.-Minispiels bewerten */
+  ivDone(r: IvRun) {
+    const p = this.prompt;
+    if (p?.kind !== 'iv' || p.result) return;
+    const { pts: P, texts: T2, angle: [lo, hi], order } = p.cfg;
+    const vein = p.cfg.veins.find((v) => v.id === r.vein);
+    const hygiene = !r.early && !r.retouched;
+    const angleOk = r.angle >= lo && r.angle <= hi;
+    const orderOk = r.order.length === order.length && r.order.every((x, i) => x === order[i]);
+    const lines: { ok: boolean; text: string; pts: number }[] = [
+      { ok: r.stauOk, text: r.stauOk ? T2.stauOk : T2.stauBad, pts: r.stauOk ? P.stau : 0 },
+      { ok: vein?.quality === 'good', text: `${vein?.label ?? '?'}: ${vein?.why ?? ''}`, pts: vein?.quality === 'good' ? P.vein : vein?.quality === 'ok' ? Math.ceil(P.vein / 2) : 0 },
+      ...(r.early ? [{ ok: false, text: T2.early, pts: 0 }] : []),
+      ...(r.retouched ? [{ ok: false, text: T2.retouched, pts: 0 }] : []),
+      ...(hygiene ? [{ ok: true, text: T2.hygieneOk, pts: P.hygiene }] : []),
+      { ok: angleOk, text: fill(angleOk ? T2.angleOk : r.angle < lo ? T2.angleFlat : T2.angleSteep, { angle: r.angle }), pts: angleOk ? P.angle : 0 },
+      { ok: r.hit === 'in', text: r.hit === 'in' ? T2.hitIn : r.hit === 'through' ? T2.hitThrough : T2.hitShort, pts: r.hit === 'in' ? P.hit : 0 },
+    ];
+    if (r.hit === 'in') lines.push({ ok: orderOk, text: orderOk ? T2.orderOk : fill(T2.orderBad, { right: order.join(' → ') }), pts: orderOk ? P.order : 0 });
+    const max = Object.values(P).reduce((a, b) => a + b, 0);
+    const got = lines.reduce((a, l) => a + l.pts, 0);
+    p.result = { lines: lines.map(({ ok, text }) => ({ ok, text })) };
+    this.reward(got, max, fill(T2.score, { pts: got, max }));
+    const wrong = lines.filter((l) => !l.ok);
+    if (wrong.length) this.addEvent(0, 0, p.title + ': Fehler beim Legen', wrong.map((l) => l.text).join(' '), 'miss');
     this.changed();
   }
   placeCheck() {

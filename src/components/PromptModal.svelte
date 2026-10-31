@@ -5,6 +5,7 @@
   import Options from './Options.svelte';
   import PlaceBoard from './PlaceBoard.svelte';
   import GaugeGame from './GaugeGame.svelte';
+  import IvGame from './IvGame.svelte';
 
   let { game, prompt }: { game: Game; prompt: Prompt } = $props();
 </script>
@@ -84,6 +85,11 @@
       <div class="kicker">Von Hand messen</div>
       <h3>{prompt.title}</h3>
       <GaugeGame {game} {prompt} />
+
+    {:else if prompt.kind === 'iv'}
+      <div class="kicker">Selbst legen</div>
+      <h3>{prompt.title}</h3>
+      <IvGame {game} {prompt} />
 
     {:else if prompt.kind === 'rhythm'}
       <div class="kicker">{prompt.kicker}</div>

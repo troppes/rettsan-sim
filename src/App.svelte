@@ -8,6 +8,8 @@
   import TrainerPro from './screens/TrainerPro.svelte';
   import Login from './screens/Login.svelte';
   import Progress from './screens/Progress.svelte';
+  import Practice from './screens/Practice.svelte';
+  import RadioTrainer from './screens/RadioTrainer.svelte';
 
   account.init();
 </script>
@@ -19,6 +21,8 @@
   {:else if app.screen.name === 'trainerPro'}<TrainerPro rhythms={app.screen.rhythms} />
   {:else if app.screen.name === 'login'}<Login />
   {:else if app.screen.name === 'progress'}<Progress />
+  {:else if app.screen.name === 'practice'}<Practice />
+  {:else if app.screen.name === 'radio'}<RadioTrainer />
   {/if}
 {/key}
 <Toasts />

@@ -59,6 +59,7 @@
   <h2 class="sec">Training</h2>
   <button class="btn wide ghost" onclick={() => app.go({ name: 'trainer' })}>📈 EKG-Trainer Basis: Rhythmen erkennen</button>
   <button class="btn wide ghost" onclick={() => app.go({ name: 'trainerPro' })}>🩺 EKG-Trainer Profi: systematisch analysieren</button>
+  <button class="btn wide ghost" onclick={() => app.go({ name: 'practice' })}>🎯 Minispiele üben: RR, Elektroden, i.v., Funk</button>
 
   <details class="card howto">
     <summary>So funktioniert’s</summary>
@@ -67,7 +68,7 @@
       <li>Arbeite nach <b>xABCDE</b>. Wer bei einem offenen x-, A-, B- oder C-Problem schon Späteres macht, bekommt Abzug. Beim stabilen Patienten reicht ein kurzer Ersteindruck, dann darfst du gezielt vorgehen.</li>
       <li>Die Einsatzmeldung kann täuschen: Nicht jeder Bauchschmerz ist der Bauch.</li>
       <li>Der Patient hat eine <b>Stimmung</b>. Wer erklärt, vorstellt und beruhigt, bekommt bessere Antworten. Wer ungefragt piekst, erntet Ärger.</li>
-      <li>Wenn du mit Maßnahmen anfängst, kommt ein kurzes <b>Quiz</b> zur richtigen Abfolge.</li>
+      <li>Maßnahmen laufen jedes Mal anders: Schritt für Schritt, als Kurzfrage, als Minispiel (RR, Elektroden, i.v.) oder sie klappen einfach. Üben kannst du die Minispiele unter <b>Training</b>.</li>
       <li>Mit <b>Übergabe</b> beendest du den Einsatz, stellst deine Verdachtsdiagnose und bekommst die Auswertung.</li>
       <li>Mit einem <b>Konto</b> (freiwillig) werden Ergebnisse gespeichert und du siehst deine Schwachstellen.</li>
     </ul>

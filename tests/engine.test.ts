@@ -254,4 +254,31 @@ describe('Opioid-Intoxikation', () => {
     expect(g.s.flags.naloxon).toBeTruthy();
     expect(g.s.v.gcs).toBe(13);
   });
+
+  it('i.v.-Minispiel: sauber gelegt volle Punkte, Fehler kosten Punkte', () => {
+    const run = (r: Partial<import('../src/lib/types').IvRun>) => {
+      const g = new Game(caseById('hypo')!, { worsen: false, detail: true });
+      g.practice('m_ivz', 'iv', () => {});
+      const p = g.prompt!;
+      if (p.kind !== 'iv') throw new Error('kein Minispiel');
+      const [lo, hi] = p.cfg.angle;
+      g.ivDone({ stauOk: true, vein: p.cfg.veins.find((v) => v.quality === 'good')!.id, early: false, retouched: false, angle: Math.round((lo + hi) / 2), hit: 'in', order: [...p.cfg.order], ...r });
+      return { ev: g.s.events.filter((e) => e.max > 0).at(-1)!, lines: (g.prompt as Extract<typeof p, { kind: 'iv' }>).result!.lines };
+    };
+    const good = run({});
+    expect(good.ev.pts).toBe(good.ev.max);
+    expect(good.lines.every((l) => l.ok)).toBe(true);
+    const bad = run({ stauOk: false, early: true, angle: 55, hit: 'through' });
+    expect(bad.ev.pts).toBeLessThan(bad.ev.max / 2);
+    expect(bad.lines.filter((l) => !l.ok).length).toBeGreaterThanOrEqual(4);
+  });
+
+  it('Übungsmodus startet das Minispiel direkt und meldet das Ende', () => {
+    const g = new Game({ ...caseById('acs')!, noStress: true }, { worsen: false, detail: true });
+    let done = false;
+    g.practice('c_ekg', 'place', () => (done = true));
+    expect(g.prompt?.kind).toBe('place');
+    g.next();
+    expect(done).toBe(true);
+  });
 });

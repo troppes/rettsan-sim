@@ -154,6 +154,8 @@ export interface CaseDef {
   effects?: Record<string, TreatEffect | TreatEffect[]>;
   required?: Required[];
   quizzes?: Quiz[];
+  /** Keine zufälligen Störungen (z. B. Übungsmodus) */
+  noStress?: boolean;
   diagnosis: {
     options: string[];
     answer: number;
@@ -181,7 +183,7 @@ export interface ProcStep {
   wrong?: string;
 }
 /** Wie eine Maßnahme abgefragt wird: Schritte, klappt einfach, eine Frage, Elektroden selbst kleben */
-export type ProcMode = 'steps' | 'quick' | 'question' | 'place' | 'gauge';
+export type ProcMode = 'steps' | 'quick' | 'question' | 'place' | 'gauge' | 'iv';
 
 export interface ProcQuestion { q: string; options: string[]; answer: number; explain?: string }
 
@@ -207,7 +209,21 @@ export interface Procedure {
   questions?: ProcQuestion[];
   place?: Placement;
   gauge?: GaugeConfig;
+  iv?: IvConfig;
 }
+
+/** i.v.-Zugang als Minispiel: stauen, Vene wählen, desinfizieren, Winkel, Vorschieben, Reihenfolge */
+export interface IvVein { id: string; x: number; y: number; r: number; quality: 'good' | 'ok' | 'bad'; label: string; why: string }
+export interface IvConfig {
+  veins: IvVein[];
+  wait: number;
+  waitText: string;
+  angle: number[];
+  order: string[];
+  pts: Record<'stau' | 'vein' | 'hygiene' | 'angle' | 'hit' | 'order', number>;
+  texts: Record<string, string>;
+}
+export interface IvRun { stauOk: boolean; vein: string; early: boolean; retouched: boolean; angle: number; hit: 'in' | 'through' | 'short'; order: string[] }
 
 /** Blutdruck von Hand messen: Manschette aufpumpen, ablassen, Korotkow-Töne hören */
 export interface GaugeConfig {

@@ -7,7 +7,9 @@ export type Screen =
   | { name: 'trainer' }
   | { name: 'trainerPro'; rhythms?: string[] }
   | { name: 'login' }
-  | { name: 'progress' };
+  | { name: 'progress' }
+  | { name: 'practice' }
+  | { name: 'radio' };
 
 export interface ToastMsg { id: number; text: string; tone: 'good' | 'bad' | '' }
 

@@ -1,0 +1,157 @@
+{
+  "callsign": "Rettung Berlin 2/83/1",
+  "dispatch": "Florian Berlin",
+  "statusLabels": {
+    "0": "Dringender Sprechwunsch",
+    "1": "Einsatzbereit über Funk",
+    "2": "Einsatzbereit auf Wache",
+    "3": "Einsatz übernommen, Anfahrt",
+    "4": "Am Einsatzort",
+    "5": "Sprechwunsch",
+    "6": "Außer Dienst / nicht einsatzbereit",
+    "7": "Patient aufgenommen, zum Krankenhaus",
+    "8": "Am Transportziel",
+    "9": "Fremdanmeldung"
+  },
+  "status": [
+    {"text":"Der Melder piept, ihr habt den Einsatz angenommen und fahrt los.","s":"3"},
+    {"text":"Ihr haltet vor der Einsatzadresse und steigt aus.","s":"4"},
+    {"text":"Der Patient liegt im RTW, ihr fahrt los ins Krankenhaus.","s":"7"},
+    {"text":"Ihr steht vor der Notaufnahme.","s":"8"},
+    {"text":"Patient übergeben, Trage frisch bezogen. Ihr sitzt wieder im Auto.","s":"1"},
+    {
+      "text": "Der Patient ist versorgt und lehnt den Transport nach Aufklärung ab. Ihr steigt wieder ein.",
+      "s": "1",
+      "explain": "Kein Transport: direkt von 4 auf 1, einsatzbereit über Funk."
+    },
+    {"text":"Ihr tankt auf dem Rückweg zur Wache.","s":"1","explain":"Unterwegs und erreichbar: Status 1."},
+    {"text":"Ihr seid zurück auf der Wache und einsatzbereit.","s":"2"},
+    {
+      "text": "Mittagspause auf der Wache.",
+      "s": "2",
+      "explain": "Prüfungsfalle: Pause auf der Wache ist Status 2, nicht 6. Status 6 heißt nicht einsatzbereit und muss begründet werden."
+    },
+    {
+      "text": "Nach einem Transport mit Verdacht auf offene Tuberkulose muss der RTW desinfiziert werden.",
+      "s": "6",
+      "explain": "Nicht einsatzbereit mit Begründung (Desinfektion): Status 6."
+    },
+    {
+      "text": "Beim Rangieren habt ihr einen Poller gestreift, der Spiegel ist ab.",
+      "s": "6",
+      "explain": "Eigenunfall: an der Stelle bleiben, Status 6. Die Leitstelle disponiert ein anderes Fahrzeug."
+    },
+    {
+      "text": "Du willst der Leitstelle melden, dass ihr ein NEF braucht, und wartest auf die Sprechaufforderung.",
+      "s": "5"
+    },
+    {
+      "text": "Ihr werdet am Einsatzort mit einem Messer bedroht. Es ist dringend.",
+      "s": "0",
+      "explain": "Dringender (priorisierter) Sprechwunsch. Im Digitalfunk gibt es dafür zusätzlich die Notruftaste."
+    },
+    {"text":"Über euer Gerät soll ein anderes Fahrzeug angemeldet werden.","s":"9"}
+  ],
+  "calls": [
+    {
+      "task": "Du rufst die Leitstelle an.",
+      "words": ["Florian Berlin","von","Rettung Berlin 2/83/1","kommen"],
+      "extra": ["Hallo","bitte","hier"],
+      "explain": "Gegenstelle – von – eigener Rufname – kommen."
+    },
+    {
+      "task": "Die Leitstelle ruft: „Rettung Berlin 2/83/1 von Florian Berlin kommen.“ Antworte.",
+      "words": ["Hier","Rettung Berlin 2/83/1","kommen"],
+      "extra": ["Ja","von","Florian Berlin","danke"],
+      "explain": "Anrufantwort: „Hier“ und der eigene Rufname, dann „kommen“."
+    },
+    {
+      "task": "Du willst wissen, ob die Leitstelle dich gut hört.",
+      "words": ["Florian Berlin","von","Rettung Berlin 2/83/1","Frage Verständigung","kommen"],
+      "extra": ["Hören Sie mich","bitte","Ende"],
+      "explain": "„Frage Verständigung“ ist das Betriebswort für die Hörprobe."
+    },
+    {
+      "task": "Du hast „Bett drei“ gesagt, meintest aber Bett 2. Berichtige dich.",
+      "words": ["Ich berichtige","Bett","zwo","kommen"],
+      "extra": ["Ich korrigiere","zwei","Entschuldigung"],
+      "explain": "„Ich berichtige“, und Zahlen unverwechselbar: zwo statt zwei."
+    },
+    {
+      "task": "Das Gespräch ist fertig, du beendest es.",
+      "words": ["Rettung Berlin 2/83/1","Ende"],
+      "extra": ["Tschüss","danke","kommen"],
+      "explain": "„Ende“ schließt das Gespräch. Keine Höflichkeitsformeln im Funk."
+    }
+  ],
+  "mc": [
+    {
+      "q": "Warum sagt man im Funk „zwo“ statt „zwei“?",
+      "options": [
+        "Damit es nicht mit „drei“ verwechselt wird",
+        "Weil es kürzer ist",
+        "Das ist Berliner Dialekt",
+        "Weil „zwei“ im Digitalfunk gefiltert wird"
+      ],
+      "answer": 0
+    },
+    {
+      "q": "Wofür steht die 83 in „Rettung Berlin 2/83/1“?",
+      "options": [
+        "Fahrzeugtyp RTW",
+        "Standort, also die Wache",
+        "Laufende Nummer des Fahrzeugs",
+        "Die Kennung der Leitstelle"
+      ],
+      "answer": 0,
+      "explain": "2 = Standort, 83 = RTW, 1 = erstes Fahrzeug am Standort."
+    },
+    {
+      "q": "Darf der Name des Patienten über Funk durchgegeben werden?",
+      "options": [
+        "Nein, keine Patientennamen und keine unnötigen Details",
+        "Ja, die Klinik braucht ihn für die Anmeldung",
+        "Ja, im Digitalfunk ist das verschlüsselt und erlaubt",
+        "Nur wenn der Patient zustimmt"
+      ],
+      "answer": 0,
+      "explain": "Fernmeldegeheimnis und Schweigepflicht: so wenig persönliche Daten wie möglich."
+    },
+    {
+      "q": "Was gilt für Höflichkeitsformeln im Funk?",
+      "options": [
+        "Weglassen: kein „bitte“, „danke“, „guten Tag“",
+        "Immer verwenden, das ist professionell",
+        "Nur gegenüber der Leitstelle",
+        "Nur „bitte“, „danke“ weglassen"
+      ],
+      "answer": 0
+    },
+    {
+      "q": "Welche Vorrangstufe unterbricht laufenden Funkverkehr niedrigerer Stufen?",
+      "options": ["Blitz","Sofort","Einfach","Dringend"],
+      "answer": 0,
+      "explain": "„Sofort“ wird vorgezogen, unterbricht aber nicht. „Blitz“ (und Staatsnot) unterbricht."
+    },
+    {
+      "q": "Ein Bekannter fragt, ob er mit einem Scanner den Rettungsdienstfunk mithören darf.",
+      "options": [
+        "Nein, privates Mithören ist verboten (Fernmeldegeheimnis)",
+        "Ja, solange er nichts weitererzählt",
+        "Ja, im analogen Funk ist das erlaubt",
+        "Nur bei Großschadenslagen"
+      ],
+      "answer": 0
+    },
+    {
+      "q": "Was bedeutet das Betriebswort „kommen“?",
+      "options": [
+        "Ich bin fertig, du bist dran",
+        "Komm zum Einsatzort",
+        "Das Gespräch ist beendet",
+        "Ich rufe dich gleich zurück"
+      ],
+      "answer": 0
+    }
+  ]
+}

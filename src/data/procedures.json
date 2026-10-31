@@ -521,7 +521,83 @@
           "answer": 0,
           "explain": "Die zurückgezogene Stahlkanüle nie wieder vorschieben: Sie kann die Kunststoffkanüle abscheren (Embolie)."
         }
-      ]
+      ],
+      "modes": {"iv":4,"steps":2,"question":2,"quick":1},
+      "iv": {
+        "veins": [
+          {
+            "id": "unterarm",
+            "x": 150,
+            "y": 62,
+            "r": 16,
+            "quality": "good",
+            "label": "Gerade Vene am Unterarm",
+            "why": "Gerade, gut tastbar, nicht über einem Gelenk: ideal."
+          },
+          {
+            "id": "hand",
+            "x": 262,
+            "y": 58,
+            "r": 12,
+            "quality": "ok",
+            "label": "Kleine Vene am Handrücken",
+            "why": "Geht und ist schön distal, aber dünn und schmerzhafter. Für große Volumina eher klein."
+          },
+          {
+            "id": "ellenbeuge",
+            "x": 48,
+            "y": 60,
+            "r": 14,
+            "quality": "ok",
+            "label": "Ellenbeuge",
+            "why": "Im Notfall gut, aber über dem Gelenk: Knickt der Arm, läuft nichts mehr, und weiter distal ist danach verbaut."
+          },
+          {
+            "id": "gabel",
+            "x": 205,
+            "y": 70,
+            "r": 12,
+            "quality": "bad",
+            "label": "Venengabel",
+            "why": "An Gabelungen sitzen oft Venenklappen: Die Kanüle lässt sich schlecht vorschieben."
+          },
+          {
+            "id": "arterie",
+            "x": 238,
+            "y": 96,
+            "r": 10,
+            "quality": "bad",
+            "label": "Pulsierendes Gefäß am Handgelenk",
+            "why": "Das pulsiert: eine Arterie (A. radialis). Nie punktieren!"
+          }
+        ],
+        "wait": 4,
+        "waitText": "Einwirkzeit (im echten Leben ca. 15–30 s, Herstellerangabe)",
+        "angle": [15,30],
+        "order": [
+          "Stahlkanüle ein Stück zurückziehen",
+          "Kunststoffkanüle vorschieben",
+          "Stau lösen",
+          "Vene abdrücken, Stahlkanüle entfernen, verschließen und fixieren"
+        ],
+        "pts": {"stau":1,"vein":2,"hygiene":2,"angle":1,"hit":3,"order":2},
+        "texts": {
+          "stauOk": "Venös gestaut, der Radialispuls bleibt tastbar.",
+          "stauBad": "Zu fest gestaut: Ohne Radialispuls fließt kein Blut nach, die Venen füllen sich schlecht.",
+          "early": "Zu früh punktiert: Die Einwirkzeit des Desinfektionsmittels nicht abgewartet.",
+          "retouched": "Nach dem Desinfizieren nochmal getastet: Die Stelle ist wieder kontaminiert.",
+          "hygieneOk": "Desinfiziert, Einwirkzeit abgewartet, nicht mehr getastet.",
+          "angleOk": "Stichwinkel {angle}° (ideal 15–30°).",
+          "angleFlat": "Stichwinkel {angle}°: zu flach, die Kanüle schiebt sich unter der Haut entlang.",
+          "angleSteep": "Stichwinkel {angle}°: zu steil, da sticht man leicht durch die Vene durch.",
+          "hitIn": "Treffer: Blut in der Rückflusskammer.",
+          "hitThrough": "Durchgestochen: Die Vene ist hinten verletzt, es bildet sich ein Hämatom. Abbrechen, abdrücken, neue Stelle weiter proximal.",
+          "hitShort": "Zu früh gestoppt: noch nicht in der Vene, kein Rückfluss.",
+          "orderOk": "Reihenfolge nach dem Treffer richtig.",
+          "orderBad": "Reihenfolge: {right}.",
+          "score": "i.v.-Zugang: {pts} von {max} Punkten"
+        }
+      }
     },
     "m_o2_mask": {
       "title": "O₂ über Reservoirmaske",

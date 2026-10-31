@@ -30,6 +30,9 @@ export function answerPrompts(g: Game, limit = 30) {
         for (const t of ctl.targets!) g.placeSet(t.id, t.x, t.y);
         g.placeCheck();
         break;
+      case 'iv':
+        g.ivDone({ stauOk: true, vein: 'unterarm', early: false, retouched: false, angle: 20, hit: 'in', order: p.cfg.order });
+        break;
       case 'gauge':
         g.gaugeDone({ sys: p.sys, dia: p.dia, maxP: p.sys + 40, rate: 3 });
         break;

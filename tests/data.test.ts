@@ -1,6 +1,7 @@
 /* Prüft, dass alle Daten zueinander passen: Verweise auf Aktionen, Probleme, Rhythmen. */
 import { describe, expect, it } from 'vitest';
-import { ACTIONS, CASES, ECG, PROCEDURES, REA } from '../src/lib/data';
+import { ACTIONS, CASES, ECG, PROCEDURES, REA, RULES } from '../src/lib/data';
+import radio from '../src/data/radio.json';
 import type { Condition } from '../src/lib/types';
 import { createSignal } from '../src/lib/ecg/signal';
 
@@ -134,4 +135,23 @@ describe('Gesprächsmomente', () => {
       for (const o of m.options) if ((o.pts ?? 0) < best) expect(o.why, o.t).toBeTruthy();
     });
   }
+});
+
+describe('Störungen und Funk', () => {
+  it('Störungen: mindestens 3 Antworten, genau eine beste, jede schwächere erklärt', () => {
+    for (const m of (RULES.stress as unknown as { pool: { id: string; options: { t: string; pts?: number; why?: string }[] }[] }).pool) {
+      expect(m.options.length, m.id).toBeGreaterThanOrEqual(3);
+      const best = Math.max(...m.options.map((o) => o.pts ?? 0));
+      expect(m.options.filter((o) => (o.pts ?? 0) === best), m.id).toHaveLength(1);
+      for (const o of m.options) if ((o.pts ?? 0) < best) expect(o.why, o.t).toBeTruthy();
+    }
+  });
+  it('Funk: Status bekannt, Bausteine eindeutig, MC-Antworten gültig', () => {
+    for (const t of radio.status) expect(radio.statusLabels[t.s as keyof typeof radio.statusLabels], t.text).toBeDefined();
+    for (const c of radio.calls) {
+      const all = [...c.words, ...c.extra];
+      expect(new Set(all).size, c.task).toBe(all.length);
+    }
+    for (const q of radio.mc) expect(q.options[q.answer], q.q).toBeDefined();
+  });
 });
