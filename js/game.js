@@ -241,9 +241,10 @@
     if (a.kind === 'ask') {
       if (a.id === 'q_hallo' || a.id === 'q_erkl' || a.id.startsWith('f_')) return;
       const open = openBlocking(li('D'));
-      if (open.length && !s.warned.ask) {
+      if (open.length) s.quickAsk = (s.quickAsk || 0) + 1;
+      if (open.length && s.quickAsk > 2 && !s.warned.ask) {
         s.warned.ask = true;
-        penalty(3, `Erst behandeln, dann ausführlich befragen. Offen ist noch: ${open[0].label} (${open[0].letter}).`);
+        penalty(3, `Ein, zwei kurze Fragen sind okay, aber jetzt erst behandeln, dann ausführlich befragen. Offen ist noch: ${open[0].label} (${open[0].letter}).`);
       }
       return;
     }
@@ -580,6 +581,11 @@
 
   function doTreat(a) {
     const e = getEffect(a.id);
+    if (e.needs && !e.needs.some((id) => s.count[id])) {
+      log('info', '🤔 ' + e.needText);
+      advance(5);
+      return;
+    }
     const first = !s.count[a.id];
     if (!first && !['m_betreuung', 'm_zeit', 'm_trinken', 'm_gluc_oral'].includes(a.id) && !e.repeat) {
       log('info', 'Schon erledigt.');

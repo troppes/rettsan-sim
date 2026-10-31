@@ -121,7 +121,8 @@
     },
     effects: {
       m_gluc_oral: (s) => s.v.gcs >= 14
-        ? { text: 'Sie trinkt in kleinen Schlucken ein Glas Saft (ca. 20 g Glucose) unter deiner Aufsicht.', fix: ['hypo'], after(st) { st.flags.glucAt = st.time; st.v.bz = 70; } }
+        ? Object.assign({ text: 'Sie trinkt in kleinen Schlucken ein Glas Saft (ca. 20 g Glucose) unter deiner Aufsicht.', fix: ['hypo'], after(st) { st.flags.glucAt = st.time; st.v.bz = 70; } },
+          s.count.d_bz ? {} : { pts: -3, why: 'Erst BZ messen, dann Glucose: Ohne Messwert weißt du nicht, ob es wirklich eine Hypo ist (Indikation BZ unter 60 mg/dl).' })
         : { pts: -10, why: 'Bewusstseinsgetrübte Patienten bekommen nichts oral: Aspirationsgefahr! Hier: Seitenlage, NEF, Zugang vorbereiten.', delta: { spo2: -4 } },
       m_trinken: (s) => s.v.gcs >= 14 ? { text: 'Sie trinkt etwas Wasser. Das enthält aber keinen Zucker.' } : { pts: -10, why: 'Bewusstseinsgetrübte Patienten bekommen nichts zu trinken: Aspirationsgefahr!' },
       m_gluc_iv: (s) => s.v.gcs >= 14
@@ -242,7 +243,7 @@
       q_o: '„Vor zehn Minuten.“',
     },
     effects: {
-      m_allergen: { text: 'Stachel mit dem Fingernagel weggewischt (nicht drücken), Stichstelle gekühlt.' },
+      m_allergen: { needs: ['e_body', 'q_e'], needText: 'Du weißt noch nicht, wo oder was das Allergen ist. Erst untersuchen (Bodycheck) oder fragen, was passiert ist.', text: 'Stachel mit dem Fingernagel weggewischt (nicht drücken), Stichstelle gekühlt.' },
       m_o2_mask: { text: 'O₂ 15 l/min über Reservoirmaske.', delta: { spo2: 5 } },
       m_o2_nb: { pts: -2, why: 'Bei Anaphylaxie hochdosiert: 15 l/min über Reservoirmaske (Schulmeinung).', delta: { spo2: 2 } },
       m_schock: { text: 'Beine hoch. Sie wird etwas klarer, die Atemnot bleibt aber.', delta: { sys: 8, dia: 4, hr: -4 } },
@@ -309,7 +310,7 @@
     effects: {
       m_ok30: { text: 'Oberkörper 30° hoch gelagert.' },
       m_ok_hoch: { text: 'Oberkörper hoch gelagert.' },
-      m_zeit: { text: 'Notiert: zuletzt gesund gesehen 9:15 Uhr. Das Zeitfenster für Lyse (bis 4,5 h) und Thrombektomie ist offen.' },
+      m_zeit: { needs: ['q_o', 'q_e', 'q_t'], needText: 'Welche Uhrzeit willst du notieren? Frag erst, wann sie zuletzt gesund gesehen wurde.', text: 'Notiert: zuletzt gesund gesehen 9:15 Uhr. Das Zeitfenster für Lyse (bis 4,5 h) und Thrombektomie ist offen.' },
       m_voranm: { text: 'Stroke Unit ist vorangemeldet: Symptome, Zeitfenster, Antikoagulation, Telefonnummer der Tochter.' },
       m_betreuung: { text: 'Du erklärst ihr ruhig, was ihr tut. Die Tochter packt Medikamentenplan und Arztbriefe ein.' },
       m_ivz: { pts: -5, why: 'Schulmeinung: Kein i.v.-Zugang durch RettSan beim kreislaufstabilen Schlaganfall. Invasive Maßnahme ohne Rechtsgrundlage.' },
@@ -467,7 +468,7 @@
       m_hws: { text: 'Kollege fixiert die HWS manuell, Helm zu zweit abgenommen, Stifneck angelegt.' },
       m_o2_mask: { text: 'O₂ 15 l/min über Reservoirmaske.', delta: { spo2: 6 } },
       m_o2_nb: { pts: -2, why: 'Polytrauma: hochdosiert O₂, 15 l/min über Reservoirmaske (Schulmeinung).', delta: { spo2: 2 } },
-      m_becken: { text: 'Beckenschlinge in Höhe der Trochanter angelegt. Der Schmerz lässt etwas nach.', delta: { sys: 6, hr: -3 } },
+      m_becken: { needs: ['c_5b', 'e_body', 'q_s'], needText: 'Woher weißt du, dass das Becken verletzt ist? Erst die Blutungsräume (5 B) prüfen oder fragen, wo es wehtut.', text: 'Beckenschlinge in Höhe der Trochanter angelegt. Der Schmerz lässt etwas nach.', delta: { sys: 6, hr: -3 } },
       m_schock: { pts: -5, why: 'Bei Verdacht auf Becken- oder Wirbelsäulenverletzung keine Schocklage (Schulmeinung).' },
       m_waerme: { text: 'Rettungsdecke und Wolldecke, RTW-Heizung hoch.' },
       m_voranm: { text: 'Überregionales Traumazentrum (Schockraum) ist vorangemeldet.' },
