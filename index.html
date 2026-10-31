@@ -39,7 +39,8 @@
     <button class="btn wide ghost" id="btnRandom">🎲 Zufälliger Einsatz</button>
 
     <h2 class="sec">Training</h2>
-    <button class="btn wide ghost" id="btnTrainer">📈 EKG-Trainer: Rhythmen erkennen</button>
+    <button class="btn wide ghost" id="btnTrainer">📈 EKG-Trainer Basis: Rhythmen erkennen</button>
+    <button class="btn wide ghost" id="btnTrainer2">🩺 EKG-Trainer Profi: systematisch analysieren</button>
 
     <details class="card howto">
       <summary>So funktioniert’s</summary>
@@ -118,6 +119,25 @@
     <button class="btn wide accent" id="trNext" hidden>Nächster Rhythmus</button>
   </section>
 
+  <!-- EKG-Trainer Profi -->
+  <section id="trainer2" class="screen">
+    <div class="topbar">
+      <button class="icon-btn" id="t2Back" aria-label="Zurück">←</button>
+      <div class="tb-mid"><div class="tb-title">EKG-Trainer Profi</div><div class="tb-sub" id="t2Stats"></div></div>
+      <select id="t2Set" class="t2set" aria-label="Auswahl">
+        <option value="alle">Alle 19</option>
+        <option value="rea">Rea-Rhythmen</option>
+        <option value="brady">Bradykardien</option>
+        <option value="tachy">Tachykardien</option>
+      </select>
+    </div>
+    <div class="card t2vig"><span id="t2Vig"></span><div class="t2pulse"><button class="btn small ghost" id="t2PulseBtn">🫳 Puls prüfen</button> <span id="t2Pulse"></span></div></div>
+    <div class="t2wrap" id="t2Wrap"><canvas id="t2Canvas"></canvas></div>
+    <p class="t2hint">25 mm/s · kleines Kästchen 0,04 s · großes Kästchen 0,2 s · Streifen 6 s (zum Wischen)</p>
+    <div id="t2Steps"></div>
+    <button class="btn wide accent" id="t2Next" hidden>Nächster Streifen</button>
+  </section>
+
   <!-- Auswertung -->
   <section id="debrief" class="screen">
     <div class="topbar"><div class="tb-mid"><div class="tb-title">Auswertung</div></div></div>
@@ -136,5 +156,7 @@
   <script src="js/cases_extra.js"></script>
   <script src="js/procedures.js"></script>
   <script src="js/game.js"></script>
+  <script src="js/ecg2.js"></script>
+  <script src="js/trainer2.js"></script>
 </body>
 </html>

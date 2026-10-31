@@ -212,3 +212,15 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .react:empty { display: none; }
 .react .who { display: block; font-size: 12px; color: var(--muted); }
 .entry.moment { border-left: 3px solid var(--af); }
+
+/* Profi-Trainer */
+.t2set { background: var(--card); color: var(--text); border: 1px solid var(--line); border-radius: 10px; padding: 6px 8px; font: inherit; font-size: 13px; }
+.t2vig { font-size: 15px; }
+.t2pulse { margin-top: 8px; display: flex; align-items: center; gap: 8px; color: var(--sp); font-weight: 600; font-size: 14px; }
+.t2wrap { margin-top: 10px; overflow-x: auto; border-radius: 10px; border: 1px solid #e3b5ae; -webkit-overflow-scrolling: touch; }
+.t2wrap canvas { display: block; height: 190px; }
+.t2hint { color: var(--muted); font-size: 12px; margin: 6px 2px 4px; }
+.t2step { margin-top: 10px; }
+.t2q { font-weight: 700; }
+.t2step .options { margin: 8px 0 6px; }
+.t2step .opt { padding: 9px 11px; font-size: 15px; }
