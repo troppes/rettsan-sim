@@ -58,7 +58,7 @@ export function debrief(g: Game): Debrief {
   const grade = sc.grades.find((x) => pct >= x.min)!;
   const missed = req.filter((r) => !r.ok);
   const bad = s.events.filter((e) => e.type === 'bad');
-  const d = c.diagnosis;
+  const d = g.diagnosis();
   return {
     caseId: c.id,
     title: s.dispatch.short,

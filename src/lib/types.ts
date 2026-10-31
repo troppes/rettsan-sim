@@ -154,7 +154,13 @@ export interface CaseDef {
   effects?: Record<string, TreatEffect | TreatEffect[]>;
   required?: Required[];
   quizzes?: Quiz[];
-  diagnosis: { options: string[]; answer: number; guard?: { if: Condition; pts: number; why: string } };
+  diagnosis: {
+    options: string[];
+    answer: number;
+    guard?: { if: Condition; pts: number; why: string };
+    /** Andere Auswahl, wenn der Spieler etwas herausgefunden hat (erste passende gilt) */
+    variants?: { if: Condition; options: string[]; answer: number }[];
+  };
   teach: string[];
 }
 
@@ -180,7 +186,11 @@ export type ProcMode = 'steps' | 'quick' | 'question' | 'place';
 export interface ProcQuestion { q: string; options: string[]; answer: number; explain?: string }
 
 /** Elektrode/Pad auf der Oberkörper-Figur: Ziel in Figur-Koordinaten (viewBox 200 × 260, Blick von vorn) */
-export interface Electrode { id: string; label: string; color: string; x: number; y: number; r: number; where: string }
+export interface Electrode {
+  id: string; label: string; color: string; x: number; y: number; r: number; where: string;
+  /** Weitere richtige Stellen, z. B. am Extremitätenansatz */
+  alt?: { x: number; y: number; r: number }[];
+}
 export interface Placement {
   task: string;
   /** Ausschnitt der Figur [x, y, Breite, Höhe], z. B. nur der Brustkorb */

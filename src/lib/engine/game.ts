@@ -576,7 +576,8 @@ export class Game {
     const PT = RULES.procedure;
     p.result = targets.map((e) => {
       const at = p.pos[e.id];
-      return { id: e.id, ok: Math.hypot(at.x - e.x, at.y - e.y) <= e.r, target: { x: e.x, y: e.y, r: e.r }, where: e.where };
+      const ok = [e, ...(e.alt ?? [])].some((t) => Math.hypot(at.x - t.x, at.y - t.y) <= t.r);
+      return { id: e.id, ok, target: { x: e.x, y: e.y, r: e.r }, where: e.where };
     });
     const right = p.result.filter((r) => r.ok).length;
     const n = targets.length;
@@ -631,6 +632,12 @@ export class Game {
   }
 
   /* ------------------------------------------------------------ Abschluss */
+  /** Diagnose-Auswahl, abhängig davon, was der Spieler herausgefunden hat */
+  diagnosis(): { options: string[]; answer: number } {
+    const d = this.c.diagnosis;
+    return d.variants?.find((v) => test(v.if, this.ctx)) ?? d;
+  }
+
   finish() {
     if (this.s.over || this.prompt) return;
     const qs = this.c.quizzes ?? [];
@@ -641,13 +648,13 @@ export class Game {
       this.changed();
       return;
     }
-    const d = this.c.diagnosis;
+    const d = this.diagnosis();
     const order = shuffle(d.options.map((_, i) => i));
     this.ask('Übergabe', 'Deine Verdachtsdiagnose?', order.map((i) => ({ key: i, label: d.options[i] })), (k, p) => {
       const ok = k === d.answer;
       markChoices(p.choices, order, k, d.answer);
       this.addEvent(ok ? 10 : 0, 10, ok ? `Diagnose richtig: ${d.options[d.answer]}` : `Diagnose falsch (richtig: ${d.options[d.answer]})`, undefined, ok ? 'good' : 'miss');
-      if (d.guard && test(d.guard.if, this.ctx)) this.addEvent(d.guard.pts, 0, d.guard.why, undefined, 'bad');
+      if (this.c.diagnosis.guard && test(this.c.diagnosis.guard.if, this.ctx)) this.addEvent(this.c.diagnosis.guard.pts, 0, this.c.diagnosis.guard.why, undefined, 'bad');
     }, () => {
       this.s.over = true;
       this.result = debrief(this);

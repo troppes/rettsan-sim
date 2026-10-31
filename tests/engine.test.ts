@@ -164,3 +164,34 @@ describe('Patientengesicht', () => {
     expect(rea.mood).toBeNull();
   });
 });
+
+describe('Krampfanfall: Vorgeschichte', () => {
+  const krampf = caseById('krampf')!;
+  it('ohne Bodycheck/Anamnese: allgemeine Diagnose und Abzug', () => {
+    const g = new Game(krampf, { worsen: false, detail: false });
+    expect(g.diagnosis().options[g.diagnosis().answer]).toBe('Generalisierter tonisch-klonischer Krampfanfall');
+    g.finish(); answerPrompts(g);
+    expect(g.result!.missed.some((m) => m.label.startsWith('Vorgeschichte'))).toBe(true);
+  });
+  it('mit Bodycheck: bekannte Epilepsie als Diagnose und Punkte', () => {
+    const g = new Game(krampf, { worsen: false, detail: false });
+    g.act('e_body'); answerPrompts(g);
+    expect(g.diagnosis().options[g.diagnosis().answer]).toContain('bekannter Epilepsie');
+    g.finish(); answerPrompts(g);
+    expect(g.result!.done.some((m) => m.label.startsWith('Vorgeschichte'))).toBe(true);
+  });
+});
+
+describe('EKG am Extremitätenansatz', () => {
+  it('Grün an der linken Hüfte und Rot an der rechten Schulter zählen als richtig', () => {
+    const g = new Game(caseById('acs')!, { worsen: false, detail: true });
+    g.forceProcMode = 'place';
+    g.act('c_ekg');
+    const p = g.prompt!;
+    if (p.kind !== 'place') throw new Error('kein Kleben');
+    const at: Record<string, [number, number]> = { rot: [32, 64], gelb: [168, 64], gruen: [138, 222], schwarz: [62, 222] };
+    for (const e of p.electrodes) g.placeSet(e.id, ...at[e.id]);
+    g.placeCheck();
+    expect(p.result!.every((r) => r.ok)).toBe(true);
+  });
+});

@@ -229,7 +229,7 @@
         }
       ],
       "place": {
-        "task": "Tippe eine Elektrode an und dann die Stelle am Oberkörper. Achtung: Du schaust den Patienten von vorn an.",
+        "task": "Tippe eine Elektrode an und dann die Stelle. Am Rumpf oder an den Extremitätenansätzen (Schultern, Leisten) ist beides richtig. Du schaust den Patienten von vorn an.",
         "variants": [
           {
             "name": "3-Pol-EKG",
@@ -241,7 +241,8 @@
                 "x": 60,
                 "y": 64,
                 "r": 20,
-                "where": "rechts unter dem Schlüsselbein"
+                "where": "rechts unter dem Schlüsselbein oder rechte Schulter/Oberarm",
+                "alt": [{"x":32,"y":64,"r":14},{"x":25,"y":110,"r":16}]
               },
               {
                 "id": "gelb",
@@ -250,7 +251,8 @@
                 "x": 140,
                 "y": 64,
                 "r": 20,
-                "where": "links unter dem Schlüsselbein"
+                "where": "links unter dem Schlüsselbein oder linke Schulter/Oberarm",
+                "alt": [{"x":168,"y":64,"r":14},{"x":175,"y":110,"r":16}]
               },
               {
                 "id": "gruen",
@@ -259,7 +261,8 @@
                 "x": 136,
                 "y": 168,
                 "r": 22,
-                "where": "links am unteren Rippenbogen"
+                "where": "links am unteren Rippenbogen oder linke Leiste/Hüfte",
+                "alt": [{"x":138,"y":222,"r":26}]
               }
             ]
           },
@@ -273,7 +276,8 @@
                 "x": 60,
                 "y": 64,
                 "r": 20,
-                "where": "rechts unter dem Schlüsselbein"
+                "where": "rechts unter dem Schlüsselbein oder rechte Schulter/Oberarm",
+                "alt": [{"x":32,"y":64,"r":14},{"x":25,"y":110,"r":16}]
               },
               {
                 "id": "gelb",
@@ -282,7 +286,8 @@
                 "x": 140,
                 "y": 64,
                 "r": 20,
-                "where": "links unter dem Schlüsselbein"
+                "where": "links unter dem Schlüsselbein oder linke Schulter/Oberarm",
+                "alt": [{"x":168,"y":64,"r":14},{"x":175,"y":110,"r":16}]
               },
               {
                 "id": "gruen",
@@ -291,7 +296,8 @@
                 "x": 136,
                 "y": 168,
                 "r": 22,
-                "where": "links am unteren Rippenbogen"
+                "where": "links am unteren Rippenbogen oder linke Leiste/Hüfte",
+                "alt": [{"x":138,"y":222,"r":26}]
               },
               {
                 "id": "schwarz",
@@ -300,7 +306,8 @@
                 "x": 64,
                 "y": 168,
                 "r": 22,
-                "where": "rechts am unteren Rippenbogen"
+                "where": "rechts am unteren Rippenbogen oder rechte Leiste/Hüfte",
+                "alt": [{"x":62,"y":222,"r":26}]
               }
             ]
           }

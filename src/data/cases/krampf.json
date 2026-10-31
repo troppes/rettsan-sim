@@ -63,7 +63,7 @@
       "id": "aufwachen",
       "if": {"all":[{"flag":"postiktal"},{"fixed":"atemweg"},{"fixed":"hypox"},{"time":601}]},
       "set": {"gcs":13,"hr":92},
-      "flags": {"wach":true},
+      "flags": {"wach":{"now":0}},
       "status": "Er wird langsam wacher, ist noch desorientiert und müde.",
       "info": "Der Patient wird langsam wacher."
     }
@@ -244,7 +244,19 @@
       "label": "Sauerstoff nach dem Anfall",
       "why": "Folie: nach dem Anfall O₂."
     },
-    {"any":["e_body"],"pts":5,"label":"Nach Verletzungen gesucht","why":"Zungenbiss, Sturzverletzungen."}
+    {"any":["e_body"],"pts":5,"label":"Nach Verletzungen gesucht","why":"Zungenbiss, Sturzverletzungen."},
+    {
+      "pts": 5,
+      "label": "Vorgeschichte geklärt: bekannte Epilepsie",
+      "why": "Notfallausweis im Bodycheck oder nach dem Aufwachen nach Vorerkrankungen und Medikamenten fragen (SAMPLER: P, M). Bekannte Epilepsie oder erster Anfall ändert Diagnose und Weiterbehandlung.",
+      "if": {
+        "any": [
+          {"done":"e_body"},
+          {"doneAfterFlag":{"action":"q_p","flag":"wach"}},
+          {"doneAfterFlag":{"action":"q_m","flag":"wach"}}
+        ]
+      }
+    }
   ],
   "quizzes": [
     {
@@ -268,7 +280,25 @@
       "Konvulsive Synkope",
       "Alkoholintoxikation"
     ],
-    "answer": 0
+    "answer": 0,
+    "variants": [
+      {
+        "if": {
+          "any": [
+            {"done":"e_body"},
+            {"doneAfterFlag":{"action":"q_p","flag":"wach"}},
+            {"doneAfterFlag":{"action":"q_m","flag":"wach"}}
+          ]
+        },
+        "options": [
+          "Generalisierter Krampfanfall bei bekannter Epilepsie",
+          "Erstmaliger Krampfanfall",
+          "Krampfanfall durch Hypoglykämie",
+          "Konvulsive Synkope"
+        ],
+        "answer": 0
+      }
+    ]
   },
   "teach": [
     "Im Anfall: nicht festhalten, kein Beißkeil, Kopf polstern, Uhrzeit, Absaugbereitschaft, NEF, BZ.",

@@ -18,7 +18,7 @@ export function answerPrompts(g: Game, limit = 30) {
       case 'mc': {
         let key: string | number;
         if (ctl.quiz) key = ctl.quiz.answer!;
-        else if (p.title === 'Deine Verdachtsdiagnose?') key = g.c.diagnosis.answer;
+        else if (p.title === 'Deine Verdachtsdiagnose?') key = g.diagnosis().answer;
         else {
           const R = g.rea!.st;
           key = R.path[R.pi] === 'rosc' && R.monRhythm === 'sinus' ? 'rosc' : ['vf', 'pvt'].includes(R.monRhythm) ? 'shock' : 'noshock';
