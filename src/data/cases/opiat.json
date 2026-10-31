@@ -302,5 +302,6 @@
     "Atemdepression heißt beatmen (10/min mit O₂), O₂-Maske allein reicht nicht.",
     "Naloxon wirkt kürzer als die meisten Opioide: Nach dem Aufwachen droht erneute Atemdepression, deshalb Überwachung und Transport.",
     "Eigenschutz: benutzte Kanülen nie recappen, direkt in den Abwurfbehälter."
-  ]
+  ],
+  "oddEcg": true
 }

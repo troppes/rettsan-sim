@@ -67,7 +67,9 @@ export type Prompt =
   | { kind: 'moment'; who: string; say: string; choices: Choice[]; answered: boolean; reply?: string; why?: string }
   | { kind: 'proc'; title: string; done: { label: string; bad?: boolean }[]; react?: { who: string; text: string }; steps: ProcStep[]; refusal?: Choice[]; finished: boolean }
   | { kind: 'place'; title: string; task: string; view: string; variant: string; electrodes: Pick<Electrode, 'id' | 'label' | 'color'>[]; pos: Record<string, { x: number; y: number }>; result?: { id: string; ok: boolean; target: { x: number; y: number; r: number }; where: string }[] }
-  | { kind: 'gauge'; title: string; cfg: GaugeConfig; hr: number; sys: number; dia: number; result?: { lines: { ok: boolean; text: string }[] } }
+  | { kind: 'gauge'; title: string; cfg: GaugeConfig; hr: number; sys: number; dia: number;
+      /** Auskultatorische Lücke [oben, unten] in mmHg: dort sind keine Töne zu hören */
+      gap?: number[]; irregular?: boolean; result?: { lines: { ok: boolean; text: string }[] } }
   | { kind: 'iv'; title: string; cfg: IvConfig; result?: { lines: { ok: boolean; text: string }[] } }
   | { kind: 'rhythm'; title: string; kicker: string; rhythm: string; rate?: number; pulseKnown: boolean; pulseText?: string; help?: { label: string; text: string }[]; choices: Choice[]; answered: boolean; explain?: string };
 

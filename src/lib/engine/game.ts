@@ -303,6 +303,14 @@ export class Game {
     if (a.id === 'c_ekg' && !s.flags.rhythmQuiz) {
       s.flags.rhythmQuiz = true;
       const k = this.currentRhythm();
+      if (this.c.oddRhythm === k) {
+        this.rhythmQuiz(k, { pulseKnown: true, bonus: true }, (ok) => {
+          this.addEvent(ok ? 2 : 0, 0, `Bonus: Nebenbefund erkannt (${ECG.rhythms[k].name})`, undefined, ok ? 'good' : 'none');
+          if (ok) { this.addLog('good', `Bonus: ${ECG.rhythms[k].name} erkannt.`, undefined, 2); this.toast('+2 Bonuspunkte', 'good'); }
+          else this.addLog('info', `Das war: ${ECG.rhythms[k].name}. Kein Abzug, für RettSan kein Handlungsbedarf.`);
+        });
+        return;
+      }
       this.rhythmQuiz(k, { pulseKnown: true }, (ok, help) => {
         this.reward(ok ? (help ? 1 : 3) : 0, 3, `Rhythmus richtig erkannt: ${ECG.rhythms[k].name}`);
         if (!ok) this.addLog('info', `Richtig wäre gewesen: ${ECG.rhythms[k].name}.`);
@@ -594,7 +602,11 @@ export class Game {
       this.open({ kind: 'iv', title: P.title, cfg: P.iv! }, { keys: [], next });
     } else if (mode === 'gauge') {
       const v = this.s.v;
-      this.open({ kind: 'gauge', title: P.title, cfg: P.gauge!, hr: Math.round(v.hr), sys: Math.round(v.sys), dia: Math.round(v.dia) }, { keys: [], next });
+      const sys = Math.round(v.sys), dia = Math.round(v.dia);
+      const top = sys - 8 - Math.round(Math.random() * 6);
+      const bottom = top - 15 - Math.round(Math.random() * 10);
+      const gap = Math.random() < P.gauge!.gapChance && bottom > dia + 12 ? [top, bottom] : undefined;
+      this.open({ kind: 'gauge', title: P.title, cfg: P.gauge!, hr: Math.round(v.hr), sys, dia, gap, irregular: v.rhythm === 'vhf' }, { keys: [], next });
     } else {
       this.proc = new ProcSession(this, a);
       this.open(this.proc.prompt, { keys: [], next });
@@ -633,6 +645,7 @@ export class Game {
       { ok: sysOk, text: fill(g.texts.sys, { read: Math.round(read.sys), true: p.sys }) },
       { ok: diaOk, text: fill(g.texts.dia, { read: Math.round(read.dia), true: p.dia }) },
     ];
+    if (!sysOk && p.gap && read.sys <= p.gap[0] + g.tolerance && read.sys >= p.gap[1] - g.tolerance * 2) lines.push({ ok: false, text: fill(g.texts.gap, { top: p.gap[0], bottom: p.gap[1] }) });
     if (low) lines.push({ ok: false, text: g.texts.low });
     if (fast) lines.push({ ok: false, text: fill(g.texts.fast, { rate: read.rate.toFixed(1).replace('.', ',') }) });
     if (!low && !fast) lines.push({ ok: true, text: g.texts.good });
@@ -653,16 +666,25 @@ export class Game {
     const hygiene = !r.early && !r.retouched;
     const angleOk = r.angle >= lo && r.angle <= hi;
     const orderOk = r.order.length === order.length && r.order.every((x, i) => x === order[i]);
+    const inVein = r.hit === 'in';
+    const hitText = { in: T2.hitIn, through: T2.hitThrough, short: T2.hitShort, beside: T2.hitBeside }[r.hit];
     const lines: { ok: boolean; text: string; pts: number }[] = [
       { ok: r.stauOk, text: r.stauOk ? T2.stauOk : T2.stauBad, pts: r.stauOk ? P.stau : 0 },
       { ok: vein?.quality === 'good', text: `${vein?.label ?? '?'}: ${vein?.why ?? ''}`, pts: vein?.quality === 'good' ? P.vein : vein?.quality === 'ok' ? Math.ceil(P.vein / 2) : 0 },
       ...(r.early ? [{ ok: false, text: T2.early, pts: 0 }] : []),
       ...(r.retouched ? [{ ok: false, text: T2.retouched, pts: 0 }] : []),
       ...(hygiene ? [{ ok: true, text: T2.hygieneOk, pts: P.hygiene }] : []),
+      { ok: r.tensioned, text: r.tensioned ? T2.tensionOk : T2.tensionBad, pts: 0 },
+      {
+        ok: r.hit !== 'beside' && !r.corrections,
+        text: r.hit === 'beside' ? T2.aimMiss : r.corrections ? fill(T2.aimCorrected, { n: r.corrections }) : T2.aimOk,
+        pts: r.hit === 'beside' ? 0 : r.corrections ? Math.floor(P.aim / 2) : P.aim,
+      },
       { ok: angleOk, text: fill(angleOk ? T2.angleOk : r.angle < lo ? T2.angleFlat : T2.angleSteep, { angle: r.angle }), pts: angleOk ? P.angle : 0 },
-      { ok: r.hit === 'in', text: r.hit === 'in' ? T2.hitIn : r.hit === 'through' ? T2.hitThrough : T2.hitShort, pts: r.hit === 'in' ? P.hit : 0 },
+      { ok: inVein, text: hitText, pts: inVein ? P.hit : 0 },
     ];
-    if (r.hit === 'in') lines.push({ ok: orderOk, text: orderOk ? T2.orderOk : fill(T2.orderBad, { right: order.join(' → ') }), pts: orderOk ? P.order : 0 });
+    if (inVein) lines.push({ ok: r.catheter, text: r.catheter ? T2.catheterOk : T2.catheterPara, pts: r.catheter ? P.catheter : 0 });
+    if (inVein && r.catheter) lines.push({ ok: orderOk, text: orderOk ? T2.orderOk : fill(T2.orderBad, { right: order.join(' → ') }), pts: orderOk ? P.order : 0 });
     const max = Object.values(P).reduce((a, b) => a + b, 0);
     const got = lines.reduce((a, l) => a + l.pts, 0);
     p.result = { lines: lines.map(({ ok, text }) => ({ ok, text })) };
@@ -690,13 +712,13 @@ export class Game {
   }
 
   /* Rhythmus erkennen */
-  rhythmQuiz(key: string, opt: { rea?: boolean; pulseKnown?: boolean; rate?: number }, done: (ok: boolean, help: boolean, note: string) => void) {
+  rhythmQuiz(key: string, opt: { rea?: boolean; pulseKnown?: boolean; rate?: number; bonus?: boolean }, done: (ok: boolean, help: boolean, note: string) => void) {
     const cfg = ECG.trainer;
     const keys = opt.rea ? cfg.reaQuiz.choices : shuffle([key, ...shuffle(cfg.caseQuiz.pool.filter((k) => k !== key)).slice(0, cfg.caseQuiz.choices - 1)]);
     const label = (k: string) => (opt.rea && k === 'sinus' ? cfg.reaQuiz.roscLabel : ECG.rhythms[k].name);
     const r = ECG.rhythms[key];
     const p: Prompt = {
-      kind: 'rhythm', kicker: opt.rea ? 'Rhythmusanalyse' : 'EKG', title: 'Welcher Rhythmus ist das?', rhythm: key, rate: opt.rate,
+      kind: 'rhythm', kicker: opt.rea ? 'Rhythmusanalyse' : opt.bonus ? 'Bonusfrage · kein Abzug' : 'EKG', title: opt.bonus ? 'Auffälliges EKG, aber stabil. Weißt du, was das ist?' : 'Welcher Rhythmus ist das?', rhythm: key, rate: opt.rate,
       pulseKnown: !!opt.pulseKnown, pulseText: opt.pulseKnown ? 'Puls: tastbar' : undefined,
       choices: keys.map((k) => ({ label: label(k) })), answered: false,
     };
@@ -709,6 +731,7 @@ export class Game {
         ok = k === key;
         markChoices(p.choices, keys, k, key);
         if (opt.rea && organized && !p.pulseText) note = REA.texts.organizedNoPulse;
+        if (opt.bonus) note = RULES.oddEcgNote;
         p.explain = (r.hint ?? r.help) + (note ? '\n' + note : '');
       },
       next: () => done(ok, !!p.help, note),

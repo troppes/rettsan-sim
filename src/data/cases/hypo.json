@@ -359,5 +359,6 @@
         "Diesmal: GCS 9. Keine orale Glucose (Aspiration), Seitenlage, NEF, Zugang vorbereiten. RettSan gibt i.v. nur bei GCS 3 mit gefährdetem Atemweg (§ 34)."
       ]
     }
-  ]
+  ],
+  "oddEcg": true
 }

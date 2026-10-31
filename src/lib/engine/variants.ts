@@ -52,7 +52,21 @@ export function jitter(c: CaseDef, rnd = Math.random): CaseDef {
   return { ...c, start: st };
 }
 
-/** Für einen neuen Einsatz: Variante + Streuung */
+/** Harmlose, aber auffällige EKG-Befunde für Nicht-Herz-Fälle. Für RettSan kein Handlungsbedarf. */
+export const ODD_RHYTHMS: Record<string, string> = {
+  avb1: 'AV-Block I. Grades',
+  ves: 'Ventrikuläre Extrasystolen (Bigeminus)',
+  wenckebach: 'AV-Block II. Grades Typ Wenckebach',
+};
+export function oddEcg(c: CaseDef, rnd = Math.random, chance = 0.35): CaseDef {
+  if (!c.oddEcg || c.rea || rnd() >= chance) return c;
+  const pool = Object.keys(ODD_RHYTHMS).filter((k) => k !== 'wenckebach' || c.start.hr <= 110);
+  const k = pool[Math.floor(rnd() * pool.length)];
+  const note = `Nebenbefund im EKG: ${ODD_RHYTHMS[k]} (harmlos)`;
+  return { ...c, start: { ...c.start, rhythm: k }, oddRhythm: k, variantNote: c.variantNote ? `${c.variantNote} · ${note}` : note };
+}
+
+/** Für einen neuen Einsatz: Variante + Streuung + evtl. harmloser EKG-Nebenbefund */
 export function randomize(c: CaseDef, rnd = Math.random): CaseDef {
-  return jitter(applyVariant(c, pickVariant(c, rnd)), rnd);
+  return oddEcg(jitter(applyVariant(c, pickVariant(c, rnd)), rnd), rnd);
 }

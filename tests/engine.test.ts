@@ -3,7 +3,8 @@ import { describe, expect, it } from 'vitest';
 import { CASES, caseById } from '../src/lib/data';
 import { Game } from '../src/lib/engine/game';
 import { answerPrompts, play } from './play';
-import { applyVariant, randomize } from '../src/lib/engine/variants';
+import { applyVariant, oddEcg, randomize } from '../src/lib/engine/variants';
+import { ECG } from '../src/lib/data';
 import type { CaseDef } from '../src/lib/types';
 
 /** Gute Reihenfolge aus den Daten ableiten: SSS, Ersteindruck, Probleme nach xABCDE, Pflichtmaßnahmen */
@@ -30,7 +31,7 @@ describe('Fälle durchspielen', () => {
   it('Auslosen und Streuung bleiben im Rahmen', () => {
     for (const c of CASES) for (let i = 0; i < 30; i++) {
       const r = randomize(c);
-      if (!c.rea) expect(Math.abs(r.start.hr - (applyVariant(c, c.variants?.find((v) => v.label === r.variantNote) ?? null).start.hr))).toBeLessThanOrEqual(5);
+      if (!c.rea) expect(Math.abs(r.start.hr - (applyVariant(c, c.variants?.find((v) => !!r.variantNote?.startsWith(v.label)) ?? null).start.hr))).toBeLessThanOrEqual(5);
       if (!c.rea) expect(r.start.dia).toBeLessThan(r.start.sys);
     }
   });
@@ -281,7 +282,7 @@ describe('Opioid-Intoxikation', () => {
       const p = g.prompt!;
       if (p.kind !== 'iv') throw new Error('kein Minispiel');
       const [lo, hi] = p.cfg.angle;
-      g.ivDone({ stauOk: true, vein: p.cfg.veins.find((v) => v.quality === 'good')!.id, early: false, retouched: false, angle: Math.round((lo + hi) / 2), hit: 'in', order: [...p.cfg.order], ...r });
+      g.ivDone({ stauOk: true, vein: p.cfg.veins.find((v) => v.quality === 'good')!.id, early: false, retouched: false, tensioned: true, corrections: 0, angle: Math.round((lo + hi) / 2), hit: 'in', catheter: true, order: [...p.cfg.order], ...r });
       return { ev: g.s.events.filter((e) => e.max > 0).at(-1)!, lines: (g.prompt as Extract<typeof p, { kind: 'iv' }>).result!.lines };
     };
     const good = run({});
@@ -299,5 +300,50 @@ describe('Opioid-Intoxikation', () => {
     expect(g.prompt?.kind).toBe('place');
     g.next();
     expect(done).toBe(true);
+  });
+
+  it('Harmloser EKG-Nebenbefund: Bonusfrage ohne Abzug', () => {
+    const base = caseById('hypo')!;
+    const c = oddEcg(base, () => 0);
+    expect(c.oddRhythm).toBeDefined();
+    expect(c.variantNote).toContain('Nebenbefund');
+    for (const right of [true, false]) {
+      const g = new Game(c, { worsen: false, detail: false });
+      g.act('c_ekg');
+      const p = g.prompt!;
+      if (p.kind !== 'rhythm') throw new Error('keine Rhythmusfrage');
+      expect(p.kicker).toContain('Bonus');
+      const idx = p.choices.findIndex((ch) => ch.label === ECG.rhythms[c.oddRhythm!].name);
+      g.choose(right ? idx : (idx + 1) % p.choices.length);
+      g.next();
+      const ev = g.s.events.find((e) => e.text.startsWith('Bonus'))!;
+      expect(ev.max).toBe(0);
+      expect(ev.pts).toBe(right ? 2 : 0);
+    }
+    expect(oddEcg(caseById('acs')!, () => 0).oddRhythm).toBeUndefined();
+  });
+
+  it('RR mit auskultatorischer Lücke: Ablesen in der Lücke wird erklärt', () => {
+    const g = new Game(caseById('acs')!, { worsen: false, detail: true });
+    g.practice('c_rr', 'gauge', () => {});
+    const p = g.prompt!;
+    if (p.kind !== 'gauge') throw new Error('kein Minispiel');
+    p.gap = [p.sys - 10, p.sys - 30];
+    g.gaugeDone({ sys: p.sys - 31, dia: p.dia, maxP: p.sys + 30, rate: 2.5 });
+    expect(p.result!.lines.some((l) => l.text.includes('Auskultatorische Lücke'))).toBe(true);
+  });
+
+  it('i.v.: daneben, durchgestochen und paravenös geben jeweils eigene Hinweise', () => {
+    const run = (r: Partial<import('../src/lib/types').IvRun>) => {
+      const g = new Game(caseById('hypo')!, { worsen: false, detail: true });
+      g.practice('m_ivz', 'iv', () => {});
+      const p = g.prompt as Extract<NonNullable<typeof g.prompt>, { kind: 'iv' }>;
+      g.ivDone({ stauOk: true, vein: 'unterarm', early: false, retouched: false, tensioned: true, corrections: 0, angle: 20, hit: 'in', catheter: true, order: [...p.cfg.order], ...r });
+      return p.result!.lines.map((l) => l.text).join(' ');
+    };
+    expect(run({ hit: 'beside', tensioned: false })).toContain('Daneben');
+    expect(run({ hit: 'through' })).toContain('Hämatom');
+    expect(run({ catheter: false })).toContain('paravenös');
+    expect(run({ corrections: 2 })).toContain('2×');
   });
 });

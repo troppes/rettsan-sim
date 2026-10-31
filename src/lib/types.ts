@@ -172,6 +172,10 @@ export interface CaseDef {
   baseWeight?: number;
   /** Gesetzt, wenn eine Variante ausgelost wurde: wird in der Auswertung genannt */
   variantNote?: string;
+  /** Kein Herzfall: darf zufällig einen harmlosen, auffälligen Nebenbefund im EKG haben */
+  oddEcg?: boolean;
+  /** Ausgeloster harmloser Nebenbefund im EKG (Bonusfrage ohne Abzug) */
+  oddRhythm?: string;
 }
 
 /** Eine Fallvariante: überschreibt Teile des Falls. Objekte werden je Schlüssel ersetzt, Listen ergänzt. */
@@ -252,10 +256,24 @@ export interface IvConfig {
   waitText: string;
   angle: number[];
   order: string[];
-  pts: Record<'stau' | 'vein' | 'hygiene' | 'angle' | 'hit' | 'order', number>;
+  /** So weit (Spielmaß) muss die Stahlkanüle nach dem Rückfluss noch in der Vene vorgeschoben werden */
+  catheter: number;
+  pts: Record<'stau' | 'vein' | 'hygiene' | 'aim' | 'angle' | 'hit' | 'catheter' | 'order', number>;
   texts: Record<string, string>;
 }
-export interface IvRun { stauOk: boolean; vein: string; early: boolean; retouched: boolean; angle: number; hit: 'in' | 'through' | 'short'; order: string[] }
+export interface IvRun {
+  stauOk: boolean; vein: string; early: boolean; retouched: boolean;
+  /** Haut gestrafft (Vene rollt nicht weg) */
+  tensioned: boolean;
+  /** Wie oft zurückgezogen und neu gezielt */
+  corrections: number;
+  angle: number;
+  /** in = in der Vene; through = Hinterwand durchstochen; short = nicht tief genug; beside = an der Vene vorbei */
+  hit: 'in' | 'through' | 'short' | 'beside';
+  /** Kunststoffkanüle sitzt in der Vene (nach dem Rückfluss noch ein Stück vorgeschoben, nicht durchgestochen) */
+  catheter: boolean;
+  order: string[];
+}
 
 /** Blutdruck von Hand messen: Manschette aufpumpen, ablassen, Korotkow-Töne hören */
 export interface GaugeConfig {
@@ -268,8 +286,10 @@ export interface GaugeConfig {
   /** So weit über systolisch muss mindestens gepumpt werden */
   pumpAbove: number;
   maxRate: number;
+  /** Wahrscheinlichkeit einer auskultatorischen Lücke */
+  gapChance: number;
   pts: { value: number; technique: number };
-  texts: Record<'low' | 'fast' | 'good' | 'sys' | 'dia' | 'score', string>;
+  texts: Record<'low' | 'fast' | 'good' | 'sys' | 'dia' | 'score' | 'gap', string>;
 }
 
 /* ------------------------------------------------------------ EKG */

@@ -128,7 +128,7 @@
       ],
       "modes": {"gauge":4,"steps":2,"question":2,"quick":1},
       "gauge": {
-        "task": "Manuell messen, Stethoskop in der Ellenbeuge. Pumpe deutlich über den systolischen Wert und lass langsam ab (2–3 mmHg/s). Beim ersten Ton „Systole“ tippen, beim letzten Ton „Diastole“.",
+        "task": "Manuell messen, Stethoskop in der Ellenbeuge. Pumpe deutlich über den systolischen Wert und lass langsam ab (2–3 mmHg/s). Beim ersten Ton „Systole“, beim letzten Ton „Diastole“. Achtung: Umgebungsgeräusche, Reibegeräusche und eine mögliche auskultatorische Lücke.",
         "max": 300,
         "pumpStep": 20,
         "rates": {"slow":3,"fast":7,"open":40},
@@ -142,8 +142,10 @@
           "good": "Saubere Technik: hoch genug gepumpt und langsam abgelassen.",
           "sys": "Systolisch: du {read}, tatsächlich {true} mmHg.",
           "dia": "Diastolisch: du {read}, tatsächlich {true} mmHg.",
-          "score": "Blutdruck manuell: {right} von 2 Werten genau"
-        }
+          "score": "Blutdruck manuell: {right} von 2 Werten genau",
+          "gap": "Auskultatorische Lücke: Zwischen {top} und {bottom} mmHg waren keine Töne zu hören, darüber aber schon. Deshalb vorher den Radialispuls tasten und weit genug darüber pumpen, dann täuscht die Lücke nicht."
+        },
+        "gapChance": 0.35
       }
     },
     "b_spo2": {
@@ -575,12 +577,12 @@
         "waitText": "Einwirkzeit (im echten Leben ca. 15–30 s, Herstellerangabe)",
         "angle": [15,30],
         "order": [
-          "Stahlkanüle ein Stück zurückziehen",
-          "Kunststoffkanüle vorschieben",
           "Stau lösen",
-          "Vene abdrücken, Stahlkanüle entfernen, verschließen und fixieren"
+          "Vene oberhalb der Kanülenspitze abdrücken, Stahlmandrin entfernen",
+          "Verschlusskonus aufsetzen",
+          "Mit NaCl spülen und sicher fixieren"
         ],
-        "pts": {"stau":1,"vein":2,"hygiene":2,"angle":1,"hit":3,"order":2},
+        "pts": {"stau":1,"vein":2,"hygiene":2,"aim":2,"angle":1,"hit":2,"catheter":2,"order":2},
         "texts": {
           "stauOk": "Venös gestaut, der Radialispuls bleibt tastbar.",
           "stauBad": "Zu fest gestaut: Ohne Radialispuls fließt kein Blut nach, die Venen füllen sich schlecht.",
@@ -591,12 +593,21 @@
           "angleFlat": "Stichwinkel {angle}°: zu flach, die Kanüle schiebt sich unter der Haut entlang.",
           "angleSteep": "Stichwinkel {angle}°: zu steil, da sticht man leicht durch die Vene durch.",
           "hitIn": "Treffer: Blut in der Rückflusskammer.",
-          "hitThrough": "Durchgestochen: Die Vene ist hinten verletzt, es bildet sich ein Hämatom. Abbrechen, abdrücken, neue Stelle weiter proximal.",
+          "hitThrough": "Durchgestochen: Die Hinterwand der Vene ist verletzt, es bildet sich ein Hämatom (Vene „geplatzt“). Stau lösen, Kanüle raus, abdrücken, neue Stelle weiter proximal.",
           "hitShort": "Zu früh gestoppt: noch nicht in der Vene, kein Rückfluss.",
           "orderOk": "Reihenfolge nach dem Treffer richtig.",
           "orderBad": "Reihenfolge: {right}.",
-          "score": "i.v.-Zugang: {pts} von {max} Punkten"
-        }
+          "score": "i.v.-Zugang: {pts} von {max} Punkten",
+          "tensionOk": "Haut unterhalb der Punktionsstelle gestrafft: Die Vene liegt fest.",
+          "tensionBad": "Haut nicht gestrafft: Die Vene kann wegrollen, gerade bei älteren Menschen.",
+          "aimOk": "Sauber gezielt: direkt beim ersten Versuch in der Vene.",
+          "aimCorrected": "Erst daneben, dann {n}× zurückgezogen und neu gezielt. Geht, tut aber weh und reizt die Vene.",
+          "aimMiss": "Daneben gestochen: Die Kanüle lief seitlich an der Vene vorbei.",
+          "hitBeside": "Kein Rückfluss, die Vene wurde nicht getroffen. Abbrechen, abdrücken, neu punktieren.",
+          "catheterOk": "Nach dem Rückfluss Winkel abgesenkt und noch ein Stück vorgeschoben: Die Kunststoffkanüle sitzt in der Vene.",
+          "catheterPara": "Kunststoffkanüle paravenös: Beim ersten Blut liegt nur die Stahlspitze in der Vene, die Kunststoffkanüle endet etwas dahinter. Erst Winkel absenken und 2–3 mm weiter vorschieben, dann die Kunststoffkanüle vorschieben."
+        },
+        "catheter": 7
       }
     },
     "m_o2_mask": {

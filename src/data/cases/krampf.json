@@ -321,5 +321,6 @@
     "Nach dem Anfall: Seitenlage, O₂, nach Verletzungen suchen (Zungenbiss).",
     "Ob eine Epilepsie bekannt ist, weißt du nur aus der Anamnese nach dem Anfall (SAMPLER: P und M) oder vom Notfallausweis bzw. -armband im Bodycheck. Ein erstmaliger Anfall gehört immer in die Klinik.",
     "Über 5 Minuten = Status epilepticus → Benzodiazepine durch NotSan/NA."
-  ]
+  ],
+  "oddEcg": true
 }

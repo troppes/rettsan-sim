@@ -277,5 +277,6 @@
         "Diesmal: Blutverdünner. Bei Trauma immer nach Antikoagulation fragen: höheres Blutungsrisiko, auch Kopf."
       ]
     }
-  ]
+  ],
+  "oddEcg": true
 }

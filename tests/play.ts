@@ -31,7 +31,7 @@ export function answerPrompts(g: Game, limit = 30) {
         g.placeCheck();
         break;
       case 'iv':
-        g.ivDone({ stauOk: true, vein: 'unterarm', early: false, retouched: false, angle: 20, hit: 'in', order: p.cfg.order });
+        g.ivDone({ stauOk: true, vein: 'unterarm', early: false, retouched: false, tensioned: true, corrections: 0, angle: 20, hit: 'in', catheter: true, order: p.cfg.order });
         break;
       case 'gauge':
         g.gaugeDone({ sys: p.sys, dia: p.dia, maxP: p.sys + 40, rate: 3 });
