@@ -236,3 +236,5 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .save-status { margin-top: 12px; text-align: center; color: var(--muted); font-size: 14px; }
 .pbar { display: block; height: 6px; border-radius: 3px; background: var(--line); margin: 6px 0 2px; overflow: hidden; }
 .pbar > span { display: block; height: 100%; border-radius: 3px; }
+.case-btn.played { border-color: #2c5a43; }
+.case-btn .t small.played-info { display: block; color: var(--good); font-size: 13px; margin-top: 2px; }

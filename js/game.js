@@ -103,13 +103,17 @@
       const pick = pickDispatch(c);
       const b = document.createElement('button');
       b.className = 'case-btn';
-      b.innerHTML = `<span class="ico">${c.person || '🚑'}</span><span class="t"><b>${esc(pick.short)}</b></span><span class="lvl">${'●'.repeat(c.level)}${'○'.repeat(3 - c.level)}</span>`;
+      const st = window.Account && window.Account.stats ? window.Account.stats[c.id] : null;
+      if (st) b.classList.add('played');
+      const sub = st ? `<small class="played-info">✓ ${st.n}× gespielt · bestes ${st.best} % · zuletzt ${st.last} %</small>` : '';
+      b.innerHTML = `<span class="ico">${c.person || '🚑'}</span><span class="t"><b>${esc(pick.short)}</b>${sub}</span><span class="lvl">${'●'.repeat(c.level)}${'○'.repeat(3 - c.level)}</span>`;
       b.onclick = () => startCase(c, pick);
       list.appendChild(b);
     });
   }
   function initHome() {
     renderList();
+    window.addEventListener('rettsan:stats', () => { if ($('home').classList.contains('active')) renderList(); });
     $('btnRandom').onclick = () => startCase(CASES[Math.floor(Math.random() * CASES.length)]);
     $('btnTrainer').onclick = startTrainer;
     $('optWorsen').onchange = (e) => { settings.worsen = e.target.checked; };

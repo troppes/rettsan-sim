@@ -70,13 +70,14 @@
     takeTokens(b);
     ls.set(LS_MAIL, email);
     renderHome();
-    flush();
+    await flush();
+    loadStats();
   }
 
   // true = direkt angemeldet, false = E-Mail-Bestätigung nötig
   async function register(email, password) {
     const b = await raw('/auth/v1/signup', { method: 'POST', body: JSON.stringify({ email, password }) });
-    if (b && b.access_token) { takeTokens(b); ls.set(LS_MAIL, email); renderHome(); return true; }
+    if (b && b.access_token) { takeTokens(b); ls.set(LS_MAIL, email); renderHome(); loadStats(); return true; }
     return false;
   }
 
@@ -85,6 +86,7 @@
     ls.set(LS_RT, null); ls.set(LS_QUEUE, null);
     A.access = null; A.user = null;
     renderHome();
+    setStats(null);
   }
 
   async function loadUser() {
@@ -92,6 +94,25 @@
       A.user = await api('/auth/v1/user');
     } catch (e) { if (e.status === 401) A.user = null; }
     renderHome();
+  }
+
+  /* ------------------------------------------------------------ Übersicht für die Fallliste */
+  const Account = { stats: null };
+  window.Account = Account;
+  function setStats(rows) {
+    if (!rows) { Account.stats = null; } else {
+      const st = {};
+      rows.forEach((r) => {
+        const x = st[r.fall] = st[r.fall] || { n: 0, best: 0, last: r.prozent || 0 };
+        x.n++; x.best = Math.max(x.best, r.prozent || 0);
+      });
+      Account.stats = st;
+    }
+    window.dispatchEvent(new CustomEvent('rettsan:stats'));
+  }
+  async function loadStats() {
+    if (!ENABLED || !ls.get(LS_RT)) return setStats(null);
+    try { setStats(await api(`/rest/v1/${COL_CASE}?select=fall,prozent&order=created_at.desc&limit=5000`)); } catch (e) { /* offline: alte Anzeige bleibt */ }
   }
 
   /* ------------------------------------------------------------ Speichern */
@@ -127,6 +148,7 @@
   window.addEventListener('rettsan:case', async (ev) => {
     const el = $('saveStatus');
     const st = await save(COL_CASE, ev.detail);
+    if (st === 'ok') loadStats();
     if (!el) return;
     if (st === 'ok') el.innerHTML = '✓ Im Fortschritt gespeichert';
     else if (st === 'queued') el.innerHTML = '⏳ Offline: wird später gespeichert';
@@ -314,6 +336,6 @@
   /* ------------------------------------------------------------ Start */
   buildDom();
   renderHome();
-  if (ENABLED && ls.get(LS_RT)) loadUser().then(flush);
+  if (ENABLED && ls.get(LS_RT)) loadUser().then(flush).then(loadStats);
   window.__account = { A, renderProgress, api };
 })();
