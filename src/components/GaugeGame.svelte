@@ -10,6 +10,7 @@
   const cfg = $derived(prompt.cfg);
 
   let p = $state(0);
+  let speed = $state(0); // geglättete Ablassgeschwindigkeit für die Anzeige
   let valve = $state(0); // Ventilstellung 0–10
   let dump = $state(false); // ganz auf
   let jitter = $state(0);
@@ -20,8 +21,8 @@
   let maskUntil = 0; // solange jemand spricht, sind die Töne leiser
   // Ventil ist bei jeder Manschette etwas anders, manchmal leckt sie leicht
   const sens = 0.75 + Math.random() * 0.3;
-  const leak = Math.random() < 0.4 ? 0.3 + Math.random() * 0.5 : 0;
-  const rate = () => (dump ? cfg.rates.open : sens * valve * 0.6 + leak);
+  const leak = Math.random() < 0.3 ? 0.1 + Math.random() * 0.2 : 0;
+  const rate = () => (dump ? cfg.rates.open : sens * valve * 0.4 + leak);
 
   /* ---------- Anzeige „Was höre ich?“: Ausschläge der letzten Sekunden */
   type Blip = { t: number; a: number; w: number };
@@ -158,7 +159,7 @@
       const dt = (t - last) / 1000;
       last = t;
       now = t;
-      if (p > 0) p = Math.max(0, p - rate() * dt);
+      if (p > 0) { const r = rate(); p = Math.max(0, p - r * dt); speed += (r - speed) * Math.min(1, dt * 2); }
       if (p === 0) dump = false;
       jitter *= Math.exp(-dt * 8);
       if (t >= nextBeat) {
@@ -247,7 +248,7 @@
   <label class="valve">
     <span class="muted">Ventil</span>
     <input type="range" min="0" max="10" step="0.1" bind:value={valve} oninput={() => (dump = false)} aria-label="Ventil aufdrehen" />
-    <span class="muted">{valve < 0.2 ? 'zu' : 'offen'}</span>
+    <span class="muted rate" class:ok={p > 0 && speed >= 2 && speed <= 3.5} class:bad={p > 0 && speed > cfg.maxRate}>{p > 0 && speed > 0.05 ? `≈ ${speed.toFixed(1).replace('.', ',')} mmHg/s` : valve < 0.2 ? 'zu' : 'offen'}</span>
   </label>
   <div class="valve">
     <button class="btn small ghost" onclick={() => (valve = Math.max(0, +(valve - 0.5).toFixed(1)))} aria-label="Ventil etwas zu">− zu</button>
@@ -279,4 +280,7 @@
   .valve { display: flex; gap: 10px; align-items: center; justify-content: center; margin: 6px 0; font-size: 14px; }
   .valve input { flex: 1; max-width: 220px; }
   .pump { flex: 1; }
+  .rate { min-width: 92px; text-align: right; font-variant-numeric: tabular-nums; }
+  .rate.ok { color: var(--good); }
+  .rate.bad { color: var(--bad); }
 </style>
