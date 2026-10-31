@@ -103,6 +103,34 @@
           "why": "Flach liegen verschlechtert die Atemmechanik. Bei Atemnot sitzen lassen, Arme aufstützen (Kutschersitz)."
         }
       ]
+    },
+    {
+      "id": "fremdspray",
+      "who": "Mitbewohner",
+      "at": 90,
+      "say": "„Ich hab auch Asthma! Hier, mein blaues Spray, das ist doch dasselbe. Soll er das nehmen?“",
+      "options": [
+        {
+          "t": "„Danke, aber er darf nur sein eigenes, verordnetes Spray benutzen. Hilf mir bitte, seins zu finden.“",
+          "pts": 3,
+          "reply": "„Moment… hier, auf dem Schreibtisch unter den Zetteln!“"
+        },
+        {
+          "t": "„Ja, Salbutamol ist Salbutamol. Zwei Hübe.“",
+          "pts": -4,
+          "why": "Als RS darfst du nur beim eigenen, ärztlich verordneten Spray des Patienten helfen. Fremde Medikamente: weder Dosis noch Wirkstoff sind gesichert."
+        },
+        {
+          "t": "„Ein Hub ist okay, mehr nicht.“",
+          "pts": -3,
+          "why": "Auch ein Hub eines fremden Sprays ist nicht erlaubt. Eigenes Spray suchen oder auf den NA warten."
+        },
+        {
+          "t": "„Bloß kein Spray, das macht den Puls zu hoch.“",
+          "pts": -1,
+          "why": "Falsch verallgemeinert: Das eigene Spray ist bei bekanntem Asthma richtig. Nur bei HF über 140/min ist es kontraindiziert."
+        }
+      ]
     }
   ],
   "react": {"m_o2_mask.noexplain":"„Nimm das weg… ich krieg… keine Luft!“ Er zerrt an der Maske."},
@@ -175,7 +203,7 @@
   ],
   "quizzes": [
     {
-      "on": "treat",
+      "on": "m_spray",
       "type": "mc",
       "q": "Wann darfst du als RettSan beim eigenen Notfallspray des Patienten helfen?",
       "options": [

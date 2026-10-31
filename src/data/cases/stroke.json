@@ -177,7 +177,7 @@
   ],
   "quizzes": [
     {
-      "on": "treat",
+      "on": "finish",
       "type": "mc",
       "q": "Bevor du „Schlaganfall“ sagst: Was musst du unbedingt gemessen haben?",
       "options": ["Blutzucker","Temperatur","Blutdruck an beiden Armen","Sauerstoffsättigung"],

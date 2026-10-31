@@ -15,9 +15,9 @@ function conditionRefs(c: Condition | undefined, out: { actions: string[]; probl
 }
 
 describe('Fälle', () => {
-  it('es gibt 11 Fälle mit eindeutigen IDs', () => {
-    expect(CASES).toHaveLength(11);
-    expect(new Set(CASES.map((c) => c.id)).size).toBe(11);
+  it('es gibt 12 Fälle mit eindeutigen IDs', () => {
+    expect(CASES).toHaveLength(12);
+    expect(new Set(CASES.map((c) => c.id)).size).toBe(12);
   });
 
   for (const c of CASES) {

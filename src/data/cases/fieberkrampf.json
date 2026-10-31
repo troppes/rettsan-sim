@@ -108,6 +108,34 @@
           "why": "Ein erster Fieberkrampf gehört in die Klinik: Ursache klären, z. B. eine Hirnhautentzündung ausschließen."
         }
       ]
+    },
+    {
+      "id": "duschen",
+      "who": "Mutter",
+      "at": 150,
+      "say": "„Sie glüht ja! Soll ich sie schnell kalt abduschen, damit das Fieber runtergeht?“",
+      "options": [
+        {
+          "t": "„Bitte nicht kalt abduschen. Ziehen Sie ihr den dicken Schlafanzug aus und decken Sie sie nur leicht zu. Wann hat sie zuletzt ein Fiebermittel bekommen, und wie viel?“",
+          "pts": 3,
+          "reply": "„Um sieben ein Zäpfchen… 125 Milligramm, glaube ich.“"
+        },
+        {
+          "t": "„Ja, kaltes Wasser senkt das Fieber am schnellsten.“",
+          "pts": -4,
+          "why": "Kaltes Wasser verengt die Hautgefäße, das Kind friert und zittert, die Temperatur steigt eher. Kälteschock ist für Kleinkinder gefährlich."
+        },
+        {
+          "t": "„Nein, warm einpacken, sie soll nicht frieren.“",
+          "pts": -3,
+          "why": "Dick einpacken staut die Wärme. Leicht bekleiden, nicht zudecken, Fiebermittel nach Dosierung."
+        },
+        {
+          "t": "„Machen Sie Wadenwickel mit Eiswasser.“",
+          "pts": -2,
+          "why": "Wadenwickel nur lauwarm und nur bei warmen Beinen. Eiswasser ist zu kalt."
+        }
+      ]
     }
   ],
   "effects": {
@@ -151,7 +179,7 @@
   ],
   "quizzes": [
     {
-      "on": "treat",
+      "on": "finish",
       "type": "mc",
       "q": "Ab wann wird ein Fieberkrampf medikamentös durchbrochen (Folie Tag 14)?",
       "options": [

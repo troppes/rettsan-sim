@@ -103,6 +103,34 @@
           "why": "Akute Verwirrtheit bei Exsikkose ist ein Notfall. Ob sie einwilligungsfähig ist, ist fraglich: nicht einfach eine Verweigerung unterschreiben lassen."
         }
       ]
+    },
+    {
+      "id": "trinken",
+      "who": "Pflegekraft",
+      "at": 120,
+      "say": "„Ich hab ihr vorhin schon Wasser hingestellt. Soll ich ihr jetzt schnell einen halben Liter einflößen?“",
+      "options": [
+        {
+          "t": "„Bitte nicht, so schläfrig kann sie sich verschlucken. Flüssigkeit bekommt sie über die Vene. Haben Sie Medikamentenplan und Trinkprotokoll für mich?“",
+          "pts": 3,
+          "reply": "„Ja, hier. Sie trinkt seit Tagen kaum etwas, und seit Montag nimmt sie neue Wassertabletten.“"
+        },
+        {
+          "t": "„Ja, so schnell wie möglich, sie ist ja ausgetrocknet.“",
+          "pts": -4,
+          "why": "Bewusstseinsgetrübt (GCS 13) heißt Aspirationsgefahr. Keine großen Mengen trinken lassen, Volumen gibt der NA i.v."
+        },
+        {
+          "t": "„Mit Strohhalm im Liegen geht es leichter.“",
+          "pts": -3,
+          "why": "Im Liegen ist die Aspirationsgefahr noch höher. Wenn überhaupt, nur wach und aufrecht sitzend in kleinen Schlucken."
+        },
+        {
+          "t": "„Kleine Schlucke, wenn sie aufrecht sitzt und richtig wach ist.“",
+          "pts": 1,
+          "why": "Grundsätzlich richtig, aber jetzt ist sie schläfrig. Und du verschenkst die Frage nach Medikamenten- und Trinkplan."
+        }
+      ]
     }
   ],
   "effects": {
@@ -145,7 +173,7 @@
   ],
   "quizzes": [
     {
-      "on": "treat",
+      "on": "finish",
       "type": "mc",
       "q": "Warum sind alte Menschen besonders gefährdet für eine Exsikkose?",
       "options": [

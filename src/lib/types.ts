@@ -271,3 +271,11 @@ export interface EcgData {
     reaQuiz: { choices: string[]; roscLabel: string };
   };
 }
+
+/** Zufällige Störungen je nach Schwierigkeit (rules.json: stress) */
+export interface StressConfig {
+  worsenFactor: Record<string, number>;
+  interruptions: Record<string, number>;
+  window: number[];
+  pool: (Omit<Moment, 'id'> & { id: string; except?: string[]; only?: string[] })[];
+}

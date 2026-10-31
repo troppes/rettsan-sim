@@ -162,6 +162,34 @@
         }
       ],
       "if": {"flag":"erholt"}
+    },
+    {
+      "id": "insulin",
+      "who": "Kollegin",
+      "at": 45,
+      "say": "„Sie ist doch Diabetikerin! Soll ich ihren Insulinpen aus der Tasche holen? Vielleicht braucht sie eine Spritze.“",
+      "options": [
+        {
+          "t": "„Auf keinen Fall spritzen. Bringen Sie mir den Pen bitte trotzdem, und sagen Sie mir, ob sie heute etwas gegessen hat.“",
+          "pts": 3,
+          "reply": "„Hier. Sie hat heute Mittag nichts gegessen, sie hatte zu viel zu tun.“"
+        },
+        {
+          "t": "„Ja, sie weiß doch selbst, wie viel sie braucht.“",
+          "pts": -5,
+          "why": "Schwitzen, Zittern, Gereiztheit sprechen für eine Unterzuckerung. Insulin würde den Zucker weiter senken, lebensgefährlich."
+        },
+        {
+          "t": "„Erst messe ich den Zucker, dann entscheide ich, ob sie Insulin bekommt.“",
+          "pts": -2,
+          "why": "Insulin zu geben ist nicht deine Aufgabe als RS. Messen ja, aber Insulin gibt es im Rettungsdienst praktisch nie."
+        },
+        {
+          "t": "„Nein, und werfen Sie den Pen am besten weg.“",
+          "pts": -1,
+          "why": "Den Pen mitnehmen: Wirkstoff und Spritzzeitpunkt sind für die Klinik wichtig."
+        }
+      ]
     }
   ],
   "effects": {

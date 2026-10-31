@@ -1,0 +1,306 @@
+{
+  "id": "opiat",
+  "level": 3,
+  "person": "🧑",
+  "icon": "🚻",
+  "look": {"sex":"m","age":"young","skin":"#e9c2a2","hair":"#4b3a2a","hairStyle":"short","beard":"stubble"},
+  "name": "Danny",
+  "mood": 3,
+  "dispatches": [
+    {
+      "short": "Hilflose Person, Bahnhofstoilette",
+      "text": "RTW, hilflose Person. Männlich, ca. 30 Jahre, Toilette im Bahnhof. Eine Reinigungskraft: „Der liegt in der Kabine und reagiert nicht.“"
+    },
+    {
+      "short": "Person reagiert nicht, ca. 30 J.",
+      "text": "RTW, Person reagiert nicht. Männlich, ca. 30 Jahre, Bahnhof, Toilettenanlage."
+    }
+  ],
+  "start": {
+    "hr": 54,
+    "rhythm": "sinusbrady",
+    "spo2": 78,
+    "sys": 95,
+    "dia": 55,
+    "af": 5,
+    "bz": 104,
+    "temp": 35.6,
+    "gcs": 5,
+    "status": "Liegt zusammengesunken in einer engen Toilettenkabine. Die Lippen sind bläulich, er atmet nur ganz selten und schnarchend. Auf dem Boden liegen ein Löffel, ein Feuerzeug und eine benutzte Spritze."
+  },
+  "answerer": [{"if":{"vital":"gcs","op":"<","value":13},"who":"Reinigungskraft"}],
+  "problems": [
+    {
+      "id": "atemweg",
+      "letter": "A",
+      "blocking": true,
+      "label": "Schnarchende Atmung, Zunge zurückgefallen",
+      "fixedBy": ["m_esmarch","m_guedel"],
+      "worsen": {"spo2":-1.5},
+      "activeIf": {"not":{"flag":"naloxon"}}
+    },
+    {
+      "id": "hypovent",
+      "letter": "B",
+      "blocking": true,
+      "label": "Atemfrequenz 5/min: Atemdepression",
+      "fixedBy": ["m_bmv"],
+      "worsen": {"spo2":-2.5,"hr":-1.5},
+      "activeIf": {"not":{"flag":"naloxon"}}
+    }
+  ],
+  "rules": [
+    {
+      "id": "kritisch",
+      "if": {"all":[{"vital":"spo2","op":"<","value":65},{"not":{"fixed":"hypovent"}}]},
+      "set": {"gcs":3,"hr":42},
+      "status": "Er ist tief bewusstlos, die Lippen sind dunkelblau, der Puls wird langsam.",
+      "alert": "SpO₂ unter 65 %, Puls fällt: Er muss sofort beatmet werden!"
+    },
+    {
+      "id": "naloxon",
+      "if": {"all":[{"sinceFlag":"nefAt","over":420}]},
+      "set": {"gcs":13,"af":12,"spo2":93,"hr":96,"sys":130,"dia":80},
+      "flags": {"naloxon":{"now":0}},
+      "status": "Der Notarzt hat Naloxon in kleinen Schritten gegeben. Er atmet wieder selbst, ist schläfrig, wird aber zunehmend unruhig.",
+      "alert": "Der Notarzt ist da und titriert Naloxon i.v. Der Patient atmet wieder selbst."
+    }
+  ],
+  "findings": {
+    "sss": "Enge Kabine, schlechtes Licht. Achtung: offene, benutzte Kanüle auf dem Boden! Eigenschutz: Handschuhe, Kanüle ohne Recapping in den Abwurfbehälter. Patient zum Arbeiten aus der Kabine in den Vorraum ziehen.",
+    "ansprechen": [
+      {"if":{"flag":"naloxon"},"text":"„Was… wer seid ihr?“ Er blinzelt und ist schläfrig."},
+      {"text":"Keine Reaktion auf Ansprache, auf Schmerzreiz nur leises Stöhnen."}
+    ],
+    "a_check": [
+      {"if":{"flag":"naloxon"},"text":"Atemweg frei, er spricht."},
+      {"if":{"fixed":"atemweg"},"text":"Atemweg frei."},
+      {"text":"Schnarchende Atmung: Die Zunge ist zurückgefallen."}
+    ],
+    "b_af": [
+      {"if":{"flag":"naloxon"},"text":"Atmet wieder selbst, regelmäßig."},
+      {"text":"Nur etwa 5 Atemzüge pro Minute, sehr flach. Das reicht nicht."}
+    ],
+    "b_ausk": "Beidseits leise Atemgeräusche, keine Nebengeräusche.",
+    "c_rekap": "Rekap 3 s, Haut kühl und blass-grau.",
+    "d_pup": "Stecknadelkopfgroße Pupillen beidseits (Miosis), kaum Lichtreaktion.",
+    "d_gcs": [
+      {"if":{"flag":"naloxon"},"text":"GCS 13, schläfrig, unruhig."},
+      {"text":"GCS 5 (Augen 1, Stöhnen 2, Strecken 2)."}
+    ],
+    "e_body": "Frische und alte Einstichstellen in beiden Ellenbeugen, eine davon gerötet. Keine Verletzungen, kein Hinweis auf einen Sturz. In der Jacke ein Personalausweis und ein Methadon-Ausweis.",
+    "x_check": "Keine Blutung."
+  },
+  "answers": {
+    "q_s": {"pt":"„Mir war nur so schwer… dann weiß ich nix mehr.“","by":"„Der lag schon so da, als ich reinkam.“"},
+    "q_a": {"pt":"„Nö.“","by":"„Keine Ahnung, ich kenn den nicht.“"},
+    "q_m": {"pt":"„Methadon, vom Programm. Und heute halt noch was dazu…“","by":"„Weiß ich nicht.“"},
+    "q_p": {"pt":"„Hepatitis C. Sonst nix.“","by":"„Weiß ich nicht.“"},
+    "q_l": {"pt":"„Gestern irgendwann.“","by":"„Keine Ahnung.“"},
+    "q_e": {
+      "pt": "„Hab mir 'nen Druck gesetzt. Das Zeug war wohl stärker als sonst.“",
+      "by": "„Vor vielleicht zehn Minuten ist er da rein. Dann war's still.“"
+    },
+    "q_r": {"pt":"„Seit Jahren halt.“","by":"„Keine Ahnung.“"}
+  },
+  "moments": [
+    {
+      "id": "kanuele",
+      "who": "Kollege",
+      "at": 15,
+      "say": "„Pass auf! Da liegt eine offene Spritze direkt neben deinem Knie!“",
+      "options": [
+        {
+          "t": "Kurz stoppen, Kanüle mit Handschuhen am Kolben aufnehmen und ohne Kappe direkt in den Abwurfbehälter. Dann weiter.",
+          "pts": 3,
+          "reply": "Die Kanüle ist sicher entsorgt."
+        },
+        {
+          "t": "Die Kappe wieder draufstecken und die Spritze in die Jackentasche.",
+          "pts": -4,
+          "why": "Kein Recapping: Häufigste Ursache für Nadelstichverletzungen. Direkt in den Abwurfbehälter."
+        },
+        {
+          "t": "Mit dem Schuh zur Seite schieben und weiterarbeiten.",
+          "pts": -2,
+          "why": "Sie bleibt im Arbeitsbereich und gefährdet dich, Kollegen und Reinigungskraft. Sofort sicher entsorgen."
+        },
+        {
+          "t": "Liegen lassen, das macht später die Polizei.",
+          "pts": -3,
+          "why": "Eigenschutz geht vor: Die Kanüle liegt genau da, wo du kniest."
+        }
+      ]
+    },
+    {
+      "id": "rebound",
+      "who": "Danny",
+      "if": {"flag":"naloxon"},
+      "say": "Er setzt sich ruckartig auf, schwitzt und zittert: „Was soll der Scheiß?! Ihr habt mir alles versaut! Ich geh jetzt!“",
+      "options": [
+        {
+          "t": "Abstand halten, ruhig bleiben. Erklären, dass das Gegenmittel kürzer wirkt als das Heroin und er wieder aufhören kann zu atmen. Überzeugen mitzukommen, der Notarzt klärt mit ihm, ob er die Ablehnung wirklich verstehen kann.",
+          "pts": 3,
+          "mood": 3,
+          "reply": "Er zittert, setzt sich aber wieder: „Scheiße… okay. Aber ich will keine Bullen.“"
+        },
+        {
+          "t": "„Sie sind ja wieder wach. Dann unterschreiben Sie hier die Ablehnung und gehen.“",
+          "pts": -4,
+          "why": "Naloxon wirkt etwa 30–90 Minuten, Heroin länger: Er kann draußen wieder aufhören zu atmen (Re-Narkotisierung). Aufklären, NA einbinden, sorgfältig dokumentieren."
+        },
+        {
+          "t": "Ihn festhalten, bis die Polizei kommt.",
+          "pts": -4,
+          "why": "Festhalten ist Freiheitsberaubung und eskaliert. Überzeugen, NA entscheidet, bei akuter Gefahr Polizei über die Leitstelle."
+        },
+        {
+          "t": "„Bleiben Sie liegen, das Gegenmittel hält jetzt den ganzen Tag.“",
+          "pts": -3,
+          "why": "Falsch: Naloxon wirkt kürzer als die meisten Opioide. Genau deshalb muss er überwacht werden."
+        }
+      ]
+    }
+  ],
+  "effects": {
+    "m_esmarch": [
+      {"if":{"flag":"naloxon"},"text":"Er atmet selbst, der Atemweg ist frei.","nopts":true,"noCount":true},
+      {
+        "text": "Esmarch-Handgriff: Das Schnarchen hört auf. Er atmet aber weiter nur ganz selten.",
+        "delta": {"spo2":2}
+      }
+    ],
+    "m_guedel": [
+      {"if":{"flag":"naloxon"},"pts":-3,"why":"Er ist wach: Ein Guedel-Tubus löst Würgen und Erbrechen aus."},
+      {"text":"Guedel-Tubus passt, er würgt nicht (keine Schutzreflexe). Atemweg frei.","delta":{"spo2":2}}
+    ],
+    "m_bmv": [
+      {"if":{"flag":"naloxon"},"pts":-3,"why":"Er atmet nach dem Naloxon wieder ausreichend selbst."},
+      {
+        "if": {"fixed":"atemweg"},
+        "text": "Beutel-Masken-Beatmung mit O₂ und Reservoir, ein Hub alle 6 Sekunden. Der Brustkorb hebt sich, die Lippen werden rosiger.",
+        "delta": {"spo2":14,"hr":12}
+      },
+      {
+        "text": "Die Maske sitzt, aber der Brustkorb hebt sich kaum, und Luft geht in den Magen. Erst den Atemweg freimachen (Esmarch oder Guedel)!",
+        "delta": {"spo2":1},
+        "noCount": true,
+        "nopts": true
+      }
+    ],
+    "m_o2_mask": [
+      {
+        "if": {"any":[{"flag":"naloxon"},{"fixed":"hypovent"}]},
+        "text": "O₂ über Reservoirmaske.",
+        "delta": {"spo2":3}
+      },
+      {
+        "text": "Reservoirmaske mit 15 l/min. Bei 5 Atemzügen pro Minute kommt davon kaum etwas an: Er muss beatmet werden!",
+        "delta": {"spo2":2}
+      }
+    ],
+    "m_o2_nb": [{"text":"Nasenbrille: Bei dieser Atemdepression bringt das fast nichts.","delta":{"spo2":1}}],
+    "m_ssl": [
+      {"if":{"flag":"naloxon"},"text":"Stabile Seitenlage, falls er erbricht. Gut überwachen."},
+      {
+        "pts": -3,
+        "why": "Bei Atemdepression (AF 5/min) muss er beatmet werden. In Seitenlage geht das mit Beutel und Maske nicht effektiv: Rückenlage, Atemweg frei, beatmen.",
+        "delta": {"spo2":1}
+      }
+    ],
+    "m_absaug": {"text":"Absaugbereitschaft. Opioide und Naloxon lösen oft Erbrechen aus."},
+    "m_ivz_vorb": {"text":"Zugang für den Notarzt vorbereitet (Naloxon)."},
+    "m_nef": {
+      "text": "NEF nachalarmiert: Verdacht auf Opioid-Intoxikation mit Atemdepression. Der NA kommt in etwa 7 Minuten."
+    },
+    "m_trinken": {"pts":-5,"why":"Nichts oral bei Bewusstseinstrübung."},
+    "m_flach": {"text":"Rückenlage auf dem Boden des Vorraums, genug Platz zum Beatmen."}
+  },
+  "required": [
+    {
+      "any": ["sss"],
+      "pts": 5,
+      "label": "Eigenschutz: Kanüle erkannt",
+      "why": "Benutzte Kanülen: Infektionsgefahr. Handschuhe, sicher entsorgen, kein Recapping."
+    },
+    {
+      "pts": 10,
+      "label": "Atemweg freigemacht",
+      "why": "Bewusstlos mit Schnarchen: Esmarch oder Guedel (keine Schutzreflexe).",
+      "if": {"fixed":"atemweg"}
+    },
+    {
+      "any": ["m_bmv"],
+      "pts": 15,
+      "label": "Beatmet",
+      "why": "Atemdepression mit AF 5/min: O₂ allein reicht nicht, Beutel-Masken-Beatmung mit O₂ (10/min)."
+    },
+    {
+      "any": ["m_nef"],
+      "pts": 10,
+      "label": "NEF nachalarmiert",
+      "why": "Naloxon gibt der Notarzt (oder NotSan nach SOP)."
+    },
+    {
+      "any": ["d_pup"],
+      "pts": 5,
+      "label": "Pupillen geprüft",
+      "why": "Stecknadelkopfgroße Pupillen sind ein Leitsymptom der Opioid-Intoxikation."
+    },
+    {
+      "any": ["d_bz"],
+      "pts": 5,
+      "label": "Blutzucker gemessen",
+      "why": "Jede Bewusstlosigkeit: Hypoglykämie ausschließen."
+    },
+    {
+      "any": ["m_absaug"],
+      "pts": 5,
+      "label": "Absaugbereitschaft",
+      "why": "Erbrechen beim Aufwachen, Aspirationsgefahr."
+    },
+    {
+      "any": ["m_ivz","m_ivz_vorb"],
+      "pts": 5,
+      "label": "Zugang vorbereitet",
+      "why": "Der NA titriert Naloxon i.v. in kleinen Schritten."
+    }
+  ],
+  "quizzes": [
+    {
+      "on": "m_bmv",
+      "type": "mc",
+      "q": "Er hat einen Puls, atmet aber nur 5-mal pro Minute. Wie beatmest du?",
+      "options": [
+        "Etwa alle 6 Sekunden einen Hub (10/min), je ca. 1 Sekunde, bis sich der Brustkorb hebt",
+        "30:2 wie bei der Reanimation",
+        "So schnell wie möglich, etwa 30/min, damit er schnell Sauerstoff bekommt",
+        "Alle 2 Sekunden ein kleiner Hub, damit kein Druck entsteht"
+      ],
+      "answer": 0,
+      "explain": "Beatmung bei erhaltenem Kreislauf: ca. 10/min. Zu schnell oder zu kräftig bläht den Magen auf (Erbrechen, Aspiration)."
+    },
+    {
+      "on": "finish",
+      "type": "order",
+      "q": "Rückblick: Bewusstloser mit Atemdepression. Bring die ersten Schritte in eine sinnvolle Reihenfolge.",
+      "items": [
+        "Eigenschutz: Kanüle sichern",
+        "Bewusstsein und Atmung prüfen",
+        "Atemweg freimachen (Esmarch/Guedel)",
+        "Mit Beutel und Maske beatmen (O₂)",
+        "NEF nachalarmieren"
+      ]
+    }
+  ],
+  "diagnosis": {
+    "options": ["Opioid-Intoxikation mit Atemdepression","Hypoglykämie","Alkoholintoxikation","Schädel-Hirn-Trauma"],
+    "answer": 0
+  },
+  "teach": [
+    "Opioid-Trias: Bewusstlosigkeit, Atemdepression, stecknadelkopfgroße Pupillen.",
+    "Atemdepression heißt beatmen (10/min mit O₂), O₂-Maske allein reicht nicht.",
+    "Naloxon wirkt kürzer als die meisten Opioide: Nach dem Aufwachen droht erneute Atemdepression, deshalb Überwachung und Transport.",
+    "Eigenschutz: benutzte Kanülen nie recappen, direkt in den Abwurfbehälter."
+  ]
+}

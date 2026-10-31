@@ -241,3 +241,17 @@ describe('Blutdruck von Hand', () => {
     expect(bad.pts).toBe(2);
   });
 });
+
+describe('Opioid-Intoxikation', () => {
+  it('Beatmen geht erst mit freiem Atemweg, Naloxon kommt mit dem Notarzt', () => {
+    const g = new Game(caseById('opiat')!, { worsen: true, detail: false });
+    for (const id of ['sss', 'ansprechen', 'm_bmv']) { g.act(id); answerPrompts(g); }
+    expect(g.s.fixed.hypovent).toBe(false);
+    for (const id of ['m_esmarch', 'm_bmv', 'm_nef']) { g.act(id); answerPrompts(g); }
+    expect(g.s.fixed.hypovent).toBe(true);
+    expect(g.s.v.spo2).toBeGreaterThan(85);
+    g.advance(480);
+    expect(g.s.flags.naloxon).toBeTruthy();
+    expect(g.s.v.gcs).toBe(13);
+  });
+});

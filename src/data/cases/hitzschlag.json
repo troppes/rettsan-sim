@@ -130,6 +130,34 @@
           "why": "Hypoton und verwirrt: Aufsetzen kann zum Kollaps führen. Liegen lassen, Beine hoch, kühlen."
         }
       ]
+    },
+    {
+      "id": "wasser",
+      "who": "Laufpartnerin",
+      "at": 150,
+      "say": "„Er hat unterwegs an jeder Station nur Wasser getrunken, literweise! Ist das schlimm?“",
+      "options": [
+        {
+          "t": "„Gut, dass Sie das sagen. Sehr viel Wasser ohne Salz kann den Natriumspiegel senken, das kann auch verwirrt machen. Das gebe ich an die Klinik weiter.“",
+          "pts": 3,
+          "reply": "„Oh… er hat auch keine Salztabletten genommen.“"
+        },
+        {
+          "t": "„Nein, Wasser ist bei Hitze immer gut.“",
+          "pts": -2,
+          "why": "Bei langen Läufen kann zu viel Wasser zu einer Hyponatriämie führen, die ebenfalls Verwirrtheit und Krämpfe macht. Wichtige Info für die Klinik."
+        },
+        {
+          "t": "„Dann geben wir ihm jetzt sofort Salztabletten.“",
+          "pts": -3,
+          "why": "Er ist bewusstseinsgetrübt: nichts zu essen oder zu trinken. Ob Natrium fehlt, zeigt erst das Labor."
+        },
+        {
+          "t": "„Das spielt keine Rolle, er hat einen Hitzschlag.“",
+          "pts": -1,
+          "why": "Nicht festlegen: Verwirrtheit nach dem Lauf kann auch durch zu wenig Natrium entstehen. Info weitergeben."
+        }
+      ]
     }
   ],
   "effects": {

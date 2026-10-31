@@ -111,6 +111,34 @@
           "why": "Kurz zu erklären dauert zwei Sätze. Die wache Patientin muss zustimmen, sonst ist es eine Körperverletzung."
         }
       ]
+    },
+    {
+      "id": "tabletten",
+      "who": "Kellner",
+      "at": 60,
+      "say": "„Sie hat Allergietabletten in der Handtasche, Cetirizin. Soll ich ihr schnell eine mit Wasser geben?“",
+      "options": [
+        {
+          "t": "„Bitte nicht, die wirken viel zu langsam, und mit der Schwellung kann sie sich verschlucken. Suchen Sie lieber nach einem Allergiepass oder einem Adrenalin-Pen in der Tasche.“",
+          "pts": 3,
+          "reply": "„Hier! Ein Pen und ein Allergiepass: Wespengift.“"
+        },
+        {
+          "t": "„Ja, gute Idee, das wirkt schnell gegen die Allergie.“",
+          "pts": -4,
+          "why": "Antihistaminika als Tablette wirken erst nach 30–60 Minuten. Im Schock zählt Adrenalin i.m., und mit Schwellung im Hals droht Aspiration."
+        },
+        {
+          "t": "„Ja, aber ohne Wasser, sie soll sie unter der Zunge zergehen lassen.“",
+          "pts": -3,
+          "why": "Cetirizin wirkt nicht sublingual schnell, und bei Schwellung im Mund kann sie nichts sicher schlucken. Adrenalin geht vor."
+        },
+        {
+          "t": "„Nein, sie darf gar nichts bekommen. Bitte gehen Sie zur Seite.“",
+          "pts": 1,
+          "why": "Halb richtig: keine Tablette, aber du verschenkst einen Helfer. Er kann in der Tasche nach Notfallset und Allergiepass suchen."
+        }
+      ]
     }
   ],
   "effects": {

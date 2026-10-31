@@ -1,5 +1,5 @@
 /* Spiel-Engine: interpretiert die Falldaten. Keine Oberfläche, kein DOM. */
-import type { Action, ActionKind, CaseDef, Letter, Moment, ProcMode, Quiz, TreatEffect, VitalKey } from '../types';
+import type { Action, ActionKind, CaseDef, Letter, Moment, ProcMode, Quiz, StressConfig, TreatEffect, VitalKey } from '../types';
 import { ACTIONS, ACTION_GROUPS, ECG, LETTERS, PROCEDURES, REA, RULES } from '../data';
 import { clamp, fill, pick, shuffle } from '../util';
 import { mutate, test, variant, type Ctx } from './conditions';
@@ -26,6 +26,8 @@ export class Game {
   private lastProcMode: ProcMode | null = null;
   private askedProcQ: Record<string, number[]> = {};
   readonly rea: Rea | null;
+  /** Gesprächsmomente des Falls plus zufällige Störungen je nach Schwierigkeit */
+  readonly moments: Moment[];
   onChange: () => void = () => {};
   onToast: (t: Toast) => void = () => {};
 
@@ -39,9 +41,25 @@ export class Game {
     };
     for (const p of c.problems ?? []) this.s.fixed[p.id] = false;
     this.rea = c.rea ? new Rea(this) : null;
+    this.moments = [...(c.moments ?? []), ...this.pickStress()];
     this.addLog('dispatch', dispatch.text, '🚑 Einsatzmeldung');
     this.addLog('info', T.start);
   }
+
+  /** Zufällige Störungen (Funk, Telefon, Gaffer …), mehr bei schwereren Fällen */
+  private pickStress(): Moment[] {
+    const st = RULES.stress as unknown as StressConfig;
+    const n = st.interruptions[String(this.c.level)] ?? 0;
+    const pool = shuffle(st.pool.filter((m) => !(m.except ?? []).includes(this.c.id) && (!m.only || m.only.includes(this.c.id))));
+    const [from, to] = st.window;
+    return pool.slice(0, n).map((m, i) => {
+      const at = Math.round(from + ((to - from) * (i + 0.2 + Math.random() * 0.6)) / n);
+      const { except: _e, only: _o, ...rest } = m;
+      return { ...rest, id: 'stress_' + m.id, at };
+    });
+  }
+  /** Schwerere Fälle verschlechtern sich schneller */
+  get worsenFactor() { return (RULES.stress as unknown as StressConfig).worsenFactor[String(this.c.level)] ?? 1; }
 
   get ctx(): Ctx { return { s: this.s, settings: this.settings }; }
   changed() { this.onChange(); }
@@ -84,7 +102,7 @@ export class Game {
     if (this.settings.worsen) {
       for (const p of c.problems ?? []) {
         if (s.fixed[p.id] || !p.worsen || !this.active(p.activeIf)) continue;
-        for (const [k, d] of Object.entries(p.worsen)) s.v[k as VitalKey] += d! * dtMin;
+        for (const [k, d] of Object.entries(p.worsen)) s.v[k as VitalKey] += d! * dtMin * this.worsenFactor;
       }
     }
     for (const tr of c.trends ?? []) {
@@ -360,7 +378,7 @@ export class Game {
     else if (bad) this.addLog('info', e.why ?? '');
     mutate(s, e);
     const fixes = new Set(e.fix ?? []);
-    if (!bad) for (const p of this.c.problems ?? []) if ((p.fixedBy ?? []).includes(a.id) && this.active(p.activeIf)) fixes.add(p.id);
+    if (!bad && !e.noCount) for (const p of this.c.problems ?? []) if ((p.fixedBy ?? []).includes(a.id) && this.active(p.activeIf)) fixes.add(p.id);
     for (const pid of fixes) s.fixed[pid] = true;
     if (a.id === 'm_defi_kleben') s.attached.ekg = true;
     if (a.id === 'm_nef') s.flags.nefAt = s.time;
@@ -473,7 +491,7 @@ export class Game {
 
   /* Gesprächsmomente */
   private findMoment(trig: { before?: string; after?: string; tick?: boolean }): Moment | null {
-    for (const m of this.c.moments ?? []) {
+    for (const m of this.moments) {
       if (this.s.momentDone[m.id]) continue;
       if (trig.before && m.before === trig.before) return m;
       if (trig.after && m.after?.includes(trig.after)) return m;
@@ -684,25 +702,29 @@ export class Game {
 
   finish() {
     if (this.s.over || this.prompt) return;
-    const qs = this.c.quizzes ?? [];
-    const idx = qs.findIndex((x, i) => x.on === 'finish' && !this.s.quizDone[i]);
-    if (idx >= 0) {
-      this.s.quizDone[idx] = true;
-      this.runQuiz(qs[idx], () => this.finish());
-      this.changed();
-      return;
-    }
     const d = this.diagnosis();
     const order = shuffle(d.options.map((_, i) => i));
+    const more = (this.c.quizzes ?? []).some((x) => x.on === 'finish');
     this.ask('Übergabe', 'Deine Verdachtsdiagnose?', order.map((i) => ({ key: i, label: d.options[i] })), (k, p) => {
       const ok = k === d.answer;
       markChoices(p.choices, order, k, d.answer);
       this.addEvent(ok ? 10 : 0, 10, ok ? `Diagnose richtig: ${d.options[d.answer]}` : `Diagnose falsch (richtig: ${d.options[d.answer]})`, undefined, ok ? 'good' : 'miss');
       if (this.c.diagnosis.guard && test(this.c.diagnosis.guard.if, this.ctx)) this.addEvent(this.c.diagnosis.guard.pts, 0, this.c.diagnosis.guard.why, undefined, 'bad');
-    }, () => {
-      this.s.over = true;
-      this.result = debrief(this);
-    }, 'Zur Auswertung');
+    }, () => this.review(), more ? 'Weiter' : 'Zur Auswertung');
+    this.changed();
+  }
+  /** Rückblick-Quizze erst nach der Diagnose, damit sie nichts verraten */
+  private review() {
+    const qs = this.c.quizzes ?? [];
+    const idx = qs.findIndex((x, i) => x.on === 'finish' && !this.s.quizDone[i]);
+    if (idx >= 0) {
+      this.s.quizDone[idx] = true;
+      this.runQuiz(qs[idx], () => this.review());
+      this.changed();
+      return;
+    }
+    this.s.over = true;
+    this.result = debrief(this);
     this.changed();
   }
 }

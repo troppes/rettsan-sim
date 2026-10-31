@@ -155,5 +155,175 @@
     "placePts": 3,
     "placeScore": "{title}: {right} von {n} richtig geklebt",
     "placeWrong": "{title}: Elektroden falsch geklebt"
+  },
+  "stress": {
+    "worsenFactor": {"1":1,"2":1.25,"3":1.5},
+    "interruptions": {"1":1,"2":2,"3":3},
+    "window": [60,540],
+    "pool": [
+      {
+        "id": "funk",
+        "who": "Leitstelle (Funk)",
+        "say": "„RTW, hier Leitstelle. Wie ist Ihre Lage? Brauchen Sie weitere Kräfte?“",
+        "options": [
+          {
+            "t": "Kurze Lagemeldung: Patient, Zustand, ob ein NEF oder weitere Kräfte nötig sind. Dann zurück zum Patienten.",
+            "pts": 3,
+            "reply": "„Verstanden, Leitstelle Ende.“"
+          },
+          {
+            "t": "Gar nicht antworten, der Patient geht vor.",
+            "pts": -2,
+            "why": "Die Leitstelle muss die Lage kennen, um Kräfte zu planen. Eine Lagemeldung dauert 15 Sekunden."
+          },
+          {
+            "t": "Ausführliche Übergabe mit allen Vitalwerten und der kompletten Anamnese durchgeben.",
+            "pts": -1,
+            "why": "Zu lang: Funk ist kein Übergabekanal, und du bist so lange vom Patienten weg. Kurz und strukturiert."
+          },
+          {
+            "t": "„Später, wir melden uns.“",
+            "why": "Besser kurz die Lage nennen und ob Nachforderung nötig ist, sonst fragt die Leitstelle erneut oder plant falsch."
+          }
+        ]
+      },
+      {
+        "id": "telefon",
+        "who": "Anrufer am Handy des Patienten",
+        "say": "Das Handy des Patienten klingelt, du gehst ran. „Hier ist der Chef. Was ist los, was hat er denn? Kommt er heute noch wieder?“",
+        "except": ["fieberkrampf","rea","krampf","poly","stroke","exsikkose","opiat"],
+        "options": [
+          {
+            "t": "„Hier ist der Rettungsdienst. Am Telefon darf ich keine Auskünfte geben, Ihr Mitarbeiter meldet sich, sobald er kann.“",
+            "pts": 3
+          },
+          {
+            "t": "„Er hat vermutlich etwas Ernstes, wir bringen ihn ins Krankenhaus.“",
+            "pts": -3,
+            "why": "Schweigepflicht (§ 203 StGB): Ohne Einwilligung keine Auskunft an Dritte, auch nicht an den Arbeitgeber."
+          },
+          {
+            "t": "Wortlos auflegen.",
+            "pts": -1,
+            "why": "Unhöflich, und der Anrufer ruft wieder an. Kurz sagen, dass du keine Auskunft geben darfst."
+          },
+          {
+            "t": "„Rufen Sie bitte in einer Stunde im Krankenhaus an, dort sagt man Ihnen alles.“",
+            "pts": -1,
+            "why": "Auch die Klinik darf ohne Einwilligung keine Auskunft geben. Versprich nichts, was nicht stimmt."
+          }
+        ]
+      },
+      {
+        "id": "gaffer",
+        "who": "Schaulustiger",
+        "say": "Ein Mann steht zwei Meter entfernt und filmt mit dem Handy direkt auf den Patienten.",
+        "only": ["poly","krampf","rea","anaphylaxie","hitzschlag","opiat"],
+        "options": [
+          {
+            "t": "Sachlich ansprechen und bitten aufzuhören, Sichtschutz schaffen (Decke, Kollege, Fahrzeug). Bei Behinderung Polizei über die Leitstelle.",
+            "pts": 3,
+            "reply": "Er murmelt etwas und steckt das Handy weg."
+          },
+          {
+            "t": "Ihm das Handy aus der Hand nehmen und die Aufnahme löschen.",
+            "pts": -4,
+            "why": "Das Handy wegzunehmen ist nicht deine Aufgabe und kann selbst strafbar sein. Ansprechen, abschirmen, ggf. Polizei."
+          },
+          {
+            "t": "Ignorieren, der Patient ist wichtiger.",
+            "pts": -1,
+            "why": "Der Patient hat ein Recht auf Würde. Sichtschutz dauert Sekunden, Bilder Hilfloser zu verbreiten kann strafbar sein (§ 201a StGB)."
+          },
+          {
+            "t": "Laut drohen: „Ich zeig Sie an, das kostet Sie Tausende!“",
+            "pts": -1,
+            "why": "Drohungen eskalieren. Sachlich bleiben und abschirmen, Strafverfolgung ist Sache der Polizei."
+          }
+        ]
+      },
+      {
+        "id": "handschuh",
+        "who": "Du selbst",
+        "say": "Du merkst, dass dein Handschuh am Zeigefinger eingerissen ist. Er ist feucht von Blut oder Speichel.",
+        "options": [
+          {
+            "t": "Kurz zurücktreten, Handschuhe wechseln, Hände desinfizieren, dann weiter. Bei Hautverletzung später als Arbeitsunfall melden.",
+            "pts": 3
+          },
+          {
+            "t": "Einen zweiten Handschuh darüberziehen und weitermachen.",
+            "pts": -2,
+            "why": "Darunter bleibt Körperflüssigkeit auf der Haut. Erst ausziehen und desinfizieren, dann neue Handschuhe."
+          },
+          {
+            "t": "Weitermachen, ist nur ein kleiner Riss.",
+            "pts": -3,
+            "why": "Eigenschutz: Infektionsgefahr (HBV, HCV, HIV). Ein Handschuhwechsel dauert 20 Sekunden."
+          },
+          {
+            "t": "Den Finger kurz am Ärmel abwischen und weiter.",
+            "pts": -3,
+            "why": "Abwischen dekontaminiert nicht. Wechseln und Hände desinfizieren."
+          }
+        ]
+      },
+      {
+        "id": "draengeln",
+        "who": "Aufgeregte Person",
+        "say": "„Warum fahren Sie denn nicht endlich los?! Der muss doch ins Krankenhaus!“",
+        "except": ["rea"],
+        "options": [
+          {
+            "t": "Ruhig erklären: „Wir untersuchen und stabilisieren hier, das ist im Moment das Sicherste. In ein paar Minuten fahren wir.“ Eine Aufgabe geben (Tasche, Ausweis, Medikamente holen).",
+            "pts": 3,
+            "reply": "„Okay… ich hol die Tabletten.“"
+          },
+          {
+            "t": "„Wir wissen, was wir tun. Bitte gehen Sie zur Seite.“",
+            "pts": -1,
+            "why": "Abwimmeln eskaliert. Erklären und eine Aufgabe geben beruhigt Angehörige."
+          },
+          {
+            "t": "Sofort einladen und losfahren, um Ärger zu vermeiden.",
+            "pts": -4,
+            "why": "Druck von außen ändert nicht die Medizin: Lebensbedrohungen werden vor Ort behandelt (xABC), erst dann wird transportiert."
+          },
+          {
+            "t": "Gar nicht reagieren.",
+            "pts": -1,
+            "why": "Ignorieren steigert den Druck. Ein Satz Erklärung und eine Aufgabe helfen."
+          }
+        ]
+      },
+      {
+        "id": "zweiter",
+        "who": "Passantin",
+        "say": "„Hallo! Hier hinten ist noch jemand umgekippt, glaub ich! Können Sie mal kommen?“",
+        "only": ["poly","hitzschlag","krampf","opiat"],
+        "options": [
+          {
+            "t": "Über die Leitstelle ein weiteres Rettungsmittel anfordern, die Passantin bitten, bei der Person zu bleiben und dich zu rufen, falls sie nicht mehr reagiert. Du bleibst bei deinem Patienten.",
+            "pts": 3,
+            "reply": "„Okay, ich bleib bei ihr und rufe, wenn was ist.“"
+          },
+          {
+            "t": "Deinen Patienten kurz allein lassen und nachsehen.",
+            "pts": -4,
+            "why": "Dein Patient ist kritisch. Nicht einfach verlassen: Nachfordern und Laienhelfer einweisen."
+          },
+          {
+            "t": "„Dafür sind wir nicht zuständig, rufen Sie die 112.“",
+            "pts": -2,
+            "why": "Ihr seid vor Ort: Nachfordern über die Leitstelle ist schneller als ein neuer Notruf."
+          },
+          {
+            "t": "Den Kollegen hinschicken, du machst allein weiter.",
+            "pts": -1,
+            "why": "Bei einem kritischen Patienten brauchst du deinen Kollegen. Erst nachfordern, Laien einweisen."
+          }
+        ]
+      }
+    ]
   }
 }

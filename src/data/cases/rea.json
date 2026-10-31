@@ -67,6 +67,34 @@
           "why": "Ihr habt euren Defi schon dabei. Sinnvoller: NA einweisen, Weg freihalten, Angehörige oder Zeugen finden."
         }
       ]
+    },
+    {
+      "id": "verfuegung",
+      "who": "Ehefrau",
+      "at": 240,
+      "say": "Eine Frau kommt aus dem Nebengang gerannt: „Das ist mein Mann! Hören Sie auf! Er hat eine Patientenverfügung, er wollte nie wiederbelebt werden!“",
+      "options": [
+        {
+          "t": "„Das tut mir sehr leid. Haben Sie die Verfügung dabei? Bis wir sie gesehen haben, machen wir weiter. Der Notarzt prüft sie gleich mit Ihnen.“",
+          "pts": 3,
+          "reply": "Sie schluchzt: „Sie liegt zu Hause im Ordner…“ Sie setzt sich an den Rand."
+        },
+        {
+          "t": "Sofort aufhören, die Ehefrau weiß, was er wollte.",
+          "pts": -6,
+          "why": "Eine mündliche Aussage reicht nicht. Ohne vorliegende, eindeutige Verfügung wird weiter reanimiert, über einen Abbruch entscheidet der Arzt."
+        },
+        {
+          "t": "„Das interessiert uns nicht, wir reanimieren immer.“",
+          "pts": -3,
+          "why": "Eine gültige Patientenverfügung ist bindend. Ernst nehmen, nachfragen, dem NA vorlegen. Bis dahin weiter."
+        },
+        {
+          "t": "Weiter reanimieren und sie wortlos wegschicken.",
+          "pts": -1,
+          "why": "Die Reanimation geht weiter, aber sie braucht Zuwendung und eine Antwort. Kollegin oder Passantin kann sich um sie kümmern."
+        }
+      ]
     }
   ],
   "effects": {},
