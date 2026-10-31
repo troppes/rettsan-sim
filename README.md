@@ -71,7 +71,7 @@ npm version minor        # erhöht die Version, legt Commit und Tag an (z. B. v2
 git push --follow-tags
 ```
 
-Der Tag startet `.github/workflows/release.yml`: prüfen, testen, bauen, GitHub-Release mit automatischen Notizen und ZIP anlegen, auf GitHub Pages veröffentlichen. Tags mit Bindestrich (z. B. `v2.1.0-beta.1`) werden als Vorabversion veröffentlicht, aber nicht auf Pages ausgerollt. Die Version steht unten auf der Startseite.
+Der Tag startet `.github/workflows/release.yml`: prüfen, testen, bauen, GitHub-Release mit automatischen Notizen und ZIP anlegen, auf GitHub Pages veröffentlichen. Tags mit Bindestrich (z. B. `v2.1.0-beta.1`) werden als Vorabversion veröffentlicht, aber nicht auf Pages ausgerollt. Ohne Tag-Push geht es auch: Version in `package.json` erhöhen, auf `main` pushen und unter *Actions → Release → Run workflow* starten. Der Workflow legt den Tag dann selbst an. Die Version steht unten auf der Startseite.
 
 Das Konto-Schema liegt in `supabase.sql`.
 

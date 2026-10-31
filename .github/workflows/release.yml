@@ -2,9 +2,11 @@ name: Release
 
 # Ein Tag wie v2.1.0 baut das Spiel, erstellt ein GitHub-Release mit Notizen
 # und veröffentlicht genau diese Version auf GitHub Pages.
+# Alternativ "Run workflow" auf main: Tag wird aus package.json erzeugt.
 on:
   push:
     tags: ['v*.*.*']
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -18,6 +20,8 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    outputs:
+      tag: ${{ steps.tag.outputs.tag }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -25,9 +29,15 @@ jobs:
           node-version: 22
           cache: npm
       - name: Tag passt zur Version in package.json
+        id: tag
         run: |
-          v=$(node -p "require('./package.json').version")
-          [ "v$v" = "$GITHUB_REF_NAME" ] || { echo "Tag $GITHUB_REF_NAME passt nicht zu package.json ($v)"; exit 1; }
+          v=v$(node -p "require('./package.json').version")
+          if [ "$GITHUB_REF_TYPE" = tag ]; then
+            [ "$v" = "$GITHUB_REF_NAME" ] || { echo "Tag $GITHUB_REF_NAME passt nicht zu package.json ($v)"; exit 1; }
+          elif git ls-remote --exit-code --tags origin "$v" >/dev/null; then
+            echo "$v gibt es schon, erst die Version erhöhen (npm version …)"; exit 1
+          fi
+          echo "tag=$v" >> "$GITHUB_OUTPUT"
       - run: npm ci
       - run: npm run check
       - run: npm test
@@ -35,20 +45,23 @@ jobs:
         env:
           BASE_PATH: /${{ github.event.repository.name }}/
       - name: ZIP für das Release
-        run: cd dist && zip -qr ../rettsan-sim-${GITHUB_REF_NAME}.zip .
+        run: cd dist && zip -qr ../rettsan-sim-$TAG.zip .
+        env:
+          TAG: ${{ steps.tag.outputs.tag }}
       - name: GitHub-Release erstellen
         env:
           GH_TOKEN: ${{ github.token }}
+          TAG: ${{ steps.tag.outputs.tag }}
         run: |
-          pre=""; case "$GITHUB_REF_NAME" in *-*) pre="--prerelease";; esac
-          gh release create "$GITHUB_REF_NAME" rettsan-sim-${GITHUB_REF_NAME}.zip --title "$GITHUB_REF_NAME" --generate-notes --verify-tag $pre
+          pre=""; case "$TAG" in *-*) pre="--prerelease";; esac
+          gh release create "$TAG" rettsan-sim-$TAG.zip --title "$TAG" --generate-notes --target "$GITHUB_SHA" $pre
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist
 
   deploy:
     needs: build
-    if: ${{ !contains(github.ref_name, '-') }}
+    if: ${{ !contains(needs.build.outputs.tag, '-') }}
     runs-on: ubuntu-latest
     environment:
       name: github-pages
