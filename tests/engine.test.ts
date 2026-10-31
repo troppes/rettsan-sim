@@ -149,3 +149,18 @@ describe('Maßnahmen abwechslungsreich', () => {
     expect(modes.size).toBeGreaterThan(1);
   });
 });
+
+describe('Patientengesicht', () => {
+  it('jeder Fall hat ein Aussehen', () => {
+    for (const c of CASES) expect(c.look?.skin, c.id).toMatch(/^#[0-9a-f]{6}$/);
+  });
+  it('Hypo: schwitzig und mit Stimmung, Rea: Augen zu und zyanotisch', () => {
+    const hypo = new Game(caseById('hypo')!, { worsen: false, detail: false }).face();
+    expect(hypo.sweat).toBe(true);
+    expect(hypo.mood).not.toBeNull();
+    const rea = new Game(caseById('rea')!, { worsen: false, detail: false }).face();
+    expect(rea.eyes).toBe('closed');
+    expect(rea.cyanotic).toBe(true);
+    expect(rea.mood).toBeNull();
+  });
+});

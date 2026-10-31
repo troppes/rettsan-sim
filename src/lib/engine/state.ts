@@ -81,3 +81,14 @@ export interface PromptCtl {
   /** Ziele beim Elektroden-Kleben */
   targets?: Electrode[];
 }
+
+/** Was das gezeichnete Gesicht gerade zeigt */
+export interface FaceState {
+  /** Stimmung 0–10; null, wenn der Patient nicht wach ist */
+  mood: number | null;
+  eyes: 'open' | 'half' | 'closed';
+  pale: boolean;
+  sweat: boolean;
+  flushed: boolean;
+  cyanotic: boolean;
+}

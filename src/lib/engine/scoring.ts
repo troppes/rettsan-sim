@@ -2,8 +2,8 @@
 import { ECG, RULES } from '../data';
 import { test } from './conditions';
 import type { Game } from './game';
-import { moodFace } from './game';
-import type { ScoreEvent } from './state';
+import type { FaceState, ScoreEvent } from './state';
+import type { Look } from '../types';
 
 export interface Check { ok: boolean; pts: number; label: string; why: string }
 
@@ -18,7 +18,8 @@ export interface Debrief {
   max: number;
   grade: { label: string; tone: string };
   minutes: number;
-  mood?: string;
+  /** Gesicht am Ende (nur bei ansprechbaren Erwachsenen) */
+  face?: { look: Look; state: FaceState };
   done: Check[];
   missed: Check[];
   bad: ScoreEvent[];
@@ -67,7 +68,7 @@ export function debrief(g: Game): Debrief {
     pct, score, max,
     grade: { label: grade.label, tone: grade.tone },
     minutes: Math.floor(s.time / 60),
-    mood: c.rea || c.child ? undefined : moodFace(s.mood),
+    face: c.rea || c.child ? undefined : { look: c.look, state: g.face() },
     done: req.filter((r) => r.ok),
     missed,
     bad,

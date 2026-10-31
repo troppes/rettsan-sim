@@ -3,6 +3,7 @@
   "level": 2,
   "person": "👵",
   "icon": "👵",
+  "look": {"sex":"f","age":"old","skin":"#f0cdb4","hair":"#f0f0f0","hairStyle":"curly","glasses":true},
   "name": "Frau Hoffmann",
   "mood": 4,
   "dispatches": [

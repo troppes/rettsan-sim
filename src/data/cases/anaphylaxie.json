@@ -3,6 +3,14 @@
   "level": 2,
   "person": "👩",
   "icon": "🐝",
+  "look": {
+    "sex": "f",
+    "age": "mid",
+    "skin": "#f3cdb0",
+    "hair": "#d6ad55",
+    "hairStyle": "bob",
+    "signs": {"flushed":{"vital":"hr","op":">","value":110}}
+  },
   "name": "Frau Krüger",
   "mood": 3,
   "dispatches": [

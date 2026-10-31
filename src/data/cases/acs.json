@@ -3,6 +3,15 @@
   "level": 1,
   "person": "👨",
   "icon": "🏠",
+  "look": {
+    "sex": "m",
+    "age": "old",
+    "skin": "#f0c9a8",
+    "hair": "#a3a3a3",
+    "hairStyle": "short",
+    "beard": "mustache",
+    "signs": {"pale":{"time":0},"sweat":{"time":0}}
+  },
   "name": "Herr Becker",
   "mood": 4,
   "dispatches": [

@@ -3,6 +3,7 @@
   "level": 1,
   "person": "👵",
   "icon": "🛋️",
+  "look": {"sex":"f","age":"old","skin":"#f2cfb6","hair":"#e3e3e3","hairStyle":"bun","glasses":true},
   "name": "Frau Schulz",
   "mood": 4,
   "nonverbal": true,

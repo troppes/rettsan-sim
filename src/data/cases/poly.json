@@ -3,6 +3,7 @@
   "level": 3,
   "person": "🏍️",
   "icon": "🏍️",
+  "look": {"sex":"m","age":"young","skin":"#e4b48d","hair":"#1d1d1d","hairStyle":"short"},
   "name": "Marco",
   "mood": 4,
   "dispatches": [

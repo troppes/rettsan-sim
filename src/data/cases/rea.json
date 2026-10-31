@@ -4,6 +4,7 @@
   "rea": true,
   "person": "👨",
   "icon": "🛒",
+  "look": {"sex":"m","age":"old","skin":"#efc6a4","hair":"#8f8f8f","hairStyle":"bald","beard":"stubble"},
   "name": "unbekannt",
   "mood": 5,
   "dispatches": [

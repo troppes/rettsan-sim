@@ -3,6 +3,7 @@
   "level": 1,
   "person": "🧑",
   "icon": "🌬️",
+  "look": {"sex":"m","age":"young","skin":"#f1c7a5","hair":"#5a3b22","hairStyle":"curly"},
   "name": "Jonas",
   "mood": 3,
   "dispatches": [

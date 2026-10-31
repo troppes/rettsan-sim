@@ -3,6 +3,14 @@
   "level": 1,
   "person": "👩",
   "icon": "🏢",
+  "look": {
+    "sex": "f",
+    "age": "mid",
+    "skin": "#d9a77c",
+    "hair": "#2b1d14",
+    "hairStyle": "long",
+    "signs": {"sweat":{"vital":"bz","op":"<","value":60},"pale":{"vital":"bz","op":"<","value":60}}
+  },
   "name": "Frau Yilmaz",
   "mood": 2,
   "dispatches": [

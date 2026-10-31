@@ -1,9 +1,10 @@
 <script lang="ts">
+  import PatientFace from '../components/PatientFace.svelte';
   import { tick, untrack } from 'svelte';
   import { app } from '../lib/app.svelte';
   import { account } from '../lib/account/account.svelte';
   import { caseById } from '../lib/data';
-  import { Game, moodFace } from '../lib/engine/game';
+  import { Game } from '../lib/engine/game';
   import type { ActionKind } from '../lib/types';
   import { clock } from '../lib/util';
   import ActionSheet from '../components/ActionSheet.svelte';
@@ -31,7 +32,7 @@
       prompt: game.prompt ? structuredClone($state.snapshot(game.prompt)) : null,
       mon: game.monitor(),
       status: game.s.status,
-      mood: game.showMood() ? moodFace(game.s.mood) : '',
+      face: game.face(),
       time: clock(game.s.time),
       score: game.score,
       result: game.result,
@@ -85,8 +86,7 @@
     </div>
 
     <div class="patient card">
-      <div class="pt-ico">{c.person}</div>
-      <div class="pt-mood" title="Stimmung">{view.mood}</div>
+      <PatientFace look={c.look} face={view.face} />
       <div class="pt-txt">{view.status}</div>
     </div>
 

@@ -113,12 +113,27 @@ export type Quiz =
   | { on: string; type: 'order'; q: string; items: string[] }
   | { on: string; type: 'mc'; q: string; options: string[]; answer: number; explain?: string };
 
+/** Aussehen des Patienten für das gezeichnete Gesicht */
+export type HairStyle = 'short' | 'long' | 'bob' | 'bun' | 'curly' | 'bald' | 'tuft';
+export interface Look {
+  sex: 'm' | 'f';
+  age: 'child' | 'young' | 'mid' | 'old';
+  skin: string;
+  hair: string;
+  hairStyle: HairStyle;
+  beard?: 'stubble' | 'mustache';
+  glasses?: boolean;
+  /** Zusätzliche Hautzeichen, z. B. kaltschweißig beim Infarkt (ergänzen die Vitalwerte) */
+  signs?: Partial<Record<'pale' | 'sweat' | 'flushed' | 'cyanotic', Condition>>;
+}
+
 export interface CaseDef {
   id: string;
   level: 1 | 2 | 3;
   rea?: boolean;
   person: string;
   icon: string;
+  look: Look;
   name: string;
   mood: number;
   child?: boolean;

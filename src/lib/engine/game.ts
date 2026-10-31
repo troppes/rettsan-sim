@@ -3,14 +3,13 @@ import type { Action, ActionKind, CaseDef, Letter, Moment, ProcMode, Quiz, Treat
 import { ACTIONS, ACTION_GROUPS, ECG, LETTERS, PROCEDURES, REA, RULES } from '../data';
 import { clamp, fill, pick, shuffle } from '../util';
 import { mutate, test, variant, type Ctx } from './conditions';
-import type { Choice, GameState, LogEntry, LogType, Prompt, PromptCtl, ScoreEvent, Settings } from './state';
+import type { Choice, FaceState, GameState, LogEntry, LogType, Prompt, PromptCtl, ScoreEvent, Settings } from './state';
 import { ProcSession } from './procedure';
 import { Rea } from './rea';
 import { debrief, type Debrief } from './scoring';
 
 const T = RULES.texts;
 const li = (l: Letter) => LETTERS.indexOf(l);
-export const moodFace = (m: number) => (m >= 8 ? '🙂' : m >= 5 ? '😐' : m >= 3 ? '😟' : '😠');
 
 export type Toast = { text: string; tone: 'good' | 'bad' | '' };
 
@@ -222,6 +221,24 @@ export class Game {
   conscious() { return this.s.v.gcs >= 13 && !(this.rea && !this.rea.st.rosc); }
   answerer(): string | null { return variant<{ who: string }>(this.c.answerer, this.ctx)?.who ?? null; }
   showMood() { return this.conscious() && !this.c.child; }
+  /** Gesichtsausdruck und Hautzeichen aus Stimmung, Bewusstsein und Vitalwerten */
+  face(): FaceState {
+    const v = this.s.v;
+    const arrest = !!this.rea && !this.rea.st.rosc;
+    const eyes = arrest || v.gcs <= 8 ? 'closed' : v.gcs < 13 ? 'half' : 'open';
+    const sign = (k: 'pale' | 'sweat' | 'flushed' | 'cyanotic') => {
+      const cond = this.c.look.signs?.[k];
+      return !!cond && test(cond, this.ctx);
+    };
+    return {
+      mood: eyes === 'open' ? this.s.mood : null,
+      eyes,
+      pale: arrest || v.sys < 90 || sign('pale'),
+      cyanotic: arrest || v.spo2 < 88 || sign('cyanotic'),
+      flushed: !arrest && (v.temp >= 39 || sign('flushed')),
+      sweat: !arrest && sign('sweat'),
+    };
+  }
   moodChange(d: number) {
     if (!d) return;
     this.s.mood = clamp(this.s.mood + d, 0, 10);

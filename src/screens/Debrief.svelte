@@ -1,6 +1,7 @@
 <script lang="ts">
   import { app } from '../lib/app.svelte';
   import type { Debrief } from '../lib/engine/scoring';
+  import PatientFace from '../components/PatientFace.svelte';
 
   let { result: r, saveState, onAgain }: { result: Debrief; saveState: 'ok' | 'queued' | 'off' | null; onAgain: () => void } = $props();
   const color = { good: 'var(--good)', warn: 'var(--warn)', bad: 'var(--bad)' } as Record<string, string>;
@@ -12,8 +13,11 @@
     <div class="score">
       <div class="big" style:color={color[r.grade.tone]}>{r.pct} %</div>
       <div class="grade">{r.grade.label}</div>
-      <small>{r.score} von {r.max} Punkten · Einsatzzeit {r.minutes} min{#if r.mood} · Stimmung am Ende {r.mood}{/if}</small>
+      <small>{r.score} von {r.max} Punkten · Einsatzzeit {r.minutes} min</small>
     </div>
+    {#if r.face}
+      <div class="end-face"><PatientFace look={r.face.look} face={r.face.state} size={64} /><span>So ging es dem Patienten am Ende mit dir.</span></div>
+    {/if}
     <div class="ditem"><b>{r.person} {r.title}</b><small>Lösung: {r.solution}{#if r.reaPath} · Rhythmusverlauf: {r.reaPath}{/if}</small></div>
 
     <h4>Erledigt</h4>

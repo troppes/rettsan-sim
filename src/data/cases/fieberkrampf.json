@@ -3,6 +3,14 @@
   "level": 2,
   "person": "👶",
   "icon": "🧸",
+  "look": {
+    "sex": "f",
+    "age": "child",
+    "skin": "#f6d3b8",
+    "hair": "#a0703f",
+    "hairStyle": "tuft",
+    "signs": {"flushed":{"vital":"temp","op":">=","value":38.5}}
+  },
   "name": "Mia",
   "mood": 5,
   "child": true,

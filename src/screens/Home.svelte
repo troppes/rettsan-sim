@@ -1,4 +1,7 @@
 <script lang="ts">
+  import PatientFace from '../components/PatientFace.svelte';
+  import type { FaceState } from '../lib/engine/state';
+  const calm: FaceState = { mood: 6, eyes: 'open', pale: false, sweat: false, flushed: false, cyanotic: false };
   import { app } from '../lib/app.svelte';
   import { account } from '../lib/account/account.svelte';
   import { CASES } from '../lib/data';
@@ -42,7 +45,7 @@
     {#each CASES as c, i (c.id)}
       {@const st = account.stats?.[c.id]}
       <button class="case-btn" class:played={!!st} onclick={() => start(i)}>
-        <span class="ico">{c.person}</span>
+        <PatientFace look={c.look} face={calm} size={40} />
         <span class="t">
           <b>{c.dispatches[picks[i]].short}</b>
           {#if st}<small class="played-info">✓ {st.n}× gespielt · bestes {st.best} % · zuletzt {st.last} %</small>{/if}

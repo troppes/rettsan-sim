@@ -268,3 +268,7 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .place-result .op { display: flex; align-items: center; gap: 6px; padding: 6px 10px; border-radius: 10px; font-size: 14px; }
 .place-result .op.right { background: #173426; }
 .place-result .op.wrong { background: #3a1d1d; }
+
+/* Patientengesicht */
+.patient { align-items: center; }
+.end-face { display: flex; align-items: center; gap: 12px; margin: 8px 0; color: var(--muted); font-size: 15px; }

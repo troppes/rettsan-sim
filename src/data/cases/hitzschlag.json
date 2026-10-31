@@ -3,6 +3,14 @@
   "level": 2,
   "person": "🏃",
   "icon": "☀️",
+  "look": {
+    "sex": "m",
+    "age": "young",
+    "skin": "#eab894",
+    "hair": "#d9b25c",
+    "hairStyle": "short",
+    "signs": {"sweat":{"vital":"temp","op":">","value":39}}
+  },
   "name": "Tim",
   "mood": 4,
   "dispatches": [

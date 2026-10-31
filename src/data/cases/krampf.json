@@ -3,6 +3,7 @@
   "level": 2,
   "person": "👨",
   "icon": "⚡",
+  "look": {"sex":"m","age":"mid","skin":"#eec29d","hair":"#4a3424","hairStyle":"short","beard":"stubble"},
   "name": "Herr Nowak",
   "mood": 5,
   "dispatches": [
