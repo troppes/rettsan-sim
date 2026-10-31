@@ -15,6 +15,9 @@ Die Inhalte folgen der NAW-Schulmeinung, gespielt wird in der Rolle als RettSan.
 - **Reanimation** mit 2-Minuten-Blöcken, Rhythmusanalyse, Schock-Entscheidung, Adrenalin-Timing und NEF-Nachalarm; der Rhythmusverlauf ist jedes Mal zufällig (VF, pVT, Asystolie oder PEA)
 - **EKG-Trainer** mit 10 Rhythmen und Hilfeknopf
 - **Verschlechterung** (Schalter, standardmäßig an): unbehandelte Probleme werden mit der Zeit schlimmer
+- **Maßnahmen im Detail** (Schalter): BZ, RR, SpO₂, EKG, 12-Kanal, Zugang, O₂, Tourniquet und Bodycheck Schritt für Schritt, inkl. Aufklärung und Einwilligung
+- **Menschliche Patienten:** Name, Stimmung, Reaktionen, Gesprächsmomente mit Auswahl und Nachfragen, die sich aus Antworten ergeben
+- **Wechselnde Einsatzmeldungen**, auch irreführende (nicht jeder Bauchschmerz ist der Bauch)
 - **Auswertung** mit Punkten, vergessenen Maßnahmen, Fehlern und Merksätzen
 
 Kein Login, nichts wird gespeichert.
@@ -24,6 +27,8 @@ Kein Login, nichts wird gespeichert.
 Reines HTML, CSS und JavaScript ohne Build-Schritt. `index.html` direkt im Browser öffnen funktioniert auch lokal.
 
 - `js/cases.js`: die Fälle (Vitalwerte, Befunde, Antworten, Wirkungen, Pflichtmaßnahmen, Quizfragen)
+- `js/cases_extra.js`: Einsatzmeldungen, Namen, Stimmung, Gesprächsmomente, Nachfragen
+- `js/procedures.js`: Maßnahmen als Schritte
 - `js/actions.js`: alle Untersuchungen, Fragen und Maßnahmen mit xABCDE-Buchstabe und Zeitbedarf
 - `js/ecg.js`: EKG- und Pleth-Simulation
 - `js/game.js`: Spiellogik, Reanimation, Auswertung, EKG-Trainer

@@ -11,7 +11,9 @@
   const esc = (t) => String(t).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
   const shuffle = (arr) => { const a = arr.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
 
-  const settings = { worsen: true };
+  const settings = { worsen: true, detail: true };
+  const PROCS = window.PROCS;
+  const MOOD_FACE = (m) => m >= 8 ? '🙂' : m >= 5 ? '😐' : m >= 3 ? '😟' : '😠';
   let C = null; // aktueller Fall
   let s = null; // Spielzustand
   let mon = null; // Monitor im Einsatz
@@ -93,30 +95,39 @@
   };
 
   /* ---------------------------------------------------------------- Start */
-  function initHome() {
+  const pickDispatch = (c) => (c.dispatches && c.dispatches.length) ? c.dispatches[Math.floor(Math.random() * c.dispatches.length)] : { short: c.short, text: c.dispatch };
+  function renderList() {
     const list = $('caseList');
     list.innerHTML = '';
     CASES.forEach((c) => {
+      const pick = pickDispatch(c);
       const b = document.createElement('button');
       b.className = 'case-btn';
-      b.innerHTML = `<span class="ico">${c.icon}</span><span class="t"><b>${esc(c.short)}</b></span><span class="lvl">${'●'.repeat(c.level)}${'○'.repeat(3 - c.level)}</span>`;
-      b.onclick = () => startCase(c);
+      b.innerHTML = `<span class="ico">${c.person || '🚑'}</span><span class="t"><b>${esc(pick.short)}</b></span><span class="lvl">${'●'.repeat(c.level)}${'○'.repeat(3 - c.level)}</span>`;
+      b.onclick = () => startCase(c, pick);
       list.appendChild(b);
     });
+  }
+  function initHome() {
+    renderList();
     $('btnRandom').onclick = () => startCase(CASES[Math.floor(Math.random() * CASES.length)]);
     $('btnTrainer').onclick = startTrainer;
     $('optWorsen').onchange = (e) => { settings.worsen = e.target.checked; };
+    $('optDetail').onchange = (e) => { settings.detail = e.target.checked; };
   }
 
   function show(id) {
+    if (id === 'home') renderList();
     document.querySelectorAll('.screen').forEach((el) => el.classList.toggle('active', el.id === id));
     window.scrollTo(0, 0);
   }
 
   /* ---------------------------------------------------------------- Einsatz starten */
-  function startCase(c) {
+  function startCase(c, pick) {
     C = c;
+    pick = pick || pickDispatch(c);
     s = {
+      dispatch: pick, mood: c.mood != null ? c.mood : 6, unlocked: [], momentDone: {}, momentQueue: [], procWarned: {},
       time: 0, v: Object.assign({}, c.start), status: c.start.status,
       count: {}, lastAt: {}, fixed: {}, flags: {}, warned: {}, quizDone: {},
       letters: {}, events: [], attached: { ekg: false, spo2: false }, nibp: null, afShown: null,
@@ -126,8 +137,8 @@
     if (c.rea) initRea();
 
     show('game');
-    $('gTitle').textContent = c.short;
-    $('pIcon').textContent = c.icon;
+    $('gTitle').textContent = pick.short;
+    $('pIcon').textContent = c.person || c.icon;
     $('tabs').classList.toggle('has-rea', !!c.rea);
     $('log').innerHTML = '';
     if (!mon) {
@@ -139,7 +150,7 @@
     mon.showPleth = false;
     mon.cpr = false;
     mon.start();
-    log('dispatch', `<span class="who">🚑 Einsatzmeldung</span>${esc(c.dispatch)}`, true);
+    log('dispatch', `<span class="who">🚑 Einsatzmeldung</span>${esc(pick.text)}`, true);
     log('info', 'Ihr seid zu zweit mit dem RTW vor Ort. Du bist Rettungssanitäter. Wähle unten, was du tust.');
     render();
   }
@@ -157,7 +168,9 @@
     const t = document.createElement('div');
     t.className = 'toast ' + (type || '');
     t.textContent = text;
-    $('toasts').appendChild(t);
+    const box = $('toasts');
+    while (box.children.length >= 2) box.firstChild.remove();
+    box.appendChild(t);
     setTimeout(() => t.remove(), 2600);
   }
   function addEvent(pts, max, text, why, type) {
@@ -226,6 +239,7 @@
       penalty(C.sssPts || 3, 'Zuerst SSS: Szene, Sicherheit, Situation. Eigenschutz geht vor.');
     }
     if (a.kind === 'ask') {
+      if (a.id === 'q_hallo' || a.id === 'q_erkl' || a.id.startsWith('f_')) return;
       const open = openBlocking(li('D'));
       if (open.length && !s.warned.ask) {
         s.warned.ask = true;
@@ -246,26 +260,42 @@
       return;
     }
     if (a.kind === 'assess') {
+      // Kein Abzug, wenn nichts Bedrohliches übersprungen wird. Nur ein Tipp, falls gar kein Ersteindruck da war.
       const missing = LET.slice(1, li(L)).filter((l) => !s.letters[l]);
-      if (missing.length && !s.warned['skip_' + L]) {
-        s.warned['skip_' + L] = true;
-        penalty(2, `Reihenfolge: Du untersuchst ${L}, hast aber ${missing.join(', ')} noch nicht geprüft.`);
+      if (missing.length && !s.warned.skiptip) {
+        s.warned.skiptip = true;
+        log('info', `💡 Tipp: Ein kurzer Ersteindruck (Ansprechen) deckt x bis C grob ab. Beim stabilen Patienten darfst du danach gezielt nach dem Leitsymptom vorgehen.`);
       }
     }
   }
 
   /* ---------------------------------------------------------------- Aktion ausführen */
+  function actionFor(id) {
+    if (A.byId[id]) return A.byId[id];
+    const f = (C.followups || {})[id];
+    return f ? { id, label: f.label, kind: 'ask', letter: null, time: 15, followup: true } : null;
+  }
   function act(id) {
-    if (s.over) return;
+    if (s.over || $('modalBg').classList.contains('open')) return;
     closeSheet();
-    const a = A.byId[id];
+    const a = actionFor(id);
     log('you', a.label);
     orderCheck(a);
-    const quiz = findQuiz(a);
-    if (quiz) {
-      s.quizDone[quiz.idx] = true;
-      runQuiz(quiz.q, () => perform(a));
-    } else perform(a);
+    const go = () => {
+      const quiz = findQuiz(a);
+      const withProc = () => {
+        if (useProc(a)) runProc(a, () => perform(a)); else perform(a);
+      };
+      if (quiz) { s.quizDone[quiz.idx] = true; runQuiz(quiz.q, withProc); } else withProc();
+    };
+    const mo = findMoment({ before: id });
+    if (mo) showMoment(mo, go); else go();
+  }
+  function useProc(a) {
+    if (!settings.detail || !PROCS.P[a.id] || s.count[a.id]) return false;
+    if (C.rea && s.rea && !s.rea.rosc) return false;
+    if (a.id === 'm_tq' && !(C.problems || []).some((p) => (p.fixedBy || []).includes('m_tq'))) return false;
+    return true;
   }
 
   function findQuiz(a) {
@@ -280,12 +310,174 @@
   }
 
   function perform(a) {
-    const id = a.id;
-    if (C.rea && reaAction(a)) { render(); return; }
+    if (C.rea && reaAction(a)) { render(); afterAction(a.id); return; }
     if (a.kind === 'assess') doAssess(a);
     else if (a.kind === 'ask') doAsk(a);
     else doTreat(a);
     render();
+    afterAction(a.id);
+  }
+
+  /* ---------------------------------------------------------------- Stimmung */
+  function conscious() { return s.v.gcs >= 13 && !(C.rea && s.rea && !s.rea.rosc); }
+  function moodChange(d) {
+    if (!d) return;
+    s.mood = Math.max(0, Math.min(10, s.mood + d));
+    if (C.id === 'acs' && d < 0) s.v.hr += 2;
+    renderMood();
+  }
+  function renderMood() {
+    const show = conscious() && !C.child;
+    $('pMood').textContent = show ? MOOD_FACE(s.mood) : '';
+  }
+
+  /* ---------------------------------------------------------------- Gesprächsmomente */
+  function findMoment(trig) {
+    const ms = C.moments || [];
+    for (const m of ms) {
+      if (s.momentDone[m.id]) continue;
+      if (trig.before && m.before === trig.before) return m;
+      if (trig.after && m.after && m.after.includes(trig.after)) return m;
+      if (trig.tick) {
+        if (m.at != null && s.time >= m.at && !m.after && !m.before) return m;
+        if (m.cond && m.cond(s)) return m;
+      }
+    }
+    return null;
+  }
+  function afterAction(id) {
+    const m = findMoment({ after: id }) || findMoment({ tick: true });
+    if (m && !$('modalBg').classList.contains('open')) showMoment(m);
+  }
+  function showMoment(m, done) {
+    s.momentDone[m.id] = true;
+    const opts = shuffle(m.options.map((o, i) => i));
+    const md = modal(`<div class="kicker">💬 ${esc(m.who)}</div><h3 style="font-weight:600">${esc(m.say)}</h3><p style="color:var(--muted);font-size:14px">Wie reagierst du?</p><div class="options"></div><div class="res"></div>`);
+    log('pt moment', `<span class="who">${esc(m.who)}</span>${esc(m.say)}`, true);
+    const box = md.querySelector('.options');
+    opts.forEach((i) => {
+      const o = m.options[i];
+      const b = document.createElement('button');
+      b.className = 'opt'; b.textContent = o.t;
+      b.onclick = () => {
+        box.querySelectorAll('button').forEach((x) => { x.disabled = true; });
+        const good = (o.pts || 0) > 0;
+        b.classList.add(good ? 'right' : (o.pts < 0 ? 'wrong' : ''));
+        const best = m.options.reduce((mx, x) => Math.max(mx, x.pts || 0), 0);
+        log('you', o.t);
+        if (o.pts > 0) reward(o.pts, best, 'Gut reagiert: ' + m.who);
+        else { addEvent(0, best, 'Gesprächsmoment: ' + m.who, null, 'none'); if (o.pts < 0) penalty(-o.pts, o.why || 'Ungünstige Reaktion.'); }
+        moodChange(o.mood || 0);
+        if (o.delta) { Object.keys(o.delta).forEach((k) => { s.v[k] += o.delta[k]; }); clampVitals(); }
+        if (o.reply) log('pt', `<span class="who">${esc(m.who)}</span>${esc(o.reply)}`, true);
+        md.querySelector('.res').innerHTML = (o.reply ? `<div class="react"><span class="who">${esc(m.who)}</span>${esc(o.reply)}</div>` : '') + (o.why && !(o.pts > 0) ? `<div class="explain">${esc(o.why)}</div>` : '') + '<button class="btn wide accent">Weiter</button>';
+        md.querySelector('.res .btn').onclick = () => { closeModal(); render(); if (done) done(); else afterAction('__none'); };
+      };
+      box.appendChild(b);
+    });
+  }
+
+  /* ---------------------------------------------------------------- Maßnahmen Schritt für Schritt */
+  function runProc(a, done) {
+    const P = PROCS.P[a.id];
+    const awake = conscious();
+    const done_ = {};
+    const list = [];
+    let explained = false, consent = s.flags.consent || false;
+    const md = modal(`<div class="kicker">Schritt für Schritt</div><h3>${esc(P.title)}</h3><p style="color:var(--muted);font-size:14px">Was machst du als Nächstes? Tippe die Schritte in deiner Reihenfolge an.</p><div class="proc-done"></div><div class="react"></div><div class="options"></div>`);
+    const doneEl = md.querySelector('.proc-done');
+    const reactEl = md.querySelector('.react');
+    const box = md.querySelector('.options');
+    const who = (C.child ? 'Mutter' : (C.answerer && C.answerer(s)) && !awake ? C.answerer(s) : (C.name || 'Patient'));
+    const say = (t, w) => { reactEl.innerHTML = `<span class="who">${esc(w || who)}</span>${esc(t)}`; log('pt', `<span class="who">${esc(w || who)}</span>${esc(t)}`, true); };
+    const steps = shuffle(P.steps);
+    const draw = () => {
+      doneEl.innerHTML = list.map((x, i) => `<div class="op ${x.bad ? 'bad' : ''}">${i + 1}. ${esc(x.label)}</div>`).join('');
+      box.innerHTML = '';
+      steps.filter((st) => !done_[st.id]).forEach((st) => {
+        const b = document.createElement('button');
+        b.className = 'opt'; b.textContent = st.label;
+        b.onclick = () => pick(st);
+        box.appendChild(b);
+      });
+    };
+    const warnOnce = (key, pts, text) => { if (s.procWarned[key]) { log('info', text); return; } s.procWarned[key] = true; penalty(pts, text); };
+    const refusal = (st) => {
+      say(C.nonverbal ? '(Sie zieht den Arm weg und schüttelt heftig den Kopf.)' : '„Nein! Lassen Sie mich in Ruhe, ich will das nicht!“');
+      box.innerHTML = '';
+      const opts = [
+        { t: 'Ruhig erklären, warum es wichtig ist, und nochmal fragen', ok: true, mood: 3, reply: '„…Na gut. Aber vorsichtig.“' },
+        { t: 'Kollegin/Angehörige bitten, gut zuzureden', ok: true, mood: 2, reply: '„Wenn du meinst… okay.“' },
+        { t: 'Trotzdem machen, ist ja zu ihrem Besten', ok: false },
+      ];
+      shuffle(opts).forEach((o) => {
+        const b = document.createElement('button'); b.className = 'opt'; b.textContent = o.t;
+        b.onclick = () => {
+          if (o.ok) { moodChange(o.mood); consent = s.flags.consent = true; say(o.reply); reward(2, 2, 'Ablehnung respektvoll gelöst'); draw(); }
+          else {
+            penalty(10, 'Gegen den erklärten Willen eines ansprechbaren Patienten: Körperverletzung (§ 223 StGB). Bei Ablehnung erklären, überzeugen, Angehörige einbinden, im Zweifel NA, Ablehnung dokumentieren.');
+            moodChange(-3); consent = true; done_[st.id] = true; list.push({ label: st.label + ' (gegen ihren Willen)', bad: true });
+            say('„Aua! Sie haben mich einfach gestochen!“');
+            if (st.final) return finishProc(); draw();
+          }
+        };
+        box.appendChild(b);
+      });
+    };
+    const pick = (st) => {
+      if (st.wrong) {
+        done_[st.id] = true; list.push({ label: st.label, bad: true });
+        warnOnce(a.id + st.id, 2, st.wrong);
+        draw(); return;
+      }
+      const missing = (st.needs || []).filter((n) => !done_[n]);
+      if (missing.length) {
+        const names = missing.map((n) => P.steps.find((x) => x.id === n).label).join(', ');
+        warnOnce(a.id + st.id + 'need', 1, `Reihenfolge: Vor „${st.label}“ kommt erst: ${names}.`);
+        return;
+      }
+      if (st.id === 'erklaeren') {
+        explained = true; done_[st.id] = true; list.push({ label: st.label });
+        log('you', st.say || st.label);
+        if (C.rea && s.rea && !s.rea.rosc) say('(Keine Reaktion.)');
+        else if (!awake && !C.child) say('(Keine verständliche Reaktion. Du handelst nach dem mutmaßlichen Willen.)', 'Patient');
+        else if (C.child) say('Die Mutter nickt und hält ihre Tochter auf dem Schoß. Die Kleine weint leise.', 'Mutter');
+        else {
+          moodChange(1);
+          if (C.nonverbal) say(s.mood >= 4 ? '(Sie nickt langsam.)' : '(Sie schüttelt den Kopf und zieht die Hand weg.)');
+          else say(s.mood >= 6 ? '„Okay, machen Sie.“' : s.mood >= 4 ? '„Muss das sein…? Na gut.“' : '„Nein… ich will das nicht!“');
+          if (s.mood >= 4) consent = s.flags.consent = true;
+        }
+        draw(); return;
+      }
+      if (st.invasive && awake && !C.child) {
+        if (!explained && !s.flags['expl_' + a.id]) {
+          s.flags['expl_' + a.id] = true;
+          warnOnce('explain', 2, PROCS.EXPLAIN_WHY);
+          moodChange(-2);
+          const r = C.react[a.id + '.noexplain'] || (st.hurt ? '„Au! Was machen Sie denn da?! Sagen Sie doch vorher Bescheid!“' : '„Hey, was soll das? Was machen Sie?“');
+          say(r);
+        } else if (s.mood <= 2 && !consent) { return refusal(st); }
+      }
+      done_[st.id] = true; list.push({ label: st.label });
+      const key = a.id + '.' + st.id;
+      if (C.react[key + (explained ? '.explained' : '')]) say(C.react[key + (explained ? '.explained' : '')]);
+      else if (C.react[key]) say(C.react[key]);
+      else if (st.hurt && awake && explained && !C.child) say(C.nonverbal ? '(Sie zuckt kurz.)' : s.mood >= 5 ? '„Autsch. Geht schon.“' : '„Au!“');
+      else if (st.hurt && C.child) say('Die Kleine weint kurz auf, die Mutter tröstet sie.', 'Mutter');
+      if (st.final) return finishProc();
+      draw();
+    };
+    const finishProc = () => {
+      const skipped = P.steps.filter((x) => !x.wrong && !x.final && !done_[x.id] && !(x.id === 'erklaeren' && (!awake || C.rea)));
+      if (skipped.length) warnOnce(a.id + 'skip', Math.min(3, skipped.length), `${P.title}: vergessen: ${skipped.map((x) => x.label).join(', ')}.`);
+      else if (!list.some((x) => x.bad)) reward(2, 2, `${P.title}: sauber durchgeführt`);
+      else addEvent(0, 2, `${P.title}: mit Fehlern`, null, 'none');
+      box.innerHTML = '<button class="btn wide accent">Weiter</button>';
+      box.querySelector('.btn').onclick = () => { closeModal(); done(); };
+      doneEl.innerHTML = list.map((x, i) => `<div class="op ${x.bad ? 'bad' : ''}">${i + 1}. ${esc(x.label)}</div>`).join('');
+    };
+    draw();
   }
 
   function markDone(a) {
@@ -341,15 +533,41 @@
   }
 
   function doAsk(a) {
-    markDone(a);
-    const raw = (C.answers || {})[a.id];
-    let ans = val(raw);
     const who = C.answerer ? C.answerer(s) : null;
+    const name = who || C.name || 'Patient';
+    const ptTalks = !who && conscious();
+    if (a.id === 'q_hallo') {
+      markDone(a);
+      const first = s.count.q_hallo === 1;
+      const text = C.rea && !(s.rea && s.rea.rosc) ? '(Keine Reaktion.)' : who ? `„Das ist ${C.name}.“` : (conscious() ? `„${C.name}.“` : '(Keine verständliche Antwort.)');
+      log('pt', `<span class="who">${esc(name)}</span>${esc(text)}`, true);
+      if (first) moodChange(1);
+      advance(10); return;
+    }
+    if (a.id === 'q_erkl') {
+      markDone(a);
+      log('pt', `<span class="who">${esc(name)}</span>${esc(ptTalks ? (s.mood >= 4 ? '„Okay, danke, dass Sie mir das sagen.“' : '„Hm. Na gut.“') : who ? '„Danke, dass Sie uns das erklären.“' : '(Keine Reaktion.)')}`, true);
+      moodChange(1);
+      advance(10); return;
+    }
+    if (ptTalks && s.mood <= 1 && !C.child) {
+      log('pt', `<span class="who">${esc(name)}</span>„Lassen Sie mich doch in Ruhe mit Ihren Fragen!“`, true);
+      if (!s.warned.moodtip) { s.warned.moodtip = true; log('info', '💡 Der Patient blockt. Vorstellen, erklären oder beruhigen hilft.'); }
+      advance(10); return;
+    }
+    markDone(a);
+    const raw = a.followup ? C.followups[a.id].ans : (C.answers || {})[a.id];
+    let ans = val(raw);
     let text;
     if (ans && typeof ans === 'object') text = who ? ans.by : ans.pt;
     else text = ans;
     if (!text) text = who ? '„Weiß ich nicht.“' : (s.v.gcs < 13 ? '(Keine verständliche Antwort.)' : '„Nein, nichts Besonderes.“');
-    log('pt', `<span class="who">${esc(who || 'Patient')}</span>${esc(text)}`, true);
+    if (ptTalks && s.mood <= 3 && !a.followup && Math.random() < 0.5) text = '(zögert, genervt) ' + text;
+    log('pt', `<span class="who">${esc(name)}</span>${esc(text)}`, true);
+    Object.keys(C.followups || {}).forEach((fid) => {
+      const f = C.followups[fid];
+      if (f.after === a.id && !s.unlocked.includes(fid)) { s.unlocked.push(fid); log('info', `💬 Neue Nachfrage möglich: „${f.label}“`); }
+    });
     advance(a.time);
   }
 
@@ -381,6 +599,8 @@
     if (e.after) e.after(s);
     if (a.id === 'm_defi_kleben') { s.attached.ekg = true; ensureRhythm(); }
     if (a.id === 'm_nef') s.flags.nefAt = s.time;
+    if (a.id === 'm_betreuung') moodChange(2);
+    if (e.pts < 0 && first && conscious()) moodChange(-1);
     clampVitals();
     advance(a.time);
   }
@@ -405,6 +625,7 @@
   function render() {
     renderTop();
     $('pStatus').textContent = s.status;
+    renderMood();
     const v = s.v;
     const r = RHYTHMS[currentRhythm()];
     const pulse = r && r.pulse && (!C.rea || (s.rea && s.rea.rosc));
@@ -441,7 +662,9 @@
     $('sheetTitle').textContent = titles[tab];
     const body = $('sheetBody');
     body.innerHTML = '';
-    lists[tab].forEach((grp) => {
+    let groups = lists[tab];
+    if (tab === 'ask' && s.unlocked.length) groups = [{ group: 'Nachfragen', items: s.unlocked.map((id) => actionFor(id)) }].concat(groups);
+    groups.forEach((grp) => {
       const g = document.createElement('div');
       g.className = 'grp'; g.textContent = grp.group; body.appendChild(g);
       const w = document.createElement('div'); w.className = 'acts';
@@ -853,6 +1076,7 @@
         return Object.assign({ ok }, r);
       });
     }
+    if (!C.rea) req.push({ ok: !!s.count.q_hallo && (s.lastAt.q_hallo || 0) < 300, pts: 3, label: 'Vorgestellt und nach dem Namen gefragt', why: 'Gehört an den Anfang: schafft Vertrauen, und der Name hilft bei jeder weiteren Ansprache.' });
     const reqPts = req.reduce((t, r) => t + (r.ok ? r.pts : 0), 0);
     const reqMax = req.reduce((t, r) => t + r.pts, 0);
     const evPts = s.events.reduce((t, e) => t + e.pts, 0);
@@ -865,8 +1089,8 @@
     const bad = s.events.filter((e) => e.type === 'bad');
     const miss = s.events.filter((e) => e.type === 'miss');
     const good = s.events.filter((e) => e.type === 'good' && e.pts > 0);
-    let h = `<div class="score"><div class="big" style="color:${grade[1]}">${pct} %</div><div class="grade">${grade[0]}</div><small>${score} von ${max} Punkten · Einsatzzeit ${mm} min</small></div>`;
-    h += `<div class="ditem"><b>${esc(C.icon + ' ' + C.short)}</b><small>Lösung: ${esc(C.diagnosis.options[C.diagnosis.answer])}${C.rea ? ' · Rhythmusverlauf: ' + esc(s.rea.path.map((k) => k === 'rosc' ? 'ROSC' : RHYTHMS[k].name.split(' (')[0]).join(' → ')) : ''}</small></div>`;
+    let h = `<div class="score"><div class="big" style="color:${grade[1]}">${pct} %</div><div class="grade">${grade[0]}</div><small>${score} von ${max} Punkten · Einsatzzeit ${mm} min${C.rea || C.child ? '' : ' · Stimmung am Ende ' + MOOD_FACE(s.mood)}</small></div>`;
+    h += `<div class="ditem"><b>${esc((C.person || C.icon) + ' ' + s.dispatch.short)}</b><small>Lösung: ${esc(C.diagnosis.options[C.diagnosis.answer])}${C.rea ? ' · Rhythmusverlauf: ' + esc(s.rea.path.map((k) => k === 'rosc' ? 'ROSC' : RHYTHMS[k].name.split(' (')[0]).join(' → ')) : ''}</small></div>`;
     h += '<h4>Erledigt</h4>' + (req.filter((r) => r.ok).map((r) => `<div class="ditem good"><span class="p">+${r.pts}</span>✓ ${esc(r.label)}<small>${esc(r.why)}</small></div>`).join('') || '<div class="ditem">Nichts davon.</div>');
     const missed = req.filter((r) => !r.ok);
     if (missed.length) h += '<h4>Vergessen</h4>' + missed.map((r) => `<div class="ditem miss"><span class="p">${r.pts}</span>✗ ${esc(r.label)}<small>${esc(r.why)}</small></div>`).join('');

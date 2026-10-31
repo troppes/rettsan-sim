@@ -42,6 +42,10 @@
   ];
 
   const ASK = [
+    { group: 'Gespräch', items: [
+      { id: 'q_hallo', label: 'Vorstellen, nach dem Namen fragen' },
+      { id: 'q_erkl', label: 'Erklären, was ihr jetzt macht' },
+    ] },
     { group: 'SAMPLER', items: [
       { id: 'q_s', label: 'S – Was für Beschwerden haben Sie?' },
       { id: 'q_a', label: 'A – Haben Sie Allergien?' },

@@ -27,6 +27,11 @@
         <span class="track"><span class="thumb"></span></span>
         <span class="tlabel"><b>Verschlechterung</b><small>Unbehandelte Probleme werden mit der Zeit schlimmer</small></span>
       </label>
+      <label class="toggle">
+        <input type="checkbox" id="optDetail" checked>
+        <span class="track"><span class="thumb"></span></span>
+        <span class="tlabel"><b>Maßnahmen im Detail</b><small>Messen und Behandeln Schritt für Schritt (aus = nur rätseln)</small></span>
+      </label>
     </div>
 
     <h2 class="sec">Einsätze</h2>
@@ -40,7 +45,9 @@
       <summary>So funktioniert’s</summary>
       <ul>
         <li><b>Untersuchen</b>, <b>Fragen</b> und <b>Maßnahmen</b> wählst du frei. Jede Aktion kostet Einsatzzeit.</li>
-        <li>Arbeite nach <b>xABCDE</b>. Wer bei einem offenen x-, A-, B- oder C-Problem schon Späteres macht, bekommt Abzug.</li>
+        <li>Arbeite nach <b>xABCDE</b>. Wer bei einem offenen x-, A-, B- oder C-Problem schon Späteres macht, bekommt Abzug. Beim stabilen Patienten reicht ein kurzer Ersteindruck, dann darfst du gezielt vorgehen.</li>
+        <li>Die Einsatzmeldung kann täuschen: Nicht jeder Bauchschmerz ist der Bauch.</li>
+        <li>Der Patient hat eine <b>Stimmung</b>. Wer erklärt, vorstellt und beruhigt, bekommt bessere Antworten. Wer ungefragt piekst, erntet Ärger.</li>
         <li>Wenn du mit Maßnahmen anfängst, kommt ein kurzes <b>Quiz</b> zur richtigen Abfolge.</li>
         <li>Mit <b>Übergabe</b> beendest du den Einsatz, stellst deine Verdachtsdiagnose und bekommst die Auswertung.</li>
         <li>Kein Login, nichts wird gespeichert.</li>
@@ -73,6 +80,7 @@
 
     <div class="patient card">
       <div class="pt-ico" id="pIcon"></div>
+      <div class="pt-mood" id="pMood" title="Stimmung"></div>
       <div class="pt-txt" id="pStatus"></div>
     </div>
 
@@ -125,6 +133,8 @@
   <script src="js/ecg.js"></script>
   <script src="js/actions.js"></script>
   <script src="js/cases.js"></script>
+  <script src="js/cases_extra.js"></script>
+  <script src="js/procedures.js"></script>
   <script src="js/game.js"></script>
 </body>
 </html>
