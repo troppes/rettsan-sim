@@ -262,12 +262,18 @@
     }
   ],
   "diagnosis": {
-    "options": ["Generalisierter Krampfanfall bei bekannter Epilepsie","Hypoglykämie","Synkope","Alkoholintoxikation"],
+    "options": [
+      "Generalisierter tonisch-klonischer Krampfanfall",
+      "Krampfanfall durch Hypoglykämie",
+      "Konvulsive Synkope",
+      "Alkoholintoxikation"
+    ],
     "answer": 0
   },
   "teach": [
     "Im Anfall: nicht festhalten, kein Beißkeil, Kopf polstern, Uhrzeit, Absaugbereitschaft, NEF, BZ.",
     "Nach dem Anfall: Seitenlage, O₂, nach Verletzungen suchen (Zungenbiss).",
+    "Ob eine Epilepsie bekannt ist, weißt du nur aus der Anamnese nach dem Anfall (SAMPLER: P und M) oder vom Notfallausweis bzw. -armband im Bodycheck. Ein erstmaliger Anfall gehört immer in die Klinik.",
     "Über 5 Minuten = Status epilepticus → Benzodiazepine durch NotSan/NA."
   ]
 }
