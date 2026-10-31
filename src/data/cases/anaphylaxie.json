@@ -97,6 +97,18 @@
           "mood": -2,
           "pts": -3,
           "why": "Auch im Notfall kurz aufklären. Der § 34 setzt eine (zumindest mutmaßliche) Einwilligung voraus, und die Patientin ist wach."
+        },
+        {
+          "t": "„Das ist Cortison, das wirkt sofort gegen die Schwellung. Kurzer Piks in den Oberarm.“",
+          "pts": -3,
+          "mood": 1,
+          "why": "Falsches Medikament und falscher Ort: Der Autoinjektor enthält Adrenalin und gehört i.m. in den seitlichen Oberschenkel."
+        },
+        {
+          "t": "„Ich erkläre Ihnen alles gleich, erst die Spritze, dann reden wir.“",
+          "pts": -1,
+          "mood": -1,
+          "why": "Kurz zu erklären dauert zwei Sätze. Die wache Patientin muss zustimmen, sonst ist es eine Körperverletzung."
         }
       ]
     }

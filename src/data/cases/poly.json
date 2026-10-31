@@ -119,6 +119,38 @@
           "pts": -3,
           "delta": {"sys":-6,"hr":4},
           "why": "Dein Patient verblutet gerade: x zuerst. Kurze Ansage reicht."
+        },
+        {
+          "t": "„Bitte sichern Sie die Unfallstelle mit dem Warndreieck ab.“",
+          "pts": 1,
+          "why": "Teilweise: Absichern ist wichtig, aber er ist selbst möglicher Patient im Schock. Platz zuweisen, Nachforderung, die Absicherung übernehmen andere."
+        }
+      ]
+    },
+    {
+      "id": "helm",
+      "who": "Passant",
+      "at": 45,
+      "say": "Ein Passant kniet sich neben den Fahrer: „Soll ich ihm den Helm abnehmen? Der kriegt doch da drin keine Luft!“",
+      "options": [
+        {
+          "t": "„Bitte nur das Visier öffnen und den Kopf ruhig halten. Den Helm nehmen wir gleich zu zweit ab, einer stabilisiert dabei die Halswirbelsäule.“",
+          "pts": 3,
+          "reply": "Er klappt vorsichtig das Visier hoch und hält den Kopf."
+        },
+        {
+          "t": "„Ja, aber ganz vorsichtig gerade nach oben ziehen.“",
+          "pts": -5,
+          "why": "Helmabnahme immer zu zweit: Einer hält Kopf und HWS in Neutralposition, der andere zieht den Helm ab. Allein droht eine Rückenmarksverletzung."
+        },
+        {
+          "t": "„Nein, der Helm bleibt drauf, bis die Klinik ihn abnimmt.“",
+          "pts": -3,
+          "why": "Falsch: Für Atemweg, Untersuchung und Immobilisation muss der Helm runter, nur eben zu zweit mit HWS-Stabilisierung."
+        },
+        {
+          "t": "„Bitte nichts anfassen und Abstand halten.“",
+          "why": "Sicher, aber verschenkt: Er kann den Kopf stabilisieren und das Visier öffnen, das hilft euch sofort."
         }
       ]
     }

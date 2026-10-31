@@ -123,3 +123,15 @@ describe('EKG', () => {
     for (const k of all) expect(ECG.rhythms[k], k).toBeDefined();
   });
 });
+
+describe('Gesprächsmomente', () => {
+  for (const c of CASES) for (const m of c.moments ?? []) {
+    it(`${c.id}.${m.id}: mindestens 3 Antworten, genau eine beste, jede schwächere erklärt`, () => {
+      expect(m.options.length).toBeGreaterThanOrEqual(3);
+      const best = Math.max(...m.options.map((o) => o.pts ?? 0));
+      expect(best).toBeGreaterThan(0);
+      expect(m.options.filter((o) => (o.pts ?? 0) === best)).toHaveLength(1);
+      for (const o of m.options) if ((o.pts ?? 0) < best) expect(o.why, o.t).toBeTruthy();
+    });
+  }
+});

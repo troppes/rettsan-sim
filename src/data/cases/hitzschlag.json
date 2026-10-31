@@ -116,6 +116,18 @@
           "pts": -5,
           "delta": {"sys":-8},
           "why": "Bewusstseinsgetrübt und hypoton: Sturz- und Kollapsgefahr."
+        },
+        {
+          "t": "„Trink erst mal ordentlich Wasser, dann geht's dir besser.“",
+          "pts": -4,
+          "mood": 1,
+          "why": "Er ist bewusstseinsgetrübt: Beim Trinken droht Aspiration. Kühlen und Flüssigkeit i.v. statt Trinken lassen."
+        },
+        {
+          "t": "Ihn langsam aufsetzen und stützen, damit er sich beruhigt.",
+          "pts": -2,
+          "mood": 1,
+          "why": "Hypoton und verwirrt: Aufsetzen kann zum Kollaps führen. Liegen lassen, Beine hoch, kühlen."
         }
       ]
     }

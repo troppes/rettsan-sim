@@ -147,6 +147,18 @@
           "mood": -3,
           "pts": -3,
           "why": "Eine wache, orientierte Patientin entscheidet selbst (Selbstbestimmungsrecht). Aufklären, nicht zwingen."
+        },
+        {
+          "t": "„Der Zucker ist wieder über 100, Sie dürfen bleiben. Unterschreiben müssen Sie nichts.“",
+          "pts": -3,
+          "mood": 2,
+          "why": "Ohne Mahlzeit kann der Zucker erneut fallen (lang wirkendes Insulin). Transportverweigerung immer mit Aufklärung dokumentieren und unterschreiben lassen."
+        },
+        {
+          "t": "„Essen Sie eine Banane, dann ist es okay. Ich notiere nur kurz Ihren Namen.“",
+          "pts": -1,
+          "mood": 1,
+          "why": "Essen ist richtig, aber du musst über das Risiko aufklären und die Ablehnung schriftlich dokumentieren."
         }
       ],
       "if": {"flag":"erholt"}

@@ -61,6 +61,10 @@
           "t": "„Nein, gehen Sie bitte weg.“",
           "pts": -1,
           "why": "Ersthelfer sinnvoll einbinden: Einweisen, Platz schaffen, Angehörige suchen."
+        },
+        {
+          "t": "„Ja, holen Sie bitte den Defi aus dem Eingangsbereich.“",
+          "why": "Ihr habt euren Defi schon dabei. Sinnvoller: NA einweisen, Weg freihalten, Angehörige oder Zeugen finden."
         }
       ]
     }

@@ -89,6 +89,18 @@
           "mood": -3,
           "pts": -3,
           "why": "Druck eskaliert. Erst erklären und den Bevollmächtigten einbinden."
+        },
+        {
+          "t": "„Dann rufe ich die Polizei, die bringt Sie gegen Ihren Willen hin.“",
+          "pts": -4,
+          "mood": -3,
+          "why": "Eine Zwangseinweisung ordnet nicht die Polizei an. In Berlin entscheiden Sozialpsychiatrischer Dienst bzw. Gericht. Erst aufklären, Bevollmächtigten einbinden, ggf. NA."
+        },
+        {
+          "t": "„Ich unterschreibe Ihnen das, dann ruft morgen der Hausarzt an.“",
+          "pts": -3,
+          "mood": 1,
+          "why": "Akute Verwirrtheit bei Exsikkose ist ein Notfall. Ob sie einwilligungsfähig ist, ist fraglich: nicht einfach eine Verweigerung unterschreiben lassen."
         }
       ]
     }

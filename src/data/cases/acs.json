@@ -112,6 +112,43 @@
           "delta": {"hr":6},
           "pts": -2,
           "why": "Abwimmeln steigert die Angst. Stress erhöht den Sauerstoffbedarf des Herzens."
+        },
+        {
+          "t": "„Ja, das ist ein Herzinfarkt. Aber keine Sorge, das ist heute gut behandelbar, Ihnen passiert nichts.“",
+          "pts": -2,
+          "mood": 1,
+          "why": "Du stellst eine Diagnose, die du als RS nicht sichern kannst, und gibst ein Versprechen, das du nicht halten kannst."
+        }
+      ]
+    },
+    {
+      "id": "klo",
+      "who": "Herr Becker",
+      "at": 200,
+      "say": "„Ich muss mal ganz dringend… kann ich schnell auf die Toilette? Ist ja gleich da vorne.“",
+      "options": [
+        {
+          "t": "„Bitte bleiben Sie sitzen. Wir haben eine Urinflasche dabei, ich schirme Sie ab.“",
+          "pts": 3,
+          "mood": 1,
+          "reply": "Er ist erleichtert, dass es diskret bleibt."
+        },
+        {
+          "t": "„Klar, aber ich begleite Sie und stütze Sie.“",
+          "pts": -3,
+          "mood": 1,
+          "why": "Beim ACS nicht laufen lassen: Gehen und Pressen erhöhen den Sauerstoffbedarf des Herzens, Gefahr von Rhythmusstörungen bis zum Kollaps auf der Toilette."
+        },
+        {
+          "t": "„Erst nach dem 12-Kanal-EKG, wenn das unauffällig ist.“",
+          "pts": -2,
+          "why": "Ein unauffälliges EKG schließt einen Infarkt nicht aus. Nicht laufen lassen, Urinflasche oder Steckbecken nutzen."
+        },
+        {
+          "t": "„Das muss jetzt warten, bis wir in der Klinik sind.“",
+          "pts": -1,
+          "mood": -2,
+          "why": "Er hat Recht auf Würde: Es gibt eine Lösung ohne Aufstehen (Urinflasche, Sichtschutz)."
         }
       ]
     }

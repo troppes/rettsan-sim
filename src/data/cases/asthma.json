@@ -89,6 +89,18 @@
           "delta": {"af":2},
           "pts": -5,
           "why": "Er hat echte Atemnot (Giemen, SpO₂ 88 %). Nie abwerten."
+        },
+        {
+          "t": "Eine Tüte vor Mund und Nase halten: „Atme in die Tüte, das beruhigt.“",
+          "pts": -5,
+          "mood": -1,
+          "why": "Tütenatmung ist bei Asthma gefährlich: Er hat zu wenig Sauerstoff, nicht zu viel CO₂ abgeatmet. Bei Hypoxie nie Rückatmung."
+        },
+        {
+          "t": "„Leg dich flach hin und entspann dich, dann geht es leichter.“",
+          "pts": -3,
+          "mood": -1,
+          "why": "Flach liegen verschlechtert die Atemmechanik. Bei Atemnot sitzen lassen, Arme aufstützen (Kutschersitz)."
         }
       ]
     }

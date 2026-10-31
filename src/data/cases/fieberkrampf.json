@@ -96,7 +96,17 @@
           "pts": -3,
           "why": "Eltern gehören zum Kind: Das Kind beruhigt sich bei den Eltern, und sie kennen die Vorgeschichte."
         },
-        {"t":"„Keine Ahnung, mal sehen.“","pts":-5,"why":"Panische Eltern brauchen klare, ruhige Infos."}
+        {"t":"„Keine Ahnung, mal sehen.“","pts":-5,"why":"Panische Eltern brauchen klare, ruhige Infos."},
+        {
+          "t": "„Sie atmet. Halten Sie sie bitte gut fest, falls es wieder losgeht.“",
+          "pts": 1,
+          "why": "Halb richtig: Beruhigen ja, aber ein krampfendes Kind nie festhalten, sondern vor Verletzungen schützen."
+        },
+        {
+          "t": "„Das war nur ein Fieberkrampf, das ist harmlos. Sie können zu Hause bleiben.“",
+          "pts": -4,
+          "why": "Ein erster Fieberkrampf gehört in die Klinik: Ursache klären, z. B. eine Hirnhautentzündung ausschließen."
+        }
       ]
     }
   ],

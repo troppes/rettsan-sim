@@ -499,7 +499,10 @@ export class Game {
       onAnswer: (k) => {
         const o = m.options[k as number];
         const best = m.options.reduce((mx, x) => Math.max(mx, x.pts ?? 0), 0);
-        p.choices[order.indexOf(k as number)].state = (o.pts ?? 0) > 0 ? 'right' : (o.pts ?? 0) < 0 ? 'wrong' : 'neutral';
+        const pts = o.pts ?? 0;
+        p.choices[order.indexOf(k as number)].state = pts >= best && pts > 0 ? 'right' : pts < 0 ? 'wrong' : 'neutral';
+        // Bei einer schwächeren Wahl die beste Antwort zeigen
+        if (pts < best) p.choices[order.indexOf(m.options.findIndex((x) => (x.pts ?? 0) === best))].state = 'right';
         this.addLog('you', o.t);
         if ((o.pts ?? 0) > 0) this.reward(o.pts!, best, 'Gut reagiert: ' + m.who);
         else {
@@ -510,7 +513,7 @@ export class Game {
         if (o.delta) { mutate(this.s, { delta: o.delta }); this.clampVitals(); }
         if (o.reply) this.addLog('pt', o.reply, m.who);
         p.reply = o.reply;
-        p.why = (o.pts ?? 0) > 0 ? undefined : o.why;
+        p.why = pts >= best ? undefined : o.why;
       },
     });
   }

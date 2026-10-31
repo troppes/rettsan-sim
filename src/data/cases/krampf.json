@@ -137,6 +137,16 @@
           "t": "„Ja, gute Idee.“",
           "pts": -10,
           "why": "Nichts in den Mund eines Krampfenden: Zähne brechen ab, Aspiration, Bissverletzungen beim Helfer."
+        },
+        {
+          "t": "„Nur ein weiches Tuch zwischen die Zähne, das schützt die Zunge.“",
+          "pts": -6,
+          "why": "Auch ein Tuch ist ein Beißkeil: Zähne brechen ab, Aspiration, Verletzung der Helfer. Nichts in den Mund."
+        },
+        {
+          "t": "„Halten Sie bitte seine Arme fest, damit er sich nicht verletzt.“",
+          "pts": -4,
+          "why": "Krampfende nie festhalten: Brüche, Luxationen, Muskelrisse. Gegenstände wegräumen, Kopf polstern."
         }
       ]
     },
@@ -156,6 +166,12 @@
           "mood": -1,
           "pts": 0,
           "why": "Postiktal sind Patienten verwirrt und beschämt: Orientieren und Würde wahren hilft mehr."
+        },
+        {
+          "t": "Erst Orientierung testen: „Welcher Tag ist heute? Wie heißen Sie? Wo sind wir?“",
+          "pts": 1,
+          "mood": -1,
+          "why": "Orientierung zu prüfen ist sinnvoll, aber vor Publikum und ohne Erklärung beschämt es. Erst beruhigen und Sichtschutz, dann prüfen."
         }
       ],
       "if": {"flag":"wach"}

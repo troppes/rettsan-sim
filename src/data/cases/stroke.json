@@ -84,6 +84,18 @@
           "mood": -2,
           "pts": -2,
           "why": "Patienten mit Sprachstörung verstehen oft viel mehr, als sie sagen können. Immer auch den Patienten selbst ansprechen."
+        },
+        {
+          "t": "„Bitte versuchen Sie nicht zu sprechen, das strengt Sie an. Wir klären alles mit Ihrer Tochter.“",
+          "pts": -1,
+          "mood": -1,
+          "why": "Sie versteht dich wahrscheinlich gut. Sprich sie selbst an und gib ihr Zeit, auch wenn die Sprache stockt."
+        },
+        {
+          "t": "„Das ist nur ein kleiner Schlaganfall, das wird schnell wieder.“",
+          "pts": -2,
+          "mood": 1,
+          "why": "Keine Prognosen und keine Verharmlosung: Das Ausmaß zeigt erst die Klinik."
         }
       ]
     },
@@ -94,14 +106,24 @@
       "say": "„Wird sie wieder gesund? Ich hätte früher kommen sollen, das ist alles meine Schuld!“",
       "options": [
         {
-          "t": "„Sie haben genau richtig gehandelt und schnell angerufen. Bitte packen Sie den Medikamentenplan ein und bleiben Sie telefonisch erreichbar, die Klinik braucht vielleicht Ihre Auskunft.“",
+          "t": "„Sie haben richtig gehandelt. Wann genau haben Sie Ihre Mutter zuletzt ohne diese Beschwerden gesehen? Und nimmt sie Blutverdünner?“",
           "pts": 3,
-          "reply": "Sie wischt sich die Tränen ab und holt die Medikamente."
+          "reply": "„Um acht beim Frühstück war alles normal… Ja, Eliquis, der Plan liegt in der Küche.“"
+        },
+        {
+          "t": "„Sie haben genau richtig gehandelt. Bitte bleiben Sie erreichbar.“",
+          "pts": 1,
+          "why": "Gut zum Beruhigen, aber die Tochter ist deine wichtigste Quelle: Zeitpunkt „zuletzt gesund gesehen“ und Blutverdünner entscheiden über die Lyse."
         },
         {
           "t": "„Na ja, eine halbe Stunde früher wäre schon besser gewesen.“",
           "pts": -3,
           "why": "Schuldzuweisung hilft niemandem. Angehörige stärken und einbinden (Zeitpunkt, Medikamente, Erreichbarkeit)."
+        },
+        {
+          "t": "„Machen Sie sich keine Sorgen, in ein paar Tagen ist sie wieder ganz die Alte.“",
+          "pts": -2,
+          "why": "Keine Versprechen über die Prognose."
         }
       ]
     }
