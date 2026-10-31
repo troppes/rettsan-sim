@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0f1720">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>RettSan Sim</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%230f1720'/><path d='M10 55h22l8-22 12 40 10-28 6 10h22' fill='none' stroke='%233df27a' stroke-width='8' stroke-linejoin='round' stroke-linecap='round'/></svg>">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Startseite -->
+  <section id="home" class="screen active">
+    <header class="hero">
+      <div class="logo">
+        <svg viewBox="0 0 100 40" aria-hidden="true"><path d="M2 22h20l6-16 9 30 8-22 5 8h48" fill="none" stroke="currentColor" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/></svg>
+      </div>
+      <h1>RettSan Sim</h1>
+      <p class="sub">Patienten untersuchen, befragen, behandeln. Nach NAW-Schulmeinung, in der Rolle als Rettungssanitäter.</p>
+    </header>
+
+    <div class="settings card">
+      <label class="toggle">
+        <input type="checkbox" id="optWorsen" checked>
+        <span class="track"><span class="thumb"></span></span>
+        <span class="tlabel"><b>Verschlechterung</b><small>Unbehandelte Probleme werden mit der Zeit schlimmer</small></span>
+      </label>
+    </div>
+
+    <h2 class="sec">Einsätze</h2>
+    <div id="caseList" class="case-list"></div>
+    <button class="btn wide ghost" id="btnRandom">🎲 Zufälliger Einsatz</button>
+
+    <h2 class="sec">Training</h2>
+    <button class="btn wide ghost" id="btnTrainer">📈 EKG-Trainer: Rhythmen erkennen</button>
+
+    <details class="card howto">
+      <summary>So funktioniert’s</summary>
+      <ul>
+        <li><b>Untersuchen</b>, <b>Fragen</b> und <b>Maßnahmen</b> wählst du frei. Jede Aktion kostet Einsatzzeit.</li>
+        <li>Arbeite nach <b>xABCDE</b>. Wer bei einem offenen x-, A-, B- oder C-Problem schon Späteres macht, bekommt Abzug.</li>
+        <li>Wenn du mit Maßnahmen anfängst, kommt ein kurzes <b>Quiz</b> zur richtigen Abfolge.</li>
+        <li>Mit <b>Übergabe</b> beendest du den Einsatz, stellst deine Verdachtsdiagnose und bekommst die Auswertung.</li>
+        <li>Kein Login, nichts wird gespeichert.</li>
+      </ul>
+    </details>
+    <p class="foot">Lernspiel für die RettSan-Ausbildung. Ersetzt keine Ausbildung, Leitlinie oder SOP.</p>
+  </section>
+
+  <!-- Einsatz -->
+  <section id="game" class="screen">
+    <div class="topbar">
+      <button class="icon-btn" id="btnQuit" aria-label="Einsatz abbrechen">✕</button>
+      <div class="tb-mid">
+        <div class="tb-title" id="gTitle"></div>
+        <div class="tb-sub"><span id="gClock">00:00</span> · <span id="gScore">0</span> Punkte</div>
+      </div>
+      <button class="btn small accent" id="btnFinish">Übergabe</button>
+    </div>
+
+    <div class="monitor">
+      <canvas id="ecg"></canvas>
+      <div class="vitals">
+        <div class="v hr"><span class="vl">HF</span><span class="vv" id="vHR">--</span></div>
+        <div class="v spo2"><span class="vl">SpO₂</span><span class="vv" id="vSpO2">--</span></div>
+        <div class="v nibp"><span class="vl">RR</span><span class="vv" id="vRR">--/--</span></div>
+        <div class="v af"><span class="vl">AF</span><span class="vv" id="vAF">--</span></div>
+      </div>
+      <div class="mini" id="vMini"></div>
+    </div>
+
+    <div class="patient card">
+      <div class="pt-ico" id="pIcon"></div>
+      <div class="pt-txt" id="pStatus"></div>
+    </div>
+
+    <div id="log" class="log" aria-live="polite"></div>
+
+    <nav class="tabs" id="tabs">
+      <button data-tab="assess">🩺<span>Untersuchen</span></button>
+      <button data-tab="ask">💬<span>Fragen</span></button>
+      <button data-tab="treat">🩹<span>Maßnahmen</span></button>
+      <button data-tab="rea" class="rea-tab">❤️‍🔥<span>Rea</span></button>
+    </nav>
+
+    <div class="sheet-bg" id="sheetBg"></div>
+    <div class="sheet" id="sheet">
+      <div class="sheet-head"><span id="sheetTitle"></span><button class="icon-btn" id="sheetClose" aria-label="Schließen">✕</button></div>
+      <div class="sheet-body" id="sheetBody"></div>
+    </div>
+  </section>
+
+  <!-- EKG-Trainer -->
+  <section id="trainer" class="screen">
+    <div class="topbar">
+      <button class="icon-btn" id="btnTrainerBack" aria-label="Zurück">←</button>
+      <div class="tb-mid"><div class="tb-title">EKG-Trainer</div><div class="tb-sub" id="trStats">0 / 0 richtig</div></div>
+      <span style="width:72px"></span>
+    </div>
+    <div class="monitor big"><canvas id="ecgTr"></canvas><div class="tr-pulse" id="trPulse"></div></div>
+    <div class="tr-actions">
+      <button class="btn small ghost" id="trPulseBtn">🫳 Puls prüfen</button>
+      <button class="btn small ghost" id="trHelpBtn">💡 Hilfe</button>
+    </div>
+    <div class="tr-help card" id="trHelp" hidden></div>
+    <div class="options" id="trOptions"></div>
+    <div class="tr-feedback" id="trFeedback"></div>
+    <button class="btn wide accent" id="trNext" hidden>Nächster Rhythmus</button>
+  </section>
+
+  <!-- Auswertung -->
+  <section id="debrief" class="screen">
+    <div class="topbar"><div class="tb-mid"><div class="tb-title">Auswertung</div></div></div>
+    <div id="debriefBody" class="debrief"></div>
+  </section>
+
+  <!-- Modal -->
+  <div class="modal-bg" id="modalBg">
+    <div class="modal" id="modal" role="dialog" aria-modal="true"></div>
+  </div>
+  <div class="toasts" id="toasts"></div>
+
+  <script src="js/ecg.js"></script>
+  <script src="js/actions.js"></script>
+  <script src="js/cases.js"></script>
+  <script src="js/game.js"></script>
+</body>
+</html>
