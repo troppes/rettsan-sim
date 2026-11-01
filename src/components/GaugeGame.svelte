@@ -5,6 +5,8 @@
      eine mögliche auskultatorische Lücke, schwergängiges Ventil und unregelmäßigen Puls bei Vorhofflimmern. */
   import type { Game } from '../lib/engine/game';
   import type { Prompt } from '../lib/engine/state';
+  import * as sfx from '../lib/audio';
+  import { unlock, audioState } from '../lib/audio';
 
   let { game, prompt }: { game: Game; prompt: Extract<Prompt, { kind: 'gauge' }> } = $props();
   const cfg = $derived(prompt.cfg);
@@ -27,84 +29,12 @@
   let now = $state(performance.now());
   const blip = (a: number, w = 1) => { blips = [...blips.filter((b) => now - b.t < 3000), { t: performance.now(), a, w }]; };
 
-  /* ---------- Töne */
-  let audio: AudioContext | null = null;
-  let noiseBuf: AudioBuffer | null = null;
-  let out: AudioNode | null = null;
-  let ttsReady = false;
-  function ctx() {
-    // iOS spricht nur, wenn die erste Sprachausgabe direkt aus einem Tippen kommt: einmal leise „freischalten“
-    if (!ttsReady) {
-      ttsReady = true;
-      try { const u = new SpeechSynthesisUtterance(' '); u.volume = 0; speechSynthesis.speak(u); } catch { /* ohne Sprache */ }
-    }
-    const AC = typeof AudioContext !== 'undefined' ? AudioContext : (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
-    if (!audio && AC) {
-      audio = new AC();
-      // Etwas lauter und gleichmäßiger: Verstärkung plus Kompressor vor dem Ausgang
-      const comp = audio.createDynamicsCompressor();
-      const gain = audio.createGain();
-      gain.gain.value = 1.6;
-      gain.connect(comp).connect(audio.destination);
-      out = gain;
-      noiseBuf = audio.createBuffer(1, audio.sampleRate, audio.sampleRate);
-      const d = noiseBuf.getChannelData(0);
-      for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
-    }
-    void audio?.resume();
-    return audio;
-  }
-  function tone(f: number, a: number, len: number, type: OscillatorType = 'sine', at = 0) {
-    if (!sound || !audio) return;
-    const t = audio.currentTime + at;
-    const o = audio.createOscillator();
-    const g = audio.createGain();
-    o.type = type;
-    o.frequency.value = f;
-    g.gain.setValueAtTime(0, t);
-    g.gain.linearRampToValueAtTime(a, t + 0.01);
-    g.gain.exponentialRampToValueAtTime(0.001, t + len);
-    o.connect(g).connect(out ?? audio.destination);
-    o.start(t);
-    o.stop(t + len + 0.02);
-    return o;
-  }
-  function noise(a: number, len: number, lo: number, hi: number) {
-    if (!sound || !audio || !noiseBuf) return;
-    const t = audio.currentTime;
-    const src = audio.createBufferSource();
-    src.buffer = noiseBuf;
-    const bp = audio.createBiquadFilter();
-    bp.type = 'bandpass';
-    bp.frequency.value = (lo + hi) / 2;
-    bp.Q.value = (lo + hi) / 2 / (hi - lo);
-    const g = audio.createGain();
-    g.gain.setValueAtTime(0, t);
-    g.gain.linearRampToValueAtTime(a, t + 0.01);
-    g.gain.exponentialRampToValueAtTime(0.001, t + len);
-    src.connect(bp).connect(g).connect(out ?? audio.destination);
-    src.start(t, Math.random() * 0.5);
-    src.stop(t + len + 0.02);
-  }
-  /** Ein „Tock“: echte Korotkow-Töne sind sehr tief, Laptop- und Handylautsprecher geben unter ~150 Hz
-      kaum etwas wieder. Deshalb Grundton + Obertöne + kurzer Klick, dumpf = tiefer und weicher. */
-  function tock(a: number, dull = false) {
-    if (!sound || !audio) return;
-    // Dreieckswelle mit fallender Tonhöhe: klingt wie ein Klopfen, die Obertöne (x3, x5) hört man auch aus kleinen Lautsprechern
-    const t = audio.currentTime;
-    const o = audio.createOscillator();
-    const g = audio.createGain();
-    o.type = 'triangle';
-    o.frequency.setValueAtTime(dull ? 170 : 240, t);
-    o.frequency.exponentialRampToValueAtTime(dull ? 80 : 110, t + 0.1);
-    g.gain.setValueAtTime(0, t);
-    g.gain.linearRampToValueAtTime(a, t + 0.008);
-    g.gain.exponentialRampToValueAtTime(0.001, t + (dull ? 0.16 : 0.12));
-    o.connect(g).connect(out ?? audio.destination);
-    o.start(t);
-    o.stop(t + 0.2);
-    noise(a * (dull ? 0.3 : 0.6), 0.025, dull ? 300 : 500, dull ? 900 : 1600);
-  }
+  /* ---------- Töne: gemeinsame Tonausgabe, siehe lib/audio.ts */
+  let audioOn = $state(audioState());
+  const ctx = () => { const c = unlock(); audioOn = audioState(); setTimeout(() => (audioOn = audioState()), 300); return c; };
+  const tone = (f: number, a: number, len: number, type: OscillatorType = 'sine', at = 0) => { if (sound) sfx.tone(f, a, len, type, at); };
+  const noise = (a: number, len: number, lo: number, hi: number) => { if (sound) sfx.noise(a, len, lo, hi); };
+  const tock = (a: number, dull = false) => { if (sound) sfx.tock(a, dull); };
   /** Korotkow-Ton je nach Phase: I leise klopfend, II mit Rauschen, III kräftig, IV dumpf */
   function korotkow(pr: number) {
     const { sys, dia } = prompt;
@@ -129,14 +59,7 @@
     say = text;
     maskUntil = performance.now() + 2200;
     setTimeout(() => (say = ''), 2200);
-    try {
-      if (sound && 'speechSynthesis' in window) {
-        const u = new SpeechSynthesisUtterance(text.replace(/[„“…]/g, ''));
-        u.lang = 'de-DE';
-        u.volume = 0.6;
-        speechSynthesis.speak(u);
-      }
-    } catch { /* kein Ton, Sprechblase reicht */ }
+    if (sound) sfx.murmur(text, prompt.hr % 2 === 1);
     blip(0.5, 6);
   };
   const DISTRACT: Distraction[] = [
@@ -147,18 +70,7 @@
     () => { tone(960, 0.12, 0.12, 'square'); tone(960, 0.12, 0.12, 'square', 0.25); blip(0.2, 2); },
     // Sirene in der Ferne
     () => {
-      if (!sound || !audio) return;
-      const t = audio.currentTime;
-      const o = audio.createOscillator();
-      const g = audio.createGain();
-      o.type = 'triangle';
-      for (let i = 0; i < 6; i++) o.frequency.setValueAtTime(i % 2 ? 440 : 587, t + i * 0.5);
-      g.gain.setValueAtTime(0, t);
-      g.gain.linearRampToValueAtTime(0.08, t + 1);
-      g.gain.linearRampToValueAtTime(0, t + 3);
-      o.connect(g).connect(out ?? audio.destination);
-      o.start(t);
-      o.stop(t + 3.1);
+      if (sound) sfx.siren(3);
       say = '🚨 Sirene draußen';
       setTimeout(() => (say = ''), 2500);
       blip(0.15, 10);
@@ -183,6 +95,7 @@
       p = Math.max(0, p - rate() * dt);
       jitter *= Math.exp(-dt * 8);
       if (t >= nextBeat) {
+        audioOn = audioState();
         const base = 60000 / prompt.hr;
         nextBeat = t + (prompt.irregular ? base * (0.65 + Math.random() * 0.7) : base);
         if (p > prompt.dia - 12 && p < prompt.sys + 20) jitter = 2.2;
@@ -196,7 +109,7 @@
       raf = requestAnimationFrame(loop);
     };
     raf = requestAnimationFrame(loop);
-    return () => { cancelAnimationFrame(raf); try { speechSynthesis.cancel(); } catch { /* egal */ } };
+    return () => cancelAnimationFrame(raf);
   });
 
   function pump() {
@@ -224,7 +137,7 @@
 </script>
 
 <p class="hint">{cfg.task}</p>
-<p class="hint small">🎧 Mit Kopfhörern hört man die Töne am besten. Tippe auf 🔊 für einen Testton.</p>
+<p class="hint small">🎧 Mit Kopfhörern hört man die Töne am besten. Tippe auf 🔊 für einen Testton.{#if sound && audioOn !== 'running' && audioOn !== 'aus'} <b class="warn">Ton pausiert ({audioOn}): einmal auf 🔊 tippen.</b>{/if}</p>
 
 <div class="gauge-wrap">
   <svg class="gauge" viewBox="0 0 200 200" role="img" aria-label="Manometer {Math.round(p)} mmHg">
@@ -263,7 +176,7 @@
   <div class="gauge-read">
     <button class="btn small {read.sys ? 'set' : ''}" onclick={() => mark('sys')}>Systole{#if read.sys}: {Math.round(read.sys.p)}{/if}</button>
     <button class="btn small {read.dia ? 'set' : ''}" disabled={!read.sys} onclick={() => mark('dia')}>Diastole{#if read.dia}: {Math.round(read.dia.p)}{/if}</button>
-    <button class="btn small ghost" onclick={() => { sound = !sound; if (sound && ctx()) tock(0.6); }} aria-label="Ton an/aus">{sound ? '🔊' : '🔇'}</button>
+    <button class="btn small ghost" onclick={() => { sound = !sound; if (sound && ctx()) setTimeout(() => tock(0.7), 120); }} aria-label="Ton an/aus">{sound ? '🔊' : '🔇'}</button>
   </div>
   <div class="valve">
     <span class="muted">Ventil</span>
@@ -297,4 +210,5 @@
   .valve .chip { padding: 6px 12px; border-radius: 999px; border: 1px solid var(--line); background: var(--bg2); }
   .valve .chip.active { border-color: var(--accent2); box-shadow: 0 0 0 2px var(--accent2) inset; }
   .pump { flex: 1; }
+  .warn { color: var(--bad); }
 </style>
