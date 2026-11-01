@@ -16,7 +16,7 @@
     {
       "check": "bak",
       "pts": 5,
-      "label": "BAK geprüft (Atmung 10 s, Puls 5 s)",
+      "label": "BAK geprüft (Atmung und Puls, höchstens 10 s)",
       "why": "Kein Bewusstsein + keine normale Atmung = Reanimation."
     },
     {
@@ -36,7 +36,7 @@
       "check": "nefInTime",
       "pts": 10,
       "label": "NEF rechtzeitig nachalarmiert",
-      "why": "Durchfallkriterium: spätestens bis Ende des 2. Blocks."
+      "why": "NEF sofort bei Kreislaufstillstand nachfordern. Durchfallkriterium der Prüfung: spätestens bis Ende des 2. Blocks."
     },
     {
       "check": "airway",
@@ -94,13 +94,13 @@
     "penalty": 10
   },
   "texts": {
-    "bak": "Keine Reaktion auf Ansprache und Schmerzreiz. Atmung (10 s): nur vereinzelte Schnappatmung, keine normale Atmung. Puls an der Carotis (5 s): nicht tastbar. → Kreislaufstillstand!",
+    "bak": "Keine Reaktion auf Ansprache und Schmerzreiz. Atmung und Carotispuls gleichzeitig, höchstens 10 s: nur vereinzelte Schnappatmung, kein Puls tastbar. → Kreislaufstillstand!",
     "assessNoPriority": "Während der Reanimation hat diese Untersuchung keine Priorität. Drücken, schocken, beatmen!",
     "assessNoTime": "Keine Zeit dafür, der Patient ist im Kreislaufstillstand.",
     "nef": "NEF ist nachalarmiert.",
     "treatWrong": "„{action}“ passt nicht zur Reanimation.",
     "hdmAfterRosc": "Der Patient hat einen Puls (ROSC)! Keine Herzdruckmassage mehr.",
-    "hdmNoBak": "Vor der Herzdruckmassage BAK prüfen: Bewusstsein, Atmung (10 s), Puls (5 s).",
+    "hdmNoBak": "Vor der Herzdruckmassage BAK prüfen: Bewusstsein, dann Atmung und Puls gleichzeitig (höchstens 10 s).",
     "hdmRunning": "Die Druckmassage läuft bereits.",
     "hdmStart": "„Reanimation, Druckmassage Start!“ Dein Kollege drückt: Mitte Brustbein, 100–120/min, 5–6 cm, vollständig entlasten.",
     "hdmStatus": "Reanimation läuft. Der Brustkorb wird rhythmisch komprimiert.",
@@ -119,14 +119,14 @@
     "blockEarlyAnalysis": "Nach dem Kleben direkt die Frühanalyse machen, nicht erst 2 Minuten drücken.",
     "block": "Block {n}: 5 Zyklen 30:2. Der Drücker zählt laut, die letzten 5 laut runter.",
     "blockNoAirway": "Keine Beatmung in diesem Block. Durchfallkriterium: keine Beatmung über 2 Zyklen. Beutel-Maske oder Larynxtubus!",
-    "blockNoNef": "Durchfallkriterium: Das NEF muss spätestens bis Ende des 2. Blocks nachalarmiert sein.",
+    "blockNoNef": "Das NEF gehört sofort nachgefordert. Durchfallkriterium: spätestens bis Ende des 2. Blocks.",
     "blockAdrEarly": "Nicht schockbarer Rhythmus: Adrenalin so früh wie möglich, sobald der Zugang liegt.",
     "blockAdrRepeat": "Adrenalin alle 4 Minuten (= alle 2 Blöcke) wiederholen (Schulmeinung).",
     "blockEnd": "Block beendet: Zeit für Rhythmusanalyse und Helferwechsel.",
     "bmvDone": "Die Beatmung läuft bereits.",
     "bmv": "Beutel-Masken-Beatmung mit O₂ (Reservoir, 15 l/min), 2 Hübe nach 30 Kompressionen, je 1 s.",
     "ltDone": "Der Larynxtubus liegt bereits.",
-    "lt": "Larynxtubus liegt, Lagekontrolle mit Kapnografie (etCO₂). Weiter 30:2.",
+    "lt": "Larynxtubus liegt, Lagekontrolle mit Kapnografie (etCO₂). Weiter 30:2 (Schulmeinung). ERC: Bei dichtem Larynxtubus geht auch durchgehende Druckmassage mit 10 Beatmungen/min.",
     "ivzDone": "Der Zugang liegt bereits.",
     "ivz": "i.v.-Zugang liegt, VEL läuft zum Nachspülen.",
     "suction": "„Absaugbereitschaft ist hergestellt.“",

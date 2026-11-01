@@ -66,9 +66,15 @@
     "m_rektiole": {"pts":-5,"why":"Diazepam ist nicht in der RettSan-Freigabe der Schulmeinung."},
     "m_tq": {"pts":-5,"why":"Keine kritische Blutung: kein Tourniquet."},
     "m_becken": {"pts":-3,"why":"Kein Hinweis auf eine Beckenverletzung."},
-    "m_gluc_iv": {"pts":-5,"why":"Glucose i.v. durch RettSan nur bei GCS 3 und Hypoglykämie im Rahmen des § 34."},
+    "m_gluc_iv": {
+      "pts": -3,
+      "why": "Glucose i.v. ist beim wachen Patienten nicht nötig: Er bekommt sie oral. Bei Bewusstseinsstörung macht es der NA (Schulmeinung: RettSan nur bei GCS 3 im Rahmen § 34, viele SAA erlauben NotSan Glucose 10 %)."
+    },
     "m_epipen": {"pts":-5,"why":"Keine Anaphylaxie: kein Adrenalin."},
-    "m_ivz": {"pts":-3,"why":"Ohne Reanimation oder klaren § 34-Notstand legt der RettSan keinen Zugang."},
+    "m_ivz": {
+      "text": "PVK liegt.",
+      "schul": "Schulmeinung NAW: Hier legt der RettSan keinen Zugang, nur vorbereiten. Je nach Rettungsdienstbereich (ÄLRD/SOP) ist der periphere Zugang aber delegiert und erlaubt, deshalb kein Abzug."
+    },
     "m_guedel": {"pts":-3,"why":"Ein wacher Patient toleriert keinen Guedel-Tubus (Würgereiz, Erbrechen)."},
     "m_bmv": {"pts":-3,"why":"Der Patient atmet ausreichend selbst."},
     "m_laufen": {"pts":-3,"why":"Kranke Patienten nicht laufen lassen: Tragestuhl oder Trage."}

@@ -72,7 +72,11 @@
     "q_o": "„Vor zehn Minuten.“"
   },
   "followups": {
-    "f_set": {"after":"q_a","label":"Wo ist Ihr Notfallset?","ans":"„In der Handtasche, glaub ich… Ich krieg die gerade nicht auf.“"},
+    "f_set": {
+      "after": "q_a",
+      "label": "Wo ist Ihr Notfallset?",
+      "ans": "„In der Handtasche, glaub ich… Ich krieg die gerade nicht auf.“"
+    },
     "f_frueher": {
       "after": "q_a",
       "label": "Wie schlimm war es beim letzten Stich?",
@@ -168,8 +172,7 @@
         "penalties": [
           {
             "if": {"not":{"done":"m_nef"}},
-            "pts": -5,
-            "why": "§ 34 StGB: Voraussetzung ist, dass das NEF nachalarmiert ist. Erst NEF, dann Adrenalin."
+            "schul": "Schulmeinung NAW: Erst NEF nachalarmieren, dann Adrenalin. Leitlinie: Adrenalin i.m. ohne Verzögerung, deshalb kein Abzug. Das NEF brauchst du trotzdem."
           }
         ]
       }
@@ -209,8 +212,8 @@
     {
       "any": ["m_epipen"],
       "pts": 10,
-      "label": "Adrenalin 0,3 mg i.m. (Autoinjektor)",
-      "why": "Stadium III: Adrenalin i.m. ist das wichtigste Medikament, RettSan im Rahmen § 34."
+      "label": "Adrenalin i.m. (0,5 mg bzw. Autoinjektor 0,3 mg)",
+      "why": "Stadium III: Adrenalin i.m. in den seitlichen Oberschenkel ist das wichtigste Medikament. Erwachsene 0,5 mg (Leitlinie), Autoinjektor 0,3 mg; nach 5 min wiederholen, wenn es nicht besser wird."
     },
     {
       "all": ["m_ivz","m_vel"],
@@ -229,7 +232,7 @@
         "NEF nachalarmieren",
         "Sauerstoff 15 l/min",
         "Schocklage",
-        "Adrenalin 0,3 mg i.m. per Autoinjektor (§ 34)"
+        "Adrenalin i.m. (0,5 mg, Autoinjektor 0,3 mg)"
       ]
     }
   ],
@@ -243,7 +246,7 @@
     "answer": 0
   },
   "teach": [
-    "Anaphylaxie Stadium III: Allergen stoppen, NEF, O₂ 15 l, Schocklage (Schock vor Atemnot), Adrenalin 0,3 mg i.m. (§ 34), PVK + VEL.",
+    "Anaphylaxie Stadium III: Allergen stoppen, NEF, O₂ 15 l, Schocklage (Schock vor Atemnot), Adrenalin i.m. (Erwachsene 0,5 mg, Autoinjektor 0,3 mg, nach 5 min wiederholbar), PVK + VEL.",
     "Adrenalin i.m. ist sicher. Zögern tötet, Antihistaminika ersetzen kein Adrenalin.",
     "Patienten im Schock nie aufstehen lassen („empty heart“)."
   ],
@@ -264,8 +267,7 @@
             "penalties": [
               {
                 "if": {"not":{"done":"m_nef"}},
-                "pts": -5,
-                "why": "§ 34 StGB: Voraussetzung ist, dass das NEF nachalarmiert ist. Erst NEF, dann Adrenalin."
+                "schul": "Schulmeinung NAW: Erst NEF nachalarmieren, dann Adrenalin. Leitlinie: Adrenalin i.m. ohne Verzögerung, deshalb kein Abzug. Das NEF brauchst du trotzdem."
               }
             ]
           }
@@ -306,9 +308,24 @@
           "fixedBy": ["m_o2_mask"],
           "worsen": {"spo2":-0.8}
         }
+      ],
+      "effects": {
+        "m_ok_hoch": {
+          "text": "Oberkörper leicht erhöht, Beine flach. Das Atmen fällt etwas leichter, der Kreislauf hält es gerade.",
+          "delta": {"spo2":1,"sys":-3},
+          "schul": "Schulmeinung NAW: Schock vor Atemnot, also Schocklage. Leitlinie: Bei Atemwegsproblemen darf der Oberkörper erhöht werden, solange der Kreislauf es zulässt, deshalb kein Abzug."
+        }
+      },
+      "dropRequired": ["Schocklage"],
+      "required": [
+        {
+          "any": ["m_schock","m_ok_hoch","m_flach"],
+          "pts": 5,
+          "label": "Gelagert nach Atemweg und Kreislauf",
+          "why": "Stridor und Schock: flach mit leicht erhöhtem Oberkörper oder Schocklage, je nachdem, was sie toleriert."
+        }
       ]
     }
   ],
-  "oddEcg": true,
   "scene": {"place":"biergarten","weather":["mild","hot","rain"]}
 }

@@ -372,6 +372,12 @@ describe('Einsatzort und Wetter', () => {
     g.advance(600);
     expect(g.s.v.temp).toBeCloseTo(t1, 5);
   });
+  it('Schulmeinung-Abweichung: Hinweis ohne Abzug', () => {
+    const g = new Game(caseById('acs')!, { worsen: false, detail: false });
+    g.act('m_ivz'); answerPrompts(g);
+    expect(g.s.events.some((e) => e.type === 'schul' && e.pts === 0)).toBe(true);
+    expect(g.s.events.filter((e) => e.pts < 0).map((e) => e.text).join()).not.toMatch(/Zugang|Rechtsgrundlage|§ 34/);
+  });
   it('RTW-Heizung kommt beim Hitzschlag nicht', () => {
     for (let i = 0; i < 30; i++) expect(new Game(caseById('hitzschlag')!, { worsen: true, detail: false }).moments.some((m) => m.id.includes('heizung'))).toBe(false);
   });

@@ -27,6 +27,7 @@ export interface Debrief {
   bad: ScoreEvent[];
   good: ScoreEvent[];
   miss: ScoreEvent[];
+  schul: ScoreEvent[];
   teach: string[];
   /** Datensatz zum Speichern im Konto */
   record: {
@@ -77,6 +78,7 @@ export function debrief(g: Game): Debrief {
     bad,
     good: s.events.filter((e) => e.type === 'good' && e.pts > 0),
     miss: s.events.filter((e) => e.type === 'miss'),
+    schul: s.events.filter((e) => e.type === 'schul'),
     teach: c.teach,
     record: {
       fall: c.id, meldung: s.dispatch.short, prozent: pct, punkte: score, max_punkte: max, dauer_s: Math.round(s.time),

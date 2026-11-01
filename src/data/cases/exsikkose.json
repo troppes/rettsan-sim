@@ -111,14 +111,14 @@
       "say": "„Ich hab ihr vorhin schon Wasser hingestellt. Soll ich ihr jetzt schnell einen halben Liter einflößen?“",
       "options": [
         {
-          "t": "„Bitte nicht, so schläfrig kann sie sich verschlucken. Flüssigkeit bekommt sie über die Vene. Haben Sie Medikamentenplan und Trinkprotokoll für mich?“",
+          "t": "„Bitte nicht, so schläfrig kann sie sich verschlucken. Flüssigkeit bekommt sie in der Klinik über die Vene. Haben Sie Medikamentenplan und Trinkprotokoll für mich?“",
           "pts": 3,
           "reply": "„Ja, hier. Sie trinkt seit Tagen kaum etwas, und seit Montag nimmt sie neue Wassertabletten.“"
         },
         {
           "t": "„Ja, so schnell wie möglich, sie ist ja ausgetrocknet.“",
           "pts": -4,
-          "why": "Bewusstseinsgetrübt (GCS 13) heißt Aspirationsgefahr. Keine großen Mengen trinken lassen, Volumen gibt der NA i.v."
+          "why": "Bewusstseinsgetrübt (GCS 13) heißt Aspirationsgefahr. Keine großen Mengen trinken lassen, das Volumen gibt es i.v. in der Klinik."
         },
         {
           "t": "„Mit Strohhalm im Liegen geht es leichter.“",
@@ -146,7 +146,10 @@
     },
     "m_laufen": {"pts":-5,"why":"Exsikkiert und verwirrt: hohe Sturzgefahr, Tragestuhl."},
     "m_waerme": {"pts":-2,"why":"Die Wohnung ist schon sehr warm: nicht zusätzlich einpacken."},
-    "m_ivz": {"pts":-3,"why":"Kein Kreislaufstillstand und kein Notstand nach § 34: Infusionen gibt hier die Klinik."}
+    "m_ivz": {
+      "text": "PVK liegt. Das Volumen startet die Klinik bzw. der NA.",
+      "schul": "Schulmeinung NAW: Hier legt der RettSan keinen Zugang, nur vorbereiten. Je nach Rettungsdienstbereich (ÄLRD/SOP) ist der periphere Zugang aber delegiert und erlaubt, deshalb kein Abzug."
+    }
   },
   "required": [
     {"any":["d_bz"],"pts":10,"label":"Blutzucker gemessen","why":"Verwirrung: immer BZ (Hypo? Hyper?)."},

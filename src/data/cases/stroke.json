@@ -141,8 +141,8 @@
     },
     "m_betreuung": {"text":"Du erklärst ihr ruhig, was ihr tut. Die Tochter packt Medikamentenplan und Arztbriefe ein."},
     "m_ivz": {
-      "pts": -5,
-      "why": "Schulmeinung: Kein i.v.-Zugang durch RettSan beim kreislaufstabilen Schlaganfall. Invasive Maßnahme ohne Rechtsgrundlage."
+      "text": "PVK liegt.",
+      "schul": "Schulmeinung NAW: Hier legt der RettSan keinen Zugang, nur vorbereiten. Je nach Rettungsdienstbereich (ÄLRD/SOP) ist der periphere Zugang aber delegiert und erlaubt, deshalb kein Abzug."
     },
     "m_trinken": {"pts":-5,"why":"Schluckstörung möglich → Aspiration. Nichts zu essen oder zu trinken."},
     "m_gluc_oral": {"pts":-5,"why":"BZ ist normal, und mit Schluckstörung nichts oral."},
@@ -160,7 +160,7 @@
       "any": ["m_zeit","q_o","q_e"],
       "pts": 10,
       "label": "Zeitfenster erfragt",
-      "why": "Lyse bis 4,5 h, Thrombektomie bis ca. 6 h: Ohne Uhrzeit keine Therapieentscheidung."
+      "why": "Lyse bis 4,5 h, Thrombektomie bis 6 h und mit passender Bildgebung bis 24 h. Ohne Uhrzeit keine Therapieentscheidung."
     },
     {
       "any": ["m_ok30","m_ok_hoch"],

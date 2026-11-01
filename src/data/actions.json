@@ -130,7 +130,7 @@
         {"id":"m_ivz","label":"i.v.-Zugang legen (§ 34)","letter":"C","time":60},
         {"id":"m_ivz_vorb","label":"i.v.-Zugang vorbereiten (für NEF)","time":30},
         {"id":"m_vel","label":"VEL-Infusion anhängen","letter":"C","time":30},
-        {"id":"m_epipen","label":"Adrenalin 0,3 mg i.m. Autoinjektor (§ 34)","letter":"C","time":20}
+        {"id":"m_epipen","label":"Adrenalin i.m. (Autoinjektor bzw. 0,5 mg)","letter":"C","time":20}
       ]
     },
     {

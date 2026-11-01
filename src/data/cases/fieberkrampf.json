@@ -155,7 +155,12 @@
     "m_waerme": {"pts":-3,"why":"Nicht zu warm einpacken: Das Fieber steigt weiter."}
   },
   "required": [
-    {"any":["m_betreuung"],"pts":5,"label":"Mutter beruhigt","why":"Folie Tag 14: Eltern beruhigen."},
+    {
+      "any": ["m_betreuung"],
+      "pts": 5,
+      "label": "Mutter beruhigt",
+      "why": "Eltern beruhigen: Ihre Angst überträgt sich aufs Kind."
+    },
     {
       "any": ["b_af","c_puls","b_spo2"],
       "pts": 5,
@@ -181,7 +186,7 @@
     {
       "on": "finish",
       "type": "mc",
-      "q": "Ab wann wird ein Fieberkrampf medikamentös durchbrochen (Folie Tag 14)?",
+      "q": "Ab wann wird ein Fieberkrampf medikamentös durchbrochen?",
       "options": [
         "Sofort, sobald er beginnt",
         "Wenn er länger als 5 Minuten dauert: Diazepam-Rektiole durch Eltern oder NA/NotSan",
@@ -202,7 +207,7 @@
         "Sie soll morgen zum Kinderarzt"
       ],
       "answer": 1,
-      "explain": "Folie Tag 14: Kliniktransport immer beim ersten oder sehr langen Anfall."
+      "explain": "Kliniktransport immer beim ersten oder sehr langen Anfall."
     }
   ],
   "diagnosis": {"options":["Fieberkrampf (einfach)","Meningitis","Epilepsie","Hypoglykämie"],"answer":0},

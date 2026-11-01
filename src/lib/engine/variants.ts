@@ -59,8 +59,11 @@ export const ODD_RHYTHMS: Record<string, string> = {
   wenckebach: 'AV-Block II. Grades Typ Wenckebach',
 };
 export function oddEcg(c: CaseDef, rnd = Math.random, chance = 0.35): CaseDef {
-  if (!c.oddEcg || c.rea || rnd() >= chance) return c;
-  const pool = Object.keys(ODD_RHYTHMS).filter((k) => k !== 'wenckebach' || c.start.hr <= 110);
+  // Nur bei stabilen Patienten ohne Hypoxie (dort wäre ein AV-Block ein Warnzeichen).
+  // AV-Blöcke nur unter HF 100, weil ein langes PQ bei Tachykardie kaum möglich ist; VES bis HF 120.
+  if (!c.oddEcg || c.rea || c.start.spo2 < 92 || rnd() >= chance) return c;
+  const pool = Object.keys(ODD_RHYTHMS).filter((k) => c.start.hr < (k === 'ves' ? 120 : 100));
+  if (!pool.length) return c;
   const k = pool[Math.floor(rnd() * pool.length)];
   const note = `Nebenbefund im EKG: ${ODD_RHYTHMS[k]} (harmlos)`;
   return { ...c, start: { ...c.start, rhythm: k }, oddRhythm: k, variantNote: c.variantNote ? `${c.variantNote} · ${note}` : note };

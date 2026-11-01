@@ -246,7 +246,7 @@
       "why": "Dauer über 5 Minuten = Status epilepticus, Medikamente durch NA/NotSan."
     },
     {"any":["m_absaug"],"pts":5,"label":"Absaugbereitschaft","why":"Speichel, Erbrochenes nach dem Anfall."},
-    {"any":["m_nef"],"pts":5,"label":"NEF alarmiert","why":"Folie Tag 8: NEF alarmieren."},
+    {"any":["m_nef"],"pts":5,"label":"NEF alarmiert","why":"Krampfanfall: NEF alarmieren."},
     {"any":["d_bz"],"pts":10,"label":"Blutzucker gemessen","why":"Hypoglykämie kann Krampfanfälle auslösen."},
     {
       "pts": 10,
@@ -254,12 +254,7 @@
       "why": "Postiktal: Zunge fällt zurück, Aspirationsgefahr.",
       "if": {"fixed":"atemweg"}
     },
-    {
-      "any": ["m_o2_mask","m_o2_nb"],
-      "pts": 5,
-      "label": "Sauerstoff nach dem Anfall",
-      "why": "Folie: nach dem Anfall O₂."
-    },
+    {"any":["m_o2_mask","m_o2_nb"],"pts":5,"label":"Sauerstoff nach dem Anfall","why":"Nach dem Anfall O₂."},
     {"any":["e_body"],"pts":5,"label":"Nach Verletzungen gesucht","why":"Zungenbiss, Sturzverletzungen."},
     {
       "pts": 5,

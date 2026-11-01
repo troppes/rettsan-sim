@@ -106,7 +106,7 @@
       "q": "Rückblick: Kreislaufstillstand. Bring die ersten Schritte in die richtige Reihenfolge.",
       "items": [
         "SSS, Bewusstsein prüfen",
-        "Atmung (10 s) und Puls (5 s) prüfen",
+        "Atmung und Puls prüfen (höchstens 10 s)",
         "Druckmassage starten: 100–120/min, 5–6 cm",
         "Defi-Elektroden kleben",
         "Frühanalyse und ggf. Schock"
@@ -121,8 +121,9 @@
     "Keine Reaktion + keine normale Atmung = Reanimation. Schnappatmung ist keine normale Atmung!",
     "Schockbar: VF und pVT. Nicht schockbar: Asystolie und PEA.",
     "Adrenalin 1 mg: nicht schockbar sofort, wenn der Zugang liegt; schockbar nach dem 3. Schock; dann alle 4 Minuten (Schulmeinung).",
-    "NEF spätestens bis Ende des 2. Blocks nachalarmieren. Pausen kurz halten: 2 Beatmungen höchstens 10 s, Pause vor dem Schock unter 5 s.",
-    "Nach ROSC: Rückenlage, Absaugbereitschaft, ABCDE, 12-Kanal-EKG, SpO₂ 94–98 %."
+    "NEF sofort nachfordern (Durchfallkriterium: spätestens bis Ende des 2. Blocks). Pausen kurz halten: 2 Beatmungen höchstens 10 s, Pause vor dem Schock unter 5 s.",
+    "Nach ROSC: Rückenlage, Absaugbereitschaft, ABCDE, 12-Kanal-EKG, SpO₂ 94–98 %.",
+    "Zur Info (Gabe durch NA bzw. NotSan): Amiodaron 300 mg nach dem 3. Schock, 150 mg nach dem 5. Schock."
   ],
   "scene": {"place":"supermarkt"}
 }

@@ -85,7 +85,7 @@
     "b_ausk": "Atemgeräusch beidseits vorhanden, rechts etwas leiser.",
     "c_puls": "Schnell, flach, an der Speichenarterie kaum tastbar.",
     "c_rekap": "Rekap 4 s. Blass, kaltschweißig.",
-    "c_5b": "Brustkorb: Prellmarke rechts. Bauch: weich. Becken: starke Schmerzen, nach KISS instabil (nicht durchdrücken!). Beine: rechter Oberschenkel fehlgestellt. Boden: große Blutlache.",
+    "c_5b": "Brustkorb: Prellmarke rechts. Bauch: weich. Becken: starke Schmerzen bei Hochrasanztrauma → Verdacht auf instabile Beckenverletzung (nicht auf Stabilität prüfen!). Beine: rechter Oberschenkel fehlgestellt. Boden: große Blutlache.",
     "d_gcs": "GCS {gcs}.",
     "e_body": "Schürfwunden, Fehlstellung rechter Oberschenkel, Prellmarke rechter Thorax. Er zittert."
   },
@@ -278,6 +278,5 @@
       ]
     }
   ],
-  "oddEcg": true,
   "scene": {"place":"landstrasse","weather":["mild","rain","cold"]}
 }

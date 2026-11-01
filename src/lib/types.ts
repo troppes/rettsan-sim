@@ -80,7 +80,9 @@ export interface TreatEffect extends Mutation {
   noCount?: boolean;
   nopts?: boolean;
   repeat?: boolean;
-  penalties?: { if: Condition; pts: number; why: string }[];
+  penalties?: { if: Condition; pts?: number; why?: string; schul?: string }[];
+  /** Abweichung von der NAW-Schulmeinung, die Leitlinie erlaubt es aber: nur Hinweis, kein Abzug */
+  schul?: string;
 }
 export type Variants<T> = T | (T & { if?: Condition })[];
 

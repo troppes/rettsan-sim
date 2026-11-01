@@ -213,7 +213,7 @@
         "Bei HF über 140/min, weil das Spray den Puls senkt"
       ],
       "answer": 0,
-      "explain": "Schulmeinung: alle drei Bedingungen, max. 2 Hübe. KI: HF über 140/min und pectanginöse Beschwerden."
+      "explain": "Schulmeinung: alle drei Bedingungen, max. 2 Hübe. KI: HF über 140/min und pektanginöse Beschwerden."
     }
   ],
   "diagnosis": {"options":["Asthmaanfall","Anaphylaxie","Hyperventilation","Lungenödem"],"answer":0},

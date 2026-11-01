@@ -165,11 +165,16 @@
     "m_kuehl": [
       {
         "if": {"done":"m_raus"},
-        "text": "Feuchtkalte Tücher, Kältepacks (mit Kompresse) an Hals, Achseln und Leisten, Lüftung an."
+        "text": "Kältepacks (mit Kompresse) an Hals, Achseln und Leisten, Lüftung an. Das hilft, kühlt aber langsamer als großflächig nass machen mit Luftstrom.",
+        "schul": "Schulmeinung NAW: Kältepacks an Hals, Achseln, Leisten. Leitlinie (ERC): am wirksamsten ist Kaltwasser am ganzen Körper bzw. großflächig nass machen mit Luftstrom."
       },
       {"text":"Kältepacks und feuchte Tücher, aber er liegt noch in der Sonne. Das wirkt nur schwach."}
     ],
-    "m_kalt_wasch": {"text":"Feucht abwaschen und Luftstrom: Das hilft beim Kühlen.","fix":["hitze"]},
+    "m_kalt_wasch": {
+      "text": "Großflächig mit kaltem Wasser nass gemacht und Luftstrom drauf: Die Verdunstung kühlt am stärksten. Weiter bis etwa 39 °C.",
+      "fix": ["hitze"],
+      "delta": {"temp":-0.6}
+    },
     "m_flach": {"text":"Flache Lagerung."},
     "m_schock": {"text":"Beine hoch. Der Puls wird etwas langsamer.","delta":{"sys":6,"hr":-3}},
     "m_trinken": [
@@ -196,14 +201,14 @@
     {
       "any": ["e_temp"],
       "pts": 10,
-      "label": "Körperkerntemperatur gemessen",
-      "why": "Über 40 °C plus Bewusstseinsstörung = Hitzschlag."
+      "label": "Temperatur gemessen",
+      "why": "Über 40 °C plus Bewusstseinsstörung = Hitzschlag. Die Kerntemperatur misst man genau rektal, das Ohr gibt einen Anhalt."
     },
     {
       "any": ["m_kuehl","m_kalt_wasch"],
       "pts": 10,
       "label": "Aktiv gekühlt",
-      "why": "Hals, Achseln, Leisten; feuchte Tücher und Luftstrom."
+      "why": "Am stärksten kühlt großflächiges Nassmachen mit Luftstrom (bzw. Kaltwasser-Immersion), Kältepacks an Hals, Achseln, Leisten ergänzend. Bis etwa 39 °C."
     },
     {"any":["m_nef"],"pts":10,"label":"NEF nachalarmiert","why":"Bewusstseinsstörung (D-Problem) → NEF."},
     {"any":["d_bz"],"pts":5,"label":"BZ gemessen","why":"Bewusstseinsstörung: BZ immer messen."},
@@ -231,7 +236,7 @@
   "diagnosis": {"options":["Hitzschlag (Hyperthermie)","Sonnenstich","Hypoglykämie","Synkope"],"answer":0},
   "teach": [
     "Hitzschlag: Kerntemperatur über 40 °C, heiße Haut (bei Anstrengung oft noch schweißig), Bewusstseinsstörung.",
-    "Raus aus der Hitze, aktiv kühlen (Hals, Achseln, Leisten), NEF bei Bewusstseinsstörung.",
+    "Raus aus der Hitze und sofort aktiv kühlen („cool first“): großflächig nass machen plus Luftstrom, Kältepacks ergänzend. NEF bei Bewusstseinsstörung.",
     "Trinken nur, wenn der Patient wach ist und sicher schluckt.",
     "Sonnenstich = Hirnhautreizung durch Sonne auf den Kopf, Körpertemperatur normal."
   ],

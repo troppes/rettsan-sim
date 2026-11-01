@@ -383,7 +383,7 @@ export class Game {
     const e = variant(this.c.effects?.[id], this.ctx);
     if (e) {
       const pen = e.penalties?.find((p) => test(p.if, this.ctx));
-      return pen ? { ...e, pts: pen.pts, why: pen.why } : e;
+      return pen ? { ...e, pts: pen.pts, why: pen.why, schul: pen.schul ?? e.schul } : e;
     }
     return (RULES.wrongTreatments as Record<string, TreatEffect>)[id] ?? {};
   }
@@ -408,6 +408,7 @@ export class Game {
     if (!(bad && !e.text)) this.addLog('find', text, 'Ergebnis');
     if (bad && first) this.penalty(-e.pts!, e.why ?? T.wrongDefault);
     else if (bad) this.addLog('info', e.why ?? '');
+    if (e.schul && first) { this.addLog('info', '📘 ' + e.schul); this.addEvent(0, 0, a.label, e.schul, 'schul'); }
     const before = s.place;
     mutate(s, e);
     if (a.id === RTW_ACTION && !bad) moveTo(s, 'rtw');

@@ -78,7 +78,7 @@
       "vignettes": ["29 J., Marathonläufer, beschwerdefrei. RR 120/70.","74 J., nimmt Betablocker, etwas müde. RR 110/65."]
     },
     "vhf": {
-      "name": "Tachyarrhythmia absoluta bei Vorhofflimmern",
+      "name": "Vorhofflimmern (absolute Arrhythmie)",
       "pulse": true,
       "shockable": false,
       "analysis": {"rate":"tachy","regular":"nein","qrs":"schmal","p":"keine","todo":"beobachten"},

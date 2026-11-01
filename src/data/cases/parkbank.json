@@ -74,7 +74,7 @@
     "d_pup": "Isokor, etwas träge.",
     "d_befast": "Keine Seitenzeichen: Arme halten gleich, Gesicht symmetrisch. Sprache verwaschen, aber eher müde als aphasisch.",
     "e_body": "Kleidung völlig durchnässt. Kein Alkoholgeruch! Am Handgelenk ein Notfallarmband: „Diabetiker – Insulin“. Keine Verletzungen.",
-    "e_temp": "Gemessen im Ohr. Unter 35 °C spricht man von Unterkühlung."
+    "e_temp": "Gemessen im Ohr. Unter 35 °C spricht man von Unterkühlung. Achtung: In kalter Umgebung misst das Ohrthermometer oft zu niedrig."
   },
   "answers": {
     "q_s": {"pt":"„Mir ist so kalt… und so komisch… zittrig.“","by":"„Keine Ahnung, der hat nur gelallt.“"},
@@ -230,11 +230,11 @@
       {"pts":-10,"why":"Bewusstseinsgetrübt: nichts zu trinken, Aspirationsgefahr."}
     ],
     "m_gluc_iv": {
-      "pts": -3,
-      "why": "Glucose i.v. ist hier Sache des NA (RettSan nach Schulmeinung nur im Notfall nach § 34 bei tiefer Bewusstlosigkeit). Aufwärmen, NEF, Glucose über den NA.",
       "fix": ["hypo"],
       "set": {"bz":85},
-      "flags": {"glucAt":{"now":0}}
+      "flags": {"glucAt":{"now":0}},
+      "text": "Glucose i.v. läuft, er wird langsam wacher.",
+      "schul": "Schulmeinung NAW: Glucose i.v. durch RettSan nur bei GCS 3 (§ 34), hier wäre es Sache des NA. § 34 kennt aber keinen GCS-Grenzwert, deshalb kein Abzug."
     },
     "m_laufen": {
       "pts": -10,

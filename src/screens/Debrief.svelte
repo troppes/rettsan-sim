@@ -35,6 +35,10 @@
       {#each r.good as e, i (i)}<div class="ditem good"><span class="p">+{e.pts}</span>{e.text}</div>{/each}
       {#each r.miss as e, i (i)}<div class="ditem miss">{e.text}{#if e.why}<small>{e.why}</small>{/if}</div>{/each}
     {/if}
+    {#if r.schul.length}
+      <h4>📘 Schulmeinung (ohne Abzug)</h4>
+      {#each r.schul as e, i (i)}<div class="ditem">{e.text}<small>{e.why}</small></div>{/each}
+    {/if}
     <h4>Merke</h4>
     <div class="ditem"><ul class="teach">{#each r.teach as t (t)}<li>{t}</li>{/each}</ul></div>
 

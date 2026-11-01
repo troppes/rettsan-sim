@@ -86,7 +86,7 @@
       {"text":"GCS 9 (Augen auf Schmerz, unverständliche Laute, gezielte Abwehr)."}
     ],
     "d_befast": "Keine Lähmung, kein hängender Mundwinkel. Sprache langsam, aber nicht verwaschen.",
-    "e_body": "Insulinpumpe am Bauch. Kein Notfallausweis-Hinweis auf weitere Krankheiten."
+    "e_body": "Insulinpumpe am Bauch, sie läuft weiter. Kein Notfallausweis-Hinweis auf weitere Krankheiten."
   },
   "answers": {
     "q_s": {"pt":"„Mir ist so komisch… alles zittert.“","by":"„Sie war schon den ganzen Vormittag fahrig.“"},
@@ -152,7 +152,7 @@
           "t": "„Der Zucker ist wieder über 100, Sie dürfen bleiben. Unterschreiben müssen Sie nichts.“",
           "pts": -3,
           "mood": 2,
-          "why": "Ohne Mahlzeit kann der Zucker erneut fallen (lang wirkendes Insulin). Transportverweigerung immer mit Aufklärung dokumentieren und unterschreiben lassen."
+          "why": "Ohne Mahlzeit kann der Zucker erneut fallen, die Pumpe gibt weiter ihre Basalrate ab. Transportverweigerung immer mit Aufklärung dokumentieren und unterschreiben lassen."
         },
         {
           "t": "„Essen Sie eine Banane, dann ist es okay. Ich notiere nur kurz Ihren Namen.“",
@@ -167,10 +167,10 @@
       "id": "insulin",
       "who": "Kollegin",
       "at": 45,
-      "say": "„Sie ist doch Diabetikerin! Soll ich ihren Insulinpen aus der Tasche holen? Vielleicht braucht sie eine Spritze.“",
+      "say": "„Sie ist doch Diabetikerin! Soll ich ihren Ersatz-Insulinpen aus der Tasche holen? Vielleicht braucht sie eine Spritze.“",
       "options": [
         {
-          "t": "„Auf keinen Fall spritzen. Bringen Sie mir den Pen bitte trotzdem, und sagen Sie mir, ob sie heute etwas gegessen hat.“",
+          "t": "„Auf keinen Fall spritzen. Bringen Sie mir den Pen bitte trotzdem mit, und sagen Sie mir, ob sie heute etwas gegessen hat.“",
           "pts": 3,
           "reply": "„Hier. Sie hat heute Mittag nichts gegessen, sie hatte zu viel zu tun.“"
         },
@@ -225,17 +225,17 @@
       {
         "if": {"vital":"gcs","op":">=","value":14},
         "pts": -5,
-        "why": "Schulmeinung: Wache Patientin (GCS 14–15) bekommt Glucose oral. i.v. durch RettSan nur bei GCS 3 mit gefährdetem Atemweg (§ 34).",
+        "why": "Die Patientin ist wach (GCS 14–15) und schluckt: Glucose oral reicht, i.v. ist unnötig invasiv.",
         "fix": ["hypo"],
         "set": {"bz":80},
         "flags": {"glucAt":{"now":0}}
       },
       {
-        "pts": -3,
-        "why": "Schulmeinung: Glucose i.v. durch RettSan nur bei GCS 3 mit gefährdetem Atemweg im Rahmen § 34. Bei GCS 9: Seitenlage, NEF, Zugang vorbereiten. Die Patientin reagiert trotzdem.",
         "fix": ["hypo"],
         "set": {"bz":80},
-        "flags": {"glucAt":{"now":-200}}
+        "flags": {"glucAt":{"now":-200}},
+        "text": "Glucose i.v. läuft, sie wird langsam wacher.",
+        "schul": "Schulmeinung NAW: Glucose i.v. durch RettSan nur bei GCS 3 (§ 34), sonst Seitenlage, NEF, Zugang vorbereiten. § 34 kennt aber keinen GCS-Grenzwert, deshalb kein Abzug."
       }
     ],
     "m_essen": [
@@ -303,7 +303,9 @@
     "BZ unter 60 mg/dl (3,3 mmol/l) = Hypoglykämie (Schulmeinung, Erwachsene).",
     "Wach (GCS 14–15): Glucose oral oder gesüßtes Getränk. Bewusstseinsgetrübt: nichts oral (Aspiration), NEF.",
     "Glucose i.v. durch RettSan nur bei GCS 3 und gefährdetem Atemweg im Rahmen des § 34.",
-    "Hypos können aussehen wie Schlaganfall, Rausch oder Psychose: Immer BZ messen!"
+    "Hypos können aussehen wie Schlaganfall, Rausch oder Psychose: Immer BZ messen!",
+    "Insulinpumpe: läuft weiter und senkt den Zucker erneut. Bei schwerer Hypo bzw. Bewusstseinsstörung Pumpe stoppen oder abkoppeln und mitnehmen.",
+    "Hypoglykämie: im Rettungsdienst meist ab unter 60 mg/dl (Schulmeinung), Fachgesellschaften (DDG) schon ab unter 70 mg/dl bzw. 3,9 mmol/l."
   ],
   "variants": [
     {

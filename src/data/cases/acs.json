@@ -78,7 +78,7 @@
     "f_viagra": {
       "after": "q_m",
       "label": "Wann haben Sie zuletzt Viagra genommen?",
-      "ans": "„Vorgestern. Ist das wichtig?“ (Ja: Nitrate sind dann für den NA tabu.)"
+      "ans": "„Heute früh. Ist das wichtig?“ (Ja: Nitrate sind dann für den NA tabu, bei Sildenafil 24 h, bei Tadalafil 48 h.)"
     },
     "f_magen": {
       "after": "q_p",
@@ -162,16 +162,16 @@
     "m_o2_mask": [
       {
         "if": {"vital":"spo2","op":">","value":90},
-        "pts": -5,
-        "why": "Schulmeinung: Sauerstoff ist beim STEMI mit SpO₂ über 90 % kontraindiziert. Zu viel O₂ verengt die Herzkranzgefäße. O₂ nur bei Atemnot oder SpO₂ unter 90 %."
+        "pts": -3,
+        "why": "Beim STEMI mit SpO₂ über 90 % ist O₂ laut Leitlinie (ESC 2023) routinemäßig nicht empfohlen, die Schulmeinung nennt es kontraindiziert. Zu viel O₂ verengt die Herzkranzgefäße. O₂ erst bei SpO₂ unter 90 %."
       },
       {"text":"O₂ läuft, die Sättigung steigt.","delta":{"spo2":4}}
     ],
     "m_o2_nb": [
       {
         "if": {"vital":"spo2","op":">","value":90},
-        "pts": -5,
-        "why": "Schulmeinung: Sauerstoff ist beim STEMI mit SpO₂ über 90 % kontraindiziert, auch über die Nasenbrille."
+        "pts": -3,
+        "why": "Beim STEMI mit SpO₂ über 90 % ist O₂ routinemäßig nicht empfohlen (ESC 2023, Schulmeinung: kontraindiziert), auch nicht über die Nasenbrille."
       },
       {"text":"O₂ über Nasenbrille.","delta":{"spo2":2}}
     ],
@@ -186,8 +186,8 @@
       "delta": {"hr":4}
     },
     "m_ivz": {
-      "pts": -5,
-      "why": "Beim stabilen ACS legt der RettSan keinen Zugang: Das NEF kommt, § 34 greift nicht. Zugang nur vorbereiten."
+      "text": "PVK liegt.",
+      "schul": "Schulmeinung NAW: Hier legt der RettSan keinen Zugang, nur vorbereiten. Je nach Rettungsdienstbereich (ÄLRD/SOP) ist der periphere Zugang aber delegiert und erlaubt, deshalb kein Abzug."
     },
     "m_trinken": {"pts":-2,"why":"Nüchtern lassen: Mögliche Herzkatheter-Untersuchung, außerdem ist ihm übel."},
     "m_flach": {"pts":-3,"why":"Flach liegen belastet das Herz und erschwert die Atmung. Oberkörper hoch."}
@@ -255,12 +255,12 @@
       "q": "Das EKG zeigt einen STEMI, die SpO₂ liegt bei 95 %, keine Atemnot. Gibst du Sauerstoff?",
       "options": [
         "Ja, 15 l/min über Reservoirmaske, ein Herzinfarkt braucht immer O₂",
-        "Nein, bei STEMI mit SpO₂ über 90 % ist O₂ laut Schulmeinung kontraindiziert",
+        "Nein, bei STEMI mit SpO₂ über 90 % ist O₂ nicht empfohlen (Schulmeinung: kontraindiziert)",
         "Ja, 2 l über Nasenbrille, das schadet nie",
         "Nur wenn der Patient es möchte"
       ],
       "answer": 1,
-      "explain": "Schulmeinung: KI für O₂ beim STEMI mit SpO₂ über 90 %. Zu viel O₂ verengt die Herzkranzgefäße und bildet Sauerstoffradikale."
+      "explain": "Leitlinie (ESC 2023): O₂ beim ACS erst bei SpO₂ unter 90 %, sonst routinemäßig nicht empfohlen. Schulmeinung NAW: kontraindiziert. Zu viel O₂ verengt die Herzkranzgefäße und bildet Sauerstoffradikale."
     }
   ],
   "diagnosis": {
@@ -269,7 +269,7 @@
   },
   "teach": [
     "Beim ACS: Oberkörper hoch, nicht laufen lassen, beruhigen, Monitoring, 12-Kanal-EKG, NEF, Defi-Patches.",
-    "Sauerstoff nur bei Atemnot oder SpO₂ unter 90 % (Schulmeinung: KI bei STEMI mit SpO₂ über 90 %).",
+    "Sauerstoff erst bei SpO₂ unter 90 % (Hypoxämie). Darüber routinemäßig nicht empfohlen (ESC), laut Schulmeinung kontraindiziert.",
     "Medikamente (ASS, Heparin, Opioide) gibt NotSan/NA, der RettSan bereitet den Zugang vor."
   ],
   "variants": [

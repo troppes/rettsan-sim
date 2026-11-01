@@ -241,7 +241,7 @@
   {#if spray}<p class="hint small">{left > 0 ? `Einwirkzeit: noch ${left} s` : 'Desinfektion trocken.'}</p>{/if}
   {#if tool === 'nadel'}
     <div class="angles">Stichwinkel:
-      {#each [10, 20, 30, 45] as a (a)}<button class="chip {angle === a ? 'active' : ''}" onclick={() => (angle = a)}>{a}°</button>{/each}
+      {#each [10, 15, 20, 30, 45] as a (a)}<button class="chip {angle === a ? 'active' : ''}" onclick={() => (angle = a)}>{a}°</button>{/each}
     </div>
   {/if}
 {/if}

@@ -6,7 +6,7 @@ export interface Settings { worsen: boolean; detail: boolean }
 export type LogType = 'dispatch' | 'info' | 'you' | 'pt' | 'moment' | 'find' | 'good' | 'bad' | 'alert';
 export interface LogEntry { type: LogType; text: string; who?: string; pts?: number }
 
-export type EventType = 'good' | 'bad' | 'miss' | 'none';
+export type EventType = 'good' | 'bad' | 'miss' | 'none' | 'schul';
 export interface ScoreEvent { pts: number; max: number; text: string; why?: string; type: EventType; at: number }
 
 export interface ReaState {
